@@ -33,7 +33,7 @@ public class Model
       for (CSVRecord csvRecord : csvParser)
       {
         // The first row of the file contains the column headers, so is not actual data.
-        data.add("TEST");
+        data.add(csvRecord.get(0));
       }
     } catch (IOException e)
     {
