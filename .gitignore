@@ -210,3 +210,38 @@ bh_unicode_properties.cache
 # https://packagecontrol.io/packages/sublime-github
 GitHub.sublime-settings
 
+
+### VS Code template
+
+# Primary VS Code folder
+.vscode/*
+
+# Allow shared workspace settings if you want them versioned
+# (uncomment the next two lines if you want to commit shared settings)
+#!.vscode/settings.json
+#!.vscode/extensions.json
+
+# Local workspace storage
+.vscode/*.code-workspace
+
+# VS Code local history extension
+.history/
+
+# VS Code test & debug output
+.vscode-test/
+
+# VS Code cache directories (occasionally created)
+.vscode/*.log
+.vscode/*.pid
+
+# macOS/Linux hidden temp files sometimes created inside .vscode
+.vscode/.DS_Store
+
+### files and folders
+
+/target
+/tomcat.8080
+
+logfile.txt
+logfile.txt.lck
+*.txt.*
