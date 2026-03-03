@@ -1,10 +1,11 @@
 package uk.ac.ucl.model;
 
-import java.io.Reader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
+
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
@@ -32,7 +33,7 @@ public class Model
       for (CSVRecord csvRecord : csvParser)
       {
         // The first row of the file contains the column headers, so is not actual data.
-        data.add(csvRecord.get(0));
+        data.add("TEST");
       }
     } catch (IOException e)
     {
