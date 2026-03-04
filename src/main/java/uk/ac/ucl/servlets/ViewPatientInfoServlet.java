@@ -48,10 +48,8 @@ public class ViewPatientInfoServlet extends HttpServlet
             // get id from URL
             String id = request.getParameter("id");
 
-            int row = model.getRowNumFromId(id);
-
             // stores patient info in a patient object
-            Patient patientInfo = model.getPatientInfo(row);
+            Patient patientInfo = model.getPatientRecord(id);
 
             // NEW: get column names for displaying with data
             List<String> columnNames = model.getColumnNames();
