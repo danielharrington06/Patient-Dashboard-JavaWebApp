@@ -210,3 +210,65 @@ dd {
 .search-input:focus {
     border-color: var(--colour-primary);
 }
+
+/* ── Patient Table ── */
+.table-wrapper {
+    background: var(--colour-surface);
+    border: 1px solid var(--colour-border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+}
+
+.patient-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    font-size: 0.9rem;
+}
+
+.patient-table thead {
+    background: var(--colour-bg);
+    border-bottom: 2px solid var(--colour-border);
+}
+
+.patient-table th {
+    padding: var(--spacing-sm) var(--spacing-md);
+    text-align: left;
+    font-size: 0.78rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--colour-text-muted);
+}
+
+.patient-table td {
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-bottom: 1px solid var(--colour-border);
+    color: var(--colour-text);
+}
+
+.patient-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.patient-table tbody tr:hover {
+    background: var(--colour-bg);
+}
+
+.btn-sm {
+    padding: 0.25rem 0.75rem;
+    font-size: 0.8rem;
+}
+
+.result-count {
+    margin-top: var(--spacing-md);
+    font-size: 0.85rem;
+    color: var(--colour-text-muted);
+    font-family: 'Segoe UI', system-ui, sans-serif;
+}
+
+.text-muted {
+    color: var(--colour-text-muted);
+    font-family: 'Segoe UI', system-ui, sans-serif;
+}

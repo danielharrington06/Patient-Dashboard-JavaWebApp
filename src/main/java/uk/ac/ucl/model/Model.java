@@ -42,7 +42,8 @@ public class Model
         throw new IllegalArgumentException("Invalid id: " + id);
     }
 
-    public Patient getPatientInfo(int row) {
+    public Patient getPatientRecord(String id) {
+        int row = getRowNumFromId(id);
         List<String> columns = getColumnNames();
         List<String> rowContents = new ArrayList<>();
         for (String column : columns) {
@@ -72,13 +73,18 @@ public class Model
         );
     }
 
-    public Map<String, String> getPatientNames() {
-        Map<String, String> patients = new HashMap<>();
+    public Map<String, List<String>> getPatientSummaries() {
+        // gets a hash map of id to contents: [fullName, dob, gender, city, state]
+        Map<String, List<String>> patients = new HashMap<>();
         for (int row = 0; row < getRowCount(); row++) {
             String id = dataFrame.getValue("ID", row);
-            String first = dataFrame.getValue("FIRST", row);
-            String last = dataFrame.getValue("LAST", row);
-            patients.put(id, first + " " + last);
+            List<String> info = new ArrayList<>();
+            info.add(dataFrame.getValue("FIRST", row) + " " + dataFrame.getValue("LAST", row));
+            info.add(dataFrame.getValue("BIRTHDATE", row));
+            info.add(dataFrame.getValue("GENDER", row));
+            info.add(dataFrame.getValue("CITY", row));
+            info.add(dataFrame.getValue("STATE", row));
+            patients.put(id, info);
         }
         return patients;
     }
