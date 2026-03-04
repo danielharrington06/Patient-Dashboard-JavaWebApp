@@ -68,24 +68,29 @@ public class Patient {
 
     // Getters (required for JSP EL)
 
-    public String getId() { return id; }
-    public String getBirthDate() { return birthDate; }
-    public String getDeathDate() { return deathDate; }
-    public String getSsn() { return ssn; }
-    public String getDrivers() { return drivers; }
-    public String getPassport() { return passport; }
-    public String getPrefix() { return prefix; }
-    public String getFirst() { return first; }
-    public String getLast() { return last; }
-    public String getSuffix() { return suffix; }
-    public String getMaiden() { return maiden; }
-    public String getMarital() { return marital; }
-    public String getRace() { return race; }
-    public String getEthnicity() { return ethnicity; }
-    public String getGender() { return gender; }
-    public String getBirthPlace() { return birthPlace; }
-    public String getAddress() { return address; }
-    public String getCity() { return city; }
-    public String getState() { return state; }
-    public String getZip() { return zip; }
+    public String get(String field) {
+        switch (field.toUpperCase()) {
+            case "ID" -> {return id;}
+            case "BIRTHDATE" -> {return birthDate;}
+            case "DEATHDATE" -> {return deathDate;}
+            case "SSN" -> {return ssn;}
+            case "DRIVERS" -> {return drivers;}
+            case "PASSPORT" -> {return passport;}
+            case "PREFIX" -> {return prefix;}
+            case "FIRST" -> {return first;}
+            case "LAST" -> {return last;}
+            case "SUFFIX" -> {return suffix;}
+            case "MAIDEN" -> {return maiden;}
+            case "MARITAL" -> {return marital;}
+            case "RACE" -> {return race;}
+            case "ETHNICITY" -> {return ethnicity;}
+            case "GENDER" -> {return gender;}
+            case "BIRTHPLACE" -> {return birthPlace;}
+            case "ADDRESS" -> {return address;}
+            case "CITY" -> {return city;}
+            case "STATE" -> {return state;}
+            case "ZIP" -> {return zip;}
+            default -> throw new IllegalArgumentException("Unknown field: " + field);
+        }
+    }
 }
