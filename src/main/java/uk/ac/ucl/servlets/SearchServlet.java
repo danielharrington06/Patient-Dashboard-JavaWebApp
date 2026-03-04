@@ -2,6 +2,7 @@ package uk.ac.ucl.servlets;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletContext;
@@ -54,39 +55,27 @@ public class SearchServlet extends HttpServlet {
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        // 1. Retrieve the search term from the request parameter.
-        // The "searchstring" parameter name matches the 'name' attribute of the input field in search.html.
         String searchString = request.getParameter("searchstring");
 
         try {
-        // 2. Get the singleton instance of the Model.
-        // The Model handles the actual data processing and search logic.
-        Model model = ModelFactory.getModel();
+            Model model = ModelFactory.getModel();
 
-        // 3. Basic validation of search input.
-        if (searchString == null || searchString.trim().isEmpty()) {
-            // If the user didn't enter anything, set an error message to be displayed on the result page.
-            request.setAttribute("errorMessage", "Please enter a search term.");
-        } else {
-            // 4. Perform the search and store the results in a request attribute.
-            // This makes the 'result' list accessible to the JSP page.
-            List<String> searchResult = model.searchFor(searchString);
-            request.setAttribute("result", searchResult);
-        }
+            if (searchString == null || searchString.trim().isEmpty()) {
+                request.setAttribute("errorMessage", "Please enter a search term.");
+            } else {
+                Map<String, List<String>> results = model.searchPatientSummaries(searchString);
+                request.setAttribute("patientData", results);
+            }
 
-        // 5. Forward the request to the JSP page for display.
-        // RequestDispatcher.forward() is used to send the request/response objects to another resource (JSP).
-        ServletContext context = getServletContext();
-        RequestDispatcher dispatch = context.getRequestDispatcher("/searchResult.jsp");
-        dispatch.forward(request, response);
+            ServletContext context = getServletContext();
+            RequestDispatcher dispatch = context.getRequestDispatcher("/patientList.jsp");
+            dispatch.forward(request, response);
 
         } catch (IOException e) {
-        // 6. Exception Handling.
-        // If there is an issue loading the model or data, log the error and forward to a dedicated error page.
-        request.setAttribute("errorMessage", "Error loading data: " + e.getMessage());
-        ServletContext context = getServletContext();
-        RequestDispatcher dispatch = context.getRequestDispatcher("/error.jsp");
-        dispatch.forward(request, response);
+            request.setAttribute("errorMessage", "Error loading data: " + e.getMessage());
+            ServletContext context = getServletContext();
+            RequestDispatcher dispatch = context.getRequestDispatcher("/error.jsp");
+            dispatch.forward(request, response);
         }
     }
 }
