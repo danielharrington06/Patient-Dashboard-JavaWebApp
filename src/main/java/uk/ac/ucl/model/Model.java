@@ -1,8 +1,9 @@
 package uk.ac.ucl.model;
 
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Model
 {
@@ -30,21 +31,16 @@ public class Model
         return dataFrame.getValue(columnName, row);
     }
 
-    public List<String> getPatientNames() {
-        List<String> names = new ArrayList<>();
+    public Map<String, String> getPatientNames() {
+        Map<String, String> patients = new HashMap<>();
         for (int row = 0; row < getRowCount(); row++) {
+            String id = dataFrame.getValue("ID", row);
             String first = dataFrame.getValue("FIRST", row);
             String last = dataFrame.getValue("LAST", row);
-            names.add(first + " " + last);
+            patients.put(id, first + " " + last);
         }
-        return names;
+        return patients;
     }
-
-    /* public List<String> getPatientNames()
-    {
-        return readFile("data/patients100.csv");
-    }
-    */
 
     // This also returns dummy data. The real version should use the keyword parameter to search
     // the data and return a list of matching items.
