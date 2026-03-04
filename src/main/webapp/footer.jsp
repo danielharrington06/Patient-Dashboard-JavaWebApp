@@ -1,4 +1,3 @@
-<div class="links">
-    <p>The footer</p>
-    <div class="clearBoth"></div>
-</div>
+<footer class="site-footer">
+    <p>Patient Data App</p>
+</footer>
