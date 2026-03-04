@@ -12,6 +12,13 @@
 <div class="main">
     <h2>Patient Record</h2>
     <%
+    String fromSearch = request.getParameter("from");
+    String backHref = (fromSearch != null && !fromSearch.isEmpty())
+        ? "/runsearch?searchstring=" + fromSearch
+        : "/patientList";
+    %>
+    <a href="<%= backHref %>" class="btn btn-secondary" style="margin-bottom: 1rem;">← Back to patients</a>
+    <%
         String errorMessage = (String) request.getAttribute("errorMessage");
         if (errorMessage != null)
         {

@@ -61,7 +61,8 @@ public class SearchServlet extends HttpServlet {
             Model model = ModelFactory.getModel();
 
             if (searchString == null || searchString.trim().isEmpty()) {
-                request.setAttribute("errorMessage", "Please enter a search term.");
+                response.sendRedirect("/patientList");
+                return;
             } else {
                 Map<String, List<String>> results = model.searchPatientSummaries(searchString);
                 request.setAttribute("patientData", results);

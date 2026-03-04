@@ -48,24 +48,23 @@
                     <th>Gender</th>
                     <th>City</th>
                     <th>State</th>
-                    <th></th>
                 </tr>
             </thead>
             <tbody>
             <%
+                String search = request.getParameter("searchstring");
                 for (Map.Entry<String, List<String>> entry : patients.entrySet()) {
                     String id = entry.getKey();
                     List<String> data = entry.getValue();
-                    // expects list: [fullName, dob, gender, city, state]
-                    String href = "patient?id=" + id;
+                    String fromParam = (search != null && !search.isEmpty()) ? "&from=" + search : "";
+                    String href = "patient?id=" + id + fromParam;
             %>
-                <tr>
+                <tr data-href="<%= href %>">
                     <td><%= data.get(0) %></td>
                     <td><%= data.get(1) %></td>
                     <td><%= data.get(2) %></td>
                     <td><%= data.get(3) %></td>
                     <td><%= data.get(4) %></td>
-                    <td><a href="<%= href %>" class="btn btn-sm">View more...</a></td>
                 </tr>
             <%
                 }
@@ -91,5 +90,12 @@
     %>
 </div>
 <jsp:include page="/footer.jsp"/>
+<script>
+    document.querySelectorAll('tr[data-href]').forEach(row => {
+        row.addEventListener('click', () => {
+            window.location = row.dataset.href;
+        });
+    });
+</script>
 </body>
 </html>
