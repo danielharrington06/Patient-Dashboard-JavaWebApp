@@ -1,6 +1,7 @@
 package uk.ac.ucl.model;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,6 +30,25 @@ public class Model
 
     public String getValue(String columnName, int row) {
         return dataFrame.getValue(columnName, row);
+    }
+
+    public int getRowNumFromId(String id) {
+        for (int row = 0; row < getRowCount(); row++) {
+            if (id.equals(getValue("ID", row))) {
+                return row;
+            }
+        }
+        // not found, so invalid ID and incorrect code
+        throw new IllegalArgumentException("Invalid id: " + id);
+    }
+
+    public List<String> getPatientInfo(int row) {
+        List<String> columns = getColumnNames();
+        List<String> rowContents = new ArrayList<>();
+        for (String column : columns) {
+            rowContents.add(getValue(column, row));
+        }
+        return rowContents;
     }
 
     public Map<String, String> getPatientNames() {

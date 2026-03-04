@@ -27,7 +27,7 @@
 
                 String id = entry.getKey();
                 String patientName = entry.getValue();
-                String href = "dummypage.html?id=" + id;
+                String href = "patient?id=" + id;
         %>
                 <li>
                     <a href="<%= href %>"><%= patientName %></a>
