@@ -10,15 +10,15 @@ import java.io.IOException;
 
 public class ModelFactory
 {
-  private static Model model;
+    private static Model model;
 
-  public static Model getModel() throws IOException
-  {
-    if (model == null)
+    public static Model getModel() throws IOException
     {
-      model = new Model();
-      // The data should be read the file once, not every time the model is accessed!
+        if (model == null)
+        {
+        model = new Model();
+        // The data should be read the file once, not every time the model is accessed!
+        }
+        return model;
     }
-    return model;
-  }
 }
