@@ -1,3 +1,4 @@
+<%@ page import="uk.ac.ucl.model.Patient" %>
 <%@ page import="java.util.List" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
@@ -9,7 +10,7 @@
 <body>
 <jsp:include page="/header.jsp"/>
 <div class="main">
-    <h2>Patients:</h2>
+    <h2>Patient Record</h2>
     <%
         String errorMessage = (String) request.getAttribute("errorMessage");
         if (errorMessage != null)
@@ -20,39 +21,15 @@
         }
     %>
     <%
-    List<String> patientInfo = (List<String>) request.getAttribute("patientInfo");
-
-    String[] labels = {
-        "Patient ID",
-        "Date of Birth",
-        "SSN",
-        "NHS Number",
-        "Driver ID",
-        "Title",
-        "First Name",
-        "Last Name",
-        "Gender",
-        "Ethnicity",
-        "Race",
-        "Marital Status",
-        "Birth City",
-        "Birth State",
-        "Birth Country",
-        "Address",
-        "City",
-        "State",
-        "Postcode"
-    };
+    Patient patientInfo = (Patient) request.getAttribute("patientInfo");
+    List<String> columns = (List<String>) request.getAttribute("columnNames");
     %>
-
     <dl>
     <%
-    int count = Math.min(patientInfo.size(), labels.length);
-
-    for (int i = 0; i < count; i++) {
+    for (int i = 0; i < columns.size(); i++) {
     %>
-        <dt><strong><%= labels[i] %></strong></dt>
-        <dd><%= patientInfo.get(i) %></dd>
+        <dt><strong><%= columns.get(i) %></strong></dt>
+        <dd><%= patientInfo.get(columns.get(i)) %></dd>
     <%
     }
     %>

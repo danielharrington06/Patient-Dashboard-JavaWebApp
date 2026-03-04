@@ -12,6 +12,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import uk.ac.ucl.model.Model;
 import uk.ac.ucl.model.ModelFactory;
+import uk.ac.ucl.model.Patient;
 
 /**
  * The ViewPatientListServlet handles HTTP requests for displaying the full list of patients.
@@ -40,32 +41,36 @@ public class ViewPatientInfoServlet extends HttpServlet
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException
     {
         try {
-        // 1. Get the singleton instance of the Model.
-        // The Model handles the actual data processing and data retrieval.
-        Model model = ModelFactory.getModel();
-        // 2a. retrieve the id from the URL
-        String id = request.getParameter("id");
-        // 2b. get the row from the id
-        int row = model.getRowNumFromId(id);
-        // 2c. Retrieve the patient info from the model.
-        List<String> patientInfo = model.getPatientInfo(row);
+            // Get the singleton instance of the Model.
+            // The Model handles the actual data processing and data retrieval.
+            Model model = ModelFactory.getModel();
 
-        // 3. Add the data to the request object.
-        // This makes the 'patientNames' list accessible to the JSP page for rendering.
-        request.setAttribute("patientInfo", patientInfo);
+            // get id from URL
+            String id = request.getParameter("id");
 
-        // 4. Invoke the JSP for display.
-        // RequestDispatcher.forward() is used to send the request/response objects to another resource (JSP).
-        ServletContext context = getServletContext();
-        RequestDispatcher dispatch = context.getRequestDispatcher("/patient.jsp");
-        dispatch.forward(request, response);
+            int row = model.getRowNumFromId(id);
+
+            // stores patient info in a patient object
+            Patient patientInfo = model.getPatientInfo(row);
+
+            // NEW: get column names for displaying with data
+            List<String> columnNames = model.getColumnNames();
+
+            // Add attributes for JSP
+            request.setAttribute("patientInfo", patientInfo);
+            request.setAttribute("columnNames", columnNames);
+
+            RequestDispatcher dispatch = getServletContext().getRequestDispatcher("/patient.jsp");
+
+            dispatch.forward(request, response);
+
         } catch (IOException e) {
-        // 5. Exception Handling.
-        // If there is an issue loading the model or data, log the error and forward to a dedicated error page.
-        request.setAttribute("errorMessage", "Error loading data: " + e.getMessage());
-        ServletContext context = getServletContext();
-        RequestDispatcher dispatch = context.getRequestDispatcher("/error.jsp");
-        dispatch.forward(request, response);
+            // Exception Handling.
+            // If there is an issue loading the model or data, log the error and forward to a dedicated error page.
+            request.setAttribute("errorMessage", "Error loading data: " + e.getMessage());
+            ServletContext context = getServletContext();
+            RequestDispatcher dispatch = context.getRequestDispatcher("/error.jsp");
+            dispatch.forward(request, response);
         }
     }
 

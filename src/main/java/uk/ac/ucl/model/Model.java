@@ -42,13 +42,34 @@ public class Model
         throw new IllegalArgumentException("Invalid id: " + id);
     }
 
-    public List<String> getPatientInfo(int row) {
+    public Patient getPatientInfo(int row) {
         List<String> columns = getColumnNames();
         List<String> rowContents = new ArrayList<>();
         for (String column : columns) {
             rowContents.add(getValue(column, row));
         }
-        return rowContents;
+        return new Patient(
+            rowContents.get(0),   // ID
+            rowContents.get(1),   // BIRTHDATE
+            rowContents.get(2),   // DEATHDATE
+            rowContents.get(3),   // SSN
+            rowContents.get(4),   // DRIVERS
+            rowContents.get(5),   // PASSPORT
+            rowContents.get(6),   // PREFIX
+            rowContents.get(7),   // FIRST
+            rowContents.get(8),   // LAST
+            rowContents.get(9),   // SUFFIX
+            rowContents.get(10),  // MAIDEN
+            rowContents.get(11),  // MARITAL
+            rowContents.get(12),  // RACE
+            rowContents.get(13),  // ETHNICITY
+            rowContents.get(14),  // GENDER
+            rowContents.get(15),  // BIRTHPLACE
+            rowContents.get(16),  // ADDRESS
+            rowContents.get(17),  // CITY
+            rowContents.get(18),  // STATE
+            rowContents.get(19)   // ZIP
+        );
     }
 
     public Map<String, String> getPatientNames() {
