@@ -24,7 +24,7 @@ import uk.ac.ucl.model.Patient;
  * 3. Error handling and forwarding to error pages.
  * 4. Request-scoped attribute passing to JSPs for rendering lists.
  */
-@WebServlet("/patient")
+@WebServlet("/patientRecord")
 public class ViewPatientInfoServlet extends HttpServlet
 {
 
@@ -58,7 +58,7 @@ public class ViewPatientInfoServlet extends HttpServlet
             request.setAttribute("patientInfo", patientInfo);
             request.setAttribute("columnNames", columnNames);
 
-            RequestDispatcher dispatch = getServletContext().getRequestDispatcher("/patient.jsp");
+            RequestDispatcher dispatch = getServletContext().getRequestDispatcher("/patientRecord.jsp");
 
             dispatch.forward(request, response);
 

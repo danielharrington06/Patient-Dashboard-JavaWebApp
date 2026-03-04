@@ -2,7 +2,7 @@
 <%@ page import="java.util.List" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
-<html>
+<html lang="en">
 <head>
     <jsp:include page="/meta.jsp"/>
     <title>Patient Data App - Patients</title>
@@ -57,7 +57,7 @@
                     String id = entry.getKey();
                     List<String> data = entry.getValue();
                     String fromParam = (search != null && !search.isEmpty()) ? "&from=" + search : "";
-                    String href = "patient?id=" + id + fromParam;
+                    String href = "patientRecord?id=" + id + fromParam;
             %>
                 <tr data-href="<%= href %>">
                     <td><%= data.get(0) %></td>
