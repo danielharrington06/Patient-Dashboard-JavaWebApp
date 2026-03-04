@@ -16,7 +16,7 @@
         if (errorMessage != null)
         {
     %>
-        <p style="color: red;"><%= errorMessage %></p>
+        <p class="error"><%= errorMessage %></p>
     <%
         }
     %>
