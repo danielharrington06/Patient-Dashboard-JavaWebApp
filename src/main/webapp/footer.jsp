@@ -1,4 +1,4 @@
 <div class="links">
-  <p>The footer</p>
-  <div class="clearBoth"></div>
+    <p>The footer</p>
+    <div class="clearBoth"></div>
 </div>
