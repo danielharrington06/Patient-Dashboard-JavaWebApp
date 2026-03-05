@@ -18,7 +18,5 @@ git branch -d feature/{featurename}
 ```
 
 # Plan for search
-1. search
 2. filter
 3. sort
-4. paginate
