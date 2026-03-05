@@ -1,5 +1,6 @@
-<%@ page import="uk.ac.ucl.model.Patient" %>
+<%@ page import="java.util.LinkedHashMap" %>
 <%@ page import="java.util.List" %>
+<%@ page import="java.util.Map" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
 <html lang="en">   
@@ -28,15 +29,15 @@
         }
     %>
     <%
-    Patient patientInfo = (Patient) request.getAttribute("patientInfo");
+    LinkedHashMap<String, String> patientRecord = (LinkedHashMap<String, String>) request.getAttribute("patientRecord");
     List<String> columns = (List<String>) request.getAttribute("columnNames");
     %>
     <dl>
     <%
-    for (int i = 0; i < columns.size(); i++) {
+        for (Map.Entry<String, String> entry : patientRecord.entrySet()) {
     %>
-        <dt><strong><%= columns.get(i) %></strong></dt>
-        <dd><%= patientInfo.get(columns.get(i)) %></dd>
+        <dt><%= entry.getKey() %></dt>
+        <dd><%= entry.getValue() != null && !entry.getValue().isEmpty() ? entry.getValue() : "—" %></dd>
     <%
     }
     %>
