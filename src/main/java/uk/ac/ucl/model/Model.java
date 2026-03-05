@@ -91,24 +91,35 @@ public class Model
         return patients;
     }
 
-    public Map<String, List<String>> searchPatientSummaries(String keyword) {
-        String lower = keyword.toLowerCase();
+    public Map<String, List<String>> searchPatientSummaries(String searchString) {
+        String[] lowerStrings = searchString.toLowerCase().split(" ");
         Map<String, List<String>> results = new HashMap<>();
 
         for (int row = 0; row < getRowCount(); row++) {
-            for (String column : getColumnNames()) {
-                String value = getValue(column, row);
-                if (value != null && value.toLowerCase().contains(lower)) {
-                    String id = getValue("ID", row);
-                    List<String> info = new ArrayList<>();
-                    info.add(getValue("FIRST", row) + " " + getValue("LAST", row));
-                    info.add(getValue("BIRTHDATE", row));
-                    info.add(getValue("GENDER", row));
-                    info.add(getValue("CITY", row));
-                    info.add(getValue("STATE", row));
-                    results.put(id, info);
-                    break;
+            boolean valid = true;
+            for (String term : lowerStrings) {
+                boolean found = false;
+                for (String column : getColumnNames()) {
+                    String value = getValue(column, row);
+                    if (value != null && value.toLowerCase().contains(term)) {
+                        found = true;
+                        break;
+                    }
                 }
+                if (!found) {
+                    valid = false;
+                    break;  // No need to check remaining terms
+                }
+            }
+            if (valid) {
+                String id = getValue("ID", row);
+                List<String> info = new ArrayList<>();
+                info.add(getValue("FIRST", row) + " " + getValue("LAST", row));
+                info.add(getValue("BIRTHDATE", row));
+                info.add(getValue("GENDER", row));
+                info.add(getValue("CITY", row));
+                info.add(getValue("STATE", row));
+                results.put(id, info);
             }
         }
         return results;
