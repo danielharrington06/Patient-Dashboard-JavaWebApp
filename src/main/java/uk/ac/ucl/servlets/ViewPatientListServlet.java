@@ -61,6 +61,7 @@ public class ViewPatientListServlet extends HttpServlet
         request.setAttribute("currentPage", page);
         request.setAttribute("totalPages", totalPages);
         request.setAttribute("totalPatients", totalPatients);
+        request.setAttribute("columnDisplayNames", model.getSummaryColumnDisplayNames());
 
         ServletContext context = getServletContext();
         RequestDispatcher dispatch = context.getRequestDispatcher("/patientList.jsp");

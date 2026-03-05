@@ -44,7 +44,63 @@ public class Model
         throw new IllegalArgumentException("Invalid id: " + id);
     }
 
-    public Patient getPatientRecord(String id) {
+    public String formatValue(String columnName, String value) {
+        if (value == null || value.isEmpty()) return "—";
+        
+        switch (columnName.toUpperCase()) {
+            case "GENDER" -> {
+                return switch (value.toUpperCase()) {
+                    case "M" -> "Male";
+                    case "F" -> "Female";
+                    default -> value;
+                };
+            }
+            case "MARITAL" -> {
+                return switch (value.toUpperCase()) {
+                    case "M" -> "Married";
+                    case "S" -> "Single";
+                    default -> value;
+                };
+            }
+            case "ETHNICITY", "RACE" -> {
+                // convert underscores to spaces and capitalise each word
+                String[] words = value.replace("_", " ").split(" ");
+                StringBuilder sb = new StringBuilder();
+                for (String word : words) {
+                    if (!word.isEmpty()) {
+                        sb.append(Character.toUpperCase(word.charAt(0)))
+                        .append(word.substring(1).toLowerCase())
+                        .append(" ");
+                    }
+                }
+                return sb.toString().trim();
+            }
+            case "BIRTHDATE", "DEATHDATE" -> {
+                // convert 1979-08-24 to 24 Aug 1979
+                try {
+                    String[] parts = value.split("-");
+                    String[] months = {"Jan","Feb","Mar","Apr","May","Jun",
+                                    "Jul","Aug","Sep","Oct","Nov","Dec"};
+                    int month = Integer.parseInt(parts[1]) - 1;
+                    return parts[2] + " " + months[month] + " " + parts[0];
+                } catch (NumberFormatException e) {
+                    return value;
+                }
+            }
+            default -> { return value; }
+        }
+    }
+
+    public LinkedHashMap<String, String> getFormattedPatientRecord(String id) {
+        LinkedHashMap<String, String> formatted = new LinkedHashMap<>();
+        for (String column : getColumnNames()) {
+            int row = getRowNumFromId(id);
+            formatted.put(dataFrame.formatColumnName(column), formatValue(column, getValue(column, row)));
+        }
+        return formatted;
+    }
+
+    /* public Patient getPatientRecord(String id) {
         int row = getRowNumFromId(id);
         List<String> columns = getColumnNames();
         List<String> rowContents = new ArrayList<>();
@@ -73,6 +129,29 @@ public class Model
             rowContents.get(18),  // STATE
             rowContents.get(19)   // ZIP
         );
+    } */
+
+    public List<String> getSummaryColumnDisplayNames() {
+        List<String> summaryColumns = List.of("FIRST", "BIRTHDATE", "DEATHDATE", "GENDER", "MARITAL", "RACE", "ETHNICITY", "CITY", "STATE");
+        List<String> displayNames = new ArrayList<>();
+        for (String col : summaryColumns) {
+            displayNames.add(dataFrame.formatColumnName(col));
+        }
+        return displayNames;
+    }
+
+    public List<String> packagePatientSummaryInfo(int row) {
+        List<String> info = new ArrayList<>();
+        info.add(formatValue("FIRST", dataFrame.getValue("FIRST", row) + " " + dataFrame.getValue("LAST", row)));
+        info.add(formatValue("BIRTHDATE", dataFrame.getValue("BIRTHDATE", row)));
+        info.add(formatValue("DEATHDATE", dataFrame.getValue("DEATHDATE", row)));
+        info.add(formatValue("GENDER", dataFrame.getValue("GENDER", row)));
+        info.add(formatValue("MARITAL", dataFrame.getValue("MARITAL", row)));
+        info.add(formatValue("RACE", dataFrame.getValue("RACE", row)));
+        info.add(formatValue("ETHNICITY", dataFrame.getValue("ETHNICITY", row)));
+        info.add(formatValue("CITY", dataFrame.getValue("CITY", row)));
+        info.add(formatValue("STATE", dataFrame.getValue("STATE", row)));
+        return info;
     }
 
     public Map<String, List<String>> getPatientSummaries() {
@@ -80,35 +159,36 @@ public class Model
         Map<String, List<String>> patients = new LinkedHashMap<>();
         for (int row = 0; row < getRowCount(); row++) {
             String id = dataFrame.getValue("ID", row);
-            List<String> info = new ArrayList<>();
-            info.add(dataFrame.getValue("FIRST", row) + " " + dataFrame.getValue("LAST", row));
-            info.add(dataFrame.getValue("BIRTHDATE", row));
-            info.add(dataFrame.getValue("GENDER", row));
-            info.add(dataFrame.getValue("CITY", row));
-            info.add(dataFrame.getValue("STATE", row));
+            List<String> info = packagePatientSummaryInfo(row);
             patients.put(id, info);
         }
         return patients;
     }
 
-    public Map<String, List<String>> searchPatientSummaries(String keyword) {
-        String lower = keyword.toLowerCase();
+    public Map<String, List<String>> searchPatientSummaries(String searchString) {
+        String[] lowerStrings = searchString.toLowerCase().split(" ");
         Map<String, List<String>> results = new HashMap<>();
 
         for (int row = 0; row < getRowCount(); row++) {
-            for (String column : getColumnNames()) {
-                String value = getValue(column, row);
-                if (value != null && value.toLowerCase().contains(lower)) {
-                    String id = getValue("ID", row);
-                    List<String> info = new ArrayList<>();
-                    info.add(getValue("FIRST", row) + " " + getValue("LAST", row));
-                    info.add(getValue("BIRTHDATE", row));
-                    info.add(getValue("GENDER", row));
-                    info.add(getValue("CITY", row));
-                    info.add(getValue("STATE", row));
-                    results.put(id, info);
-                    break;
+            boolean valid = true;
+            for (String term : lowerStrings) {
+                boolean found = false;
+                for (String column : getColumnNames()) {
+                    String value = getValue(column, row);
+                    if (value != null && formatValue(column, value).toLowerCase().contains(term)) {
+                        found = true;
+                        break;
+                    }
                 }
+                if (!found) {
+                    valid = false;
+                    break;  // No need to check remaining terms
+                }
+            }
+            if (valid) {
+                String id = getValue("ID", row);
+                List<String> info = packagePatientSummaryInfo(row);
+                results.put(id, info);
             }
         }
         return results;

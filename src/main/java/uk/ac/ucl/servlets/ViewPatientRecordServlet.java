@@ -1,7 +1,7 @@
 package uk.ac.ucl.servlets;
 
 import java.io.IOException;
-import java.util.List;
+import java.util.LinkedHashMap;
 
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletContext;
@@ -12,7 +12,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import uk.ac.ucl.model.Model;
 import uk.ac.ucl.model.ModelFactory;
-import uk.ac.ucl.model.Patient;
 
 /**
  * The ViewPatientListServlet handles HTTP requests for displaying the full list of patients.
@@ -25,7 +24,7 @@ import uk.ac.ucl.model.Patient;
  * 4. Request-scoped attribute passing to JSPs for rendering lists.
  */
 @WebServlet("/patientRecord")
-public class ViewPatientInfoServlet extends HttpServlet
+public class ViewPatientRecordServlet extends HttpServlet
 {
 
     /**
@@ -47,19 +46,10 @@ public class ViewPatientInfoServlet extends HttpServlet
 
             // get id from URL
             String id = request.getParameter("id");
-
-            // stores patient info in a patient object
-            Patient patientInfo = model.getPatientRecord(id);
-
-            // NEW: get column names for displaying with data
-            List<String> columnNames = model.getColumnNames();
-
-            // Add attributes for JSP
-            request.setAttribute("patientInfo", patientInfo);
-            request.setAttribute("columnNames", columnNames);
+            LinkedHashMap<String, String> patientRecord = model.getFormattedPatientRecord(id);
+            request.setAttribute("patientRecord", patientRecord);
 
             RequestDispatcher dispatch = getServletContext().getRequestDispatcher("/patientRecord.jsp");
-
             dispatch.forward(request, response);
 
         } catch (IOException e) {
