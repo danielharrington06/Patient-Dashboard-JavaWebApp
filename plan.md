@@ -12,6 +12,8 @@
 ```bash
 # create new branch for a feature
 git checkout -b feature/{featurename}
+# first push on new branch
+git push -u origin feature/{featurename}
 # when done do the following
 git checkout main
 git merge feature/{featurename}
