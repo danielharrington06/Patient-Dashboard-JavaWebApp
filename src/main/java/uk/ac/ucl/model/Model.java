@@ -83,6 +83,15 @@ public class Model
         );
     }
 
+    public List<String> getSummaryColumnDisplayNames() {
+        List<String> summaryColumns = List.of("FIRST", "BIRTHDATE", "DEATHDATE", "GENDER", "MARITAL", "RACE", "ETHNICITY", "CITY", "STATE");
+        List<String> displayNames = new ArrayList<>();
+        for (String col : summaryColumns) {
+            displayNames.add(dataFrame.formatColumnName(col));
+        }
+        return displayNames;
+    }
+
     public List<String> packagePatientSummaryInfo(int row) {
         List<String> info = new ArrayList<>();
         info.add(dataFrame.getValue("FIRST", row) + " " + dataFrame.getValue("LAST", row));

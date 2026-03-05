@@ -41,17 +41,14 @@
     %>
     <div class="table-wrapper">
         <table class="patient-table">
+            <%
+                List<String> columnDisplayNames = (List<String>) request.getAttribute("columnDisplayNames");
+            %>
             <thead>
                 <tr>
-                    <th>Name</th>
-                    <th>Date of Birth</th>
-                    <th>Date of Death</th>
-                    <th>Gender</th>
-                    <th>Marital</th>
-                    <th>Race</th>
-                    <th>Ethnicity</th>
-                    <th>City</th>
-                    <th>State</th>
+                    <% for (String colName : columnDisplayNames) { %>
+                        <th><%= colName %></th>
+                    <% } %>
                 </tr>
             </thead>
             <tbody>
