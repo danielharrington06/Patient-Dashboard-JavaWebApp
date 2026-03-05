@@ -44,6 +44,14 @@ public class Model
         throw new IllegalArgumentException("Invalid id: " + id);
     }
 
+    public LinkedHashMap<String, String> getFormattedPatientRecord(String id) {
+        LinkedHashMap<String, String> formatted = new LinkedHashMap<>();
+        for (String column : getColumnNames()) {
+            formatted.put(dataFrame.formatColumnName(column), getPatientRecord(id).get(column));
+        }
+        return formatted;
+    }
+
     public Patient getPatientRecord(String id) {
         int row = getRowNumFromId(id);
         List<String> columns = getColumnNames();
