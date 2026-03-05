@@ -75,17 +75,26 @@ public class Model
         );
     }
 
+    public List<String> packagePatientSummaryInfo(int row) {
+        List<String> info = new ArrayList<>();
+        info.add(dataFrame.getValue("FIRST", row) + " " + dataFrame.getValue("LAST", row));
+        info.add(dataFrame.getValue("BIRTHDATE", row));
+        info.add(dataFrame.getValue("DEATHDATE", row));
+        info.add(dataFrame.getValue("GENDER", row));
+        info.add(dataFrame.getValue("MARITAL", row));
+        info.add(dataFrame.getValue("RACE", row));
+        info.add(dataFrame.getValue("ETHNICITY", row));
+        info.add(dataFrame.getValue("CITY", row));
+        info.add(dataFrame.getValue("STATE", row));
+        return info;
+    }
+
     public Map<String, List<String>> getPatientSummaries() {
         // gets a hash map of id to contents: [fullName, dob, gender, city, state]
         Map<String, List<String>> patients = new LinkedHashMap<>();
         for (int row = 0; row < getRowCount(); row++) {
             String id = dataFrame.getValue("ID", row);
-            List<String> info = new ArrayList<>();
-            info.add(dataFrame.getValue("FIRST", row) + " " + dataFrame.getValue("LAST", row));
-            info.add(dataFrame.getValue("BIRTHDATE", row));
-            info.add(dataFrame.getValue("GENDER", row));
-            info.add(dataFrame.getValue("CITY", row));
-            info.add(dataFrame.getValue("STATE", row));
+            List<String> info = packagePatientSummaryInfo(row);
             patients.put(id, info);
         }
         return patients;
@@ -113,12 +122,7 @@ public class Model
             }
             if (valid) {
                 String id = getValue("ID", row);
-                List<String> info = new ArrayList<>();
-                info.add(getValue("FIRST", row) + " " + getValue("LAST", row));
-                info.add(getValue("BIRTHDATE", row));
-                info.add(getValue("GENDER", row));
-                info.add(getValue("CITY", row));
-                info.add(getValue("STATE", row));
+                List<String> info = packagePatientSummaryInfo(row);
                 results.put(id, info);
             }
         }

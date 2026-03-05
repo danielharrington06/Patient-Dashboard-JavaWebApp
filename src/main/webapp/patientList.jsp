@@ -45,7 +45,11 @@
                 <tr>
                     <th>Name</th>
                     <th>Date of Birth</th>
+                    <th>Date of Death</th>
                     <th>Gender</th>
+                    <th>Marital</th>
+                    <th>Race</th>
+                    <th>Ethnicity</th>
                     <th>City</th>
                     <th>State</th>
                 </tr>
@@ -65,6 +69,10 @@
                     <td><%= data.get(2) %></td>
                     <td><%= data.get(3) %></td>
                     <td><%= data.get(4) %></td>
+                    <td><%= data.get(5) %></td>
+                    <td><%= data.get(6) %></td>
+                    <td><%= data.get(7) %></td>
+                    <td><%= data.get(8) %></td>
                 </tr>
             <%
                 }
