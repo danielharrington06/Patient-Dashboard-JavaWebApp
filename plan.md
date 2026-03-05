@@ -16,7 +16,7 @@ git checkout -b feature/{featurename}
 git push -u origin feature/{featurename}
 # when done do the following
 git checkout main
-git merge feature/{featurename}
+git merge --no-ff feature/{featurename} -m "{message}"
 git branch -d feature/{featurename}
 ```
 
