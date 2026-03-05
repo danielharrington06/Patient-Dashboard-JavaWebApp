@@ -61,15 +61,11 @@
                     String href = "patientRecord?id=" + id + fromParam;
             %>
                 <tr data-href="<%= href %>">
-                    <td><%= data.get(0) %></td>
-                    <td><%= data.get(1) %></td>
-                    <td><%= data.get(2) %></td>
-                    <td><%= data.get(3) %></td>
-                    <td><%= data.get(4) %></td>
-                    <td><%= data.get(5) %></td>
-                    <td><%= data.get(6) %></td>
-                    <td><%= data.get(7) %></td>
-                    <td><%= data.get(8) %></td>
+                    <% for (int i = 0; i < columnDisplayNames.size(); i++) {
+                        %>
+                        <td><%= data.get(i) %></td>
+                    <%
+                    } %>
                 </tr>
             <%
                 }
