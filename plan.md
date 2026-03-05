@@ -1,10 +1,7 @@
 # Upcoming features
 - sort search results
-- improve headings on patient record page
-- split search terms by spaces and return results that match on each individual term
 - deal with search term "abington" which returns patients with current address matching but also birthplace
 - add filters such as for gender, whether patient is alive, ethnicity, race, marital status
-- pagination
 - requirement 7: functionality like oldest person, people living in same place
 
 # Something to consider
@@ -18,14 +15,6 @@ git push -u origin feature/{featurename}
 git checkout main
 git merge feature/{featurename}
 git branch -d feature/{featurename}
-```
-
-```bash
-main
- ├── feature/search-improvements
- ├── feature/filtering
- ├── feature/pagination
- ├── feature/analytics
 ```
 
 # Plan for search
