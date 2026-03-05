@@ -63,10 +63,28 @@ public class SearchServlet extends HttpServlet {
             if (searchString == null || searchString.trim().isEmpty()) {
                 response.sendRedirect("/patientList");
                 return;
-            } else {
-                Map<String, List<String>> results = model.searchPatientSummaries(searchString);
-                request.setAttribute("patientData", results);
             }
+
+            Map<String, List<String>> results = model.searchPatientSummaries(searchString);
+
+            int pageSize = Model.DEFAULT_PAGE_SIZE;
+            int page = 1;
+            try {
+                String pageParam = request.getParameter("page");
+                if (pageParam != null) page = Integer.parseInt(pageParam);
+            } catch (NumberFormatException e) {
+                page = 1;
+            }
+
+            int totalPatients = results.size();
+            int totalPages = (int) Math.ceil((double) totalPatients / pageSize);
+
+            Map<String, List<String>> pageData = model.getPage(results, page, pageSize);
+
+            request.setAttribute("patientData", pageData);
+            request.setAttribute("currentPage", page);
+            request.setAttribute("totalPages", totalPages);
+            request.setAttribute("totalPatients", totalPatients);
 
             ServletContext context = getServletContext();
             RequestDispatcher dispatch = context.getRequestDispatcher("/patientList.jsp");

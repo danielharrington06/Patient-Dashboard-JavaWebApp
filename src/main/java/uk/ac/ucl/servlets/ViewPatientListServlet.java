@@ -40,31 +40,31 @@ public class ViewPatientListServlet extends HttpServlet
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException
     {
-        try {
-        // 1. Get the singleton instance of the Model.
-        // The Model handles the actual data processing and data retrieval.
         Model model = ModelFactory.getModel();
+        Map<String, List<String>> allPatients = model.getPatientSummaries();
 
-        // 2. Retrieve the list of patient names from the model.
-        Map<String, List<String>> patientData = model.getPatientSummaries();
+        int pageSize = Model.DEFAULT_PAGE_SIZE;
+        int page = 1;
+        try {
+            String pageParam = request.getParameter("page");
+            if (pageParam != null) page = Integer.parseInt(pageParam);
+        } catch (NumberFormatException e) {
+            page = 1;
+        }
 
-        // 3. Add the data to the request object.
-        // This makes the 'patientNames' list accessible to the JSP page for rendering.
-        request.setAttribute("patientData", patientData);
+        int totalPatients = allPatients.size();
+        int totalPages = (int) Math.ceil((double) totalPatients / pageSize);
 
-        // 4. Invoke the JSP for display.
-        // RequestDispatcher.forward() is used to send the request/response objects to another resource (JSP).
+        Map<String, List<String>> pageData = model.getPage(allPatients, page, pageSize);
+
+        request.setAttribute("patientData", pageData);
+        request.setAttribute("currentPage", page);
+        request.setAttribute("totalPages", totalPages);
+        request.setAttribute("totalPatients", totalPatients);
+
         ServletContext context = getServletContext();
         RequestDispatcher dispatch = context.getRequestDispatcher("/patientList.jsp");
         dispatch.forward(request, response);
-        } catch (IOException e) {
-        // 5. Exception Handling.
-        // If there is an issue loading the model or data, log the error and forward to a dedicated error page.
-        request.setAttribute("errorMessage", "Error loading data: " + e.getMessage());
-        ServletContext context = getServletContext();
-        RequestDispatcher dispatch = context.getRequestDispatcher("/error.jsp");
-        dispatch.forward(request, response);
-        }
     }
 
     /**
