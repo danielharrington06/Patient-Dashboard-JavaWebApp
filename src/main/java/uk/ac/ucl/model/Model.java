@@ -44,6 +44,32 @@ public class Model
         throw new IllegalArgumentException("Invalid id: " + id);
     }
 
+    public String formatColumnName(String columnName) {
+        switch (columnName.toUpperCase()) {
+            case "ID" -> {return "Patient ID";}
+            case "BIRTHDATE" -> {return "Date of Birth";}
+            case "DEATHDATE" -> {return "Date of Death";}
+            case "SSN" -> {return "SSN";}
+            case "DRIVERS" -> {return "Driver's Licence Number";}
+            case "PASSPORT" -> {return "Passport Number";}
+            case "PREFIX" -> {return "Prefix";}
+            case "FIRST" -> {return "Firstname";}
+            case "LAST" -> {return "Lastname";}
+            case "SUFFIX" -> {return "Suffix";}
+            case "MAIDEN" -> {return "Maiden Name";}
+            case "MARITAL" -> {return "Marital Status";}
+            case "RACE" -> {return "Race";}
+            case "ETHNICITY" -> {return "Ethnicity";}
+            case "GENDER" -> {return "Gender";}
+            case "BIRTHPLACE" -> {return "Birthplace";}
+            case "ADDRESS" -> {return "Street Address";}
+            case "CITY" -> {return "City";}
+            case "STATE" -> {return "State";}
+            case "ZIP" -> {return "Zip Code";}
+            default -> { return columnName; }
+        }
+    }
+
     public String formatValue(String columnName, String value) {
         if (value == null || value.isEmpty()) return "—";
         
@@ -95,47 +121,16 @@ public class Model
         LinkedHashMap<String, String> formatted = new LinkedHashMap<>();
         for (String column : getColumnNames()) {
             int row = getRowNumFromId(id);
-            formatted.put(dataFrame.formatColumnName(column), formatValue(column, getValue(column, row)));
+            formatted.put(formatColumnName(column), formatValue(column, getValue(column, row)));
         }
         return formatted;
     }
 
-    /* public Patient getPatientRecord(String id) {
-        int row = getRowNumFromId(id);
-        List<String> columns = getColumnNames();
-        List<String> rowContents = new ArrayList<>();
-        for (String column : columns) {
-            rowContents.add(getValue(column, row));
-        }
-        return new Patient(
-            rowContents.get(0),   // ID
-            rowContents.get(1),   // BIRTHDATE
-            rowContents.get(2),   // DEATHDATE
-            rowContents.get(3),   // SSN
-            rowContents.get(4),   // DRIVERS
-            rowContents.get(5),   // PASSPORT
-            rowContents.get(6),   // PREFIX
-            rowContents.get(7),   // FIRST
-            rowContents.get(8),   // LAST
-            rowContents.get(9),   // SUFFIX
-            rowContents.get(10),  // MAIDEN
-            rowContents.get(11),  // MARITAL
-            rowContents.get(12),  // RACE
-            rowContents.get(13),  // ETHNICITY
-            rowContents.get(14),  // GENDER
-            rowContents.get(15),  // BIRTHPLACE
-            rowContents.get(16),  // ADDRESS
-            rowContents.get(17),  // CITY
-            rowContents.get(18),  // STATE
-            rowContents.get(19)   // ZIP
-        );
-    } */
-
     public List<String> getSummaryColumnDisplayNames() {
-        List<String> summaryColumns = List.of("FIRST", "BIRTHDATE", "DEATHDATE", "GENDER", "MARITAL", "RACE", "ETHNICITY", "CITY", "STATE");
+        List<String> summaryColumns = List.of("NAME", "BIRTHDATE", "DEATHDATE", "GENDER", "MARITAL", "RACE", "ETHNICITY", "CITY", "STATE");
         List<String> displayNames = new ArrayList<>();
         for (String col : summaryColumns) {
-            displayNames.add(dataFrame.formatColumnName(col));
+            displayNames.add(formatColumnName(col));
         }
         return displayNames;
     }
