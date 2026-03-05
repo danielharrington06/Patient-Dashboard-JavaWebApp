@@ -3,12 +3,14 @@ package uk.ac.ucl.model;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 public class Model
 {
     DataFrame dataFrame;
+    public static final int DEFAULT_PAGE_SIZE = 25;
 
     public Model() {
         DataLoader loader = new DataLoader();
@@ -75,7 +77,7 @@ public class Model
 
     public Map<String, List<String>> getPatientSummaries() {
         // gets a hash map of id to contents: [fullName, dob, gender, city, state]
-        Map<String, List<String>> patients = new HashMap<>();
+        Map<String, List<String>> patients = new LinkedHashMap<>();
         for (int row = 0; row < getRowCount(); row++) {
             String id = dataFrame.getValue("ID", row);
             List<String> info = new ArrayList<>();
@@ -112,10 +114,17 @@ public class Model
         return results;
     }
 
-    // This also returns dummy data. The real version should use the keyword parameter to search
-    // the data and return a list of matching items.
-    public List<String> searchFor(String keyword)
-    {
-        return List.of("Search keyword is: "+ keyword, "result1", "result2", "result3");
+    public Map<String, List<String>> getPage(Map<String, List<String>> data, int page, int pageSize) {
+        List<String> keys = new ArrayList<>(data.keySet());
+        int start = (page - 1) * pageSize;
+        int end = Math.min(start + pageSize, keys.size());
+        if (start >= keys.size()) return new HashMap<>();
+
+        Map<String, List<String>> pageData = new LinkedHashMap<>();
+        for (int i = start; i < end; i++) {
+            String key = keys.get(i);
+            pageData.put(key, data.get(key));
+        }
+        return pageData;
     }
 }

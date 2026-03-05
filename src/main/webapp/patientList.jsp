@@ -83,9 +83,38 @@
     <%-- Result count --%>
     <%
         if (patients != null) {
-    %>
-        <p class="result-count"><%= patients.size() %> patient(s) found</p>
-    <%
+            Integer currentPage = (Integer) request.getAttribute("currentPage");
+            Integer totalPages = (Integer) request.getAttribute("totalPages");
+            Integer totalPatients = (Integer) request.getAttribute("totalPatients");
+            String searchTerm = request.getParameter("searchstring");
+            String baseUrl = (searchTerm != null && !searchTerm.isEmpty())
+                ? "/runsearch?searchstring=" + searchTerm + "&page="
+                : "/patientList?page=";
+            if (currentPage != null && totalPages != null) {
+        %>
+        <div class="pagination">
+            <span class="result-count">
+                <%= totalPatients %> patient(s) found — page <%= currentPage %> of <%= totalPages %>
+            </span>
+            <div class="page-controls">
+                <% if (currentPage > 1) { %>
+                    <a href="<%= baseUrl %><%= currentPage - 1 %>" class="btn btn-secondary btn-sm">← Previous</a>
+                <% } %>
+
+                <% for (int p = 1; p <= totalPages; p++) { %>
+                    <a href="<%= baseUrl %><%= p %>"
+                    class="btn btn-sm <%= p == currentPage ? "" : "btn-secondary" %>">
+                        <%= p %>
+                    </a>
+                <% } %>
+
+                <% if (currentPage < totalPages) { %>
+                    <a href="<%= baseUrl %><%= currentPage + 1 %>" class="btn btn-secondary btn-sm">Next →</a>
+                <% } %>
+            </div>
+        </div>
+        <%
+            }
         }
     %>
 </div>
