@@ -67,6 +67,14 @@ public class SearchServlet extends HttpServlet {
 
             Map<String, List<String>> results = model.searchPatientSummaries(searchString);
 
+            String sortKey = request.getParameter("sort");
+            String sortDir = request.getParameter("dir");
+            boolean ascending = !"desc".equals(sortDir);
+
+            if (sortKey != null && !sortKey.isEmpty()) {
+                results = model.sortPatientSummaries(results, sortKey, ascending);
+            }
+
             int pageSize = Model.DEFAULT_PAGE_SIZE;
             int page = 1;
             try {
@@ -80,6 +88,9 @@ public class SearchServlet extends HttpServlet {
             int totalPages = (int) Math.ceil((double) totalPatients / pageSize);
 
             Map<String, List<String>> pageData = model.getPage(results, page, pageSize);
+
+            request.setAttribute("sortKey", sortKey);
+            request.setAttribute("sortDir", sortDir);
 
             request.setAttribute("patientData", pageData);
             request.setAttribute("currentPage", page);
