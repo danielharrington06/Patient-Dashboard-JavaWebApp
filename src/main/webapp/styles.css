@@ -292,3 +292,26 @@ dd {
     gap: var(--spacing-xs);
     flex-wrap: wrap;
 }
+
+/* ── Sortable column headers ── */
+.patient-table th.sortable a {
+    color: inherit;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.patient-table th.sortable:hover {
+    background: var(--colour-border);
+    cursor: pointer;
+}
+
+.patient-table th.sort-active {
+    background: var(--colour-border);
+    color: var(--colour-primary);
+}
+
+.patient-table th.sort-active a {
+    color: var(--colour-primary);
+}

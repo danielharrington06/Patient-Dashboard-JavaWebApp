@@ -44,13 +44,55 @@
             <%
                 List<String> columnDisplayNames = (List<String>) request.getAttribute("columnDisplayNames");
             %>
-            <thead>
-                <tr>
-                    <% for (String colName : columnDisplayNames) { %>
-                        <th><%= colName %></th>
-                    <% } %>
-                </tr>
-            </thead>
+            <%
+            String sortKey = (String) request.getAttribute("sortKey");
+            String sortDir = (String) request.getAttribute("sortDir");
+            String searchTerm = request.getParameter("searchstring");
+
+            // helper to build sort URL for a column
+            // if already sorting by this column, toggle direction
+        %>
+        <thead>
+            <tr>
+                <%
+                // define sortable columns: display name -> sort key
+                String[][] headers = {
+                    {"First Name", "firstname"},
+                    {"Last Name",  "lastname"},
+                    {"Date of Birth", "birthdate"},
+                    {"Date of Death", "deathdate"},
+                    {"Gender", null},
+                    {"Marital", null},
+                    {"Race", null},
+                    {"Ethnicity", null},
+                    {"City", "city"},
+                    {"State", null}
+                };
+                for (String[] header : headers) {
+                    String label = header[0];
+                    String key = header[1];
+                    if (key != null) {
+                        boolean isActive = key.equals(sortKey);
+                        String nextDir = (isActive && "asc".equals(sortDir)) ? "desc" : "asc";
+                        String arrow = isActive ? ("asc".equals(sortDir) ? " ↑" : " ↓") : "";
+                        String base = (searchTerm != null && !searchTerm.isEmpty())
+                            ? "/runsearch?searchstring=" + searchTerm
+                            : "/patientList?";
+                        String sortUrl = base + (base.endsWith("?") ? "" : "&") + "sort=" + key + "&dir=" + nextDir;
+                %>
+                        <th class="sortable <%= isActive ? "sort-active" : "" %>">
+                            <a href="<%= sortUrl %>"><%= label %><%= arrow %></a>
+                        </th>
+                <%
+                    } else {
+                %>
+                        <th><%= label %></th>
+                <%
+                    }
+                }
+                %>
+            </tr>
+        </thead>
             <tbody>
             <%
                 String search = request.getParameter("searchstring");
@@ -88,9 +130,17 @@
             Integer totalPages = (Integer) request.getAttribute("totalPages");
             Integer totalPatients = (Integer) request.getAttribute("totalPatients");
             String searchTerm = request.getParameter("searchstring");
+            String sortKey = (String) request.getAttribute("sortKey");
+            String sortDir = (String) request.getAttribute("sortDir");
+
             String baseUrl = (searchTerm != null && !searchTerm.isEmpty())
-                ? "/runsearch?searchstring=" + searchTerm + "&page="
-                : "/patientList?page=";
+                ? "/runsearch?searchstring=" + searchTerm
+                : "/patientList?";
+            if (sortKey != null && !sortKey.isEmpty()) {
+                baseUrl += (baseUrl.endsWith("?") ? "" : "&") + "sort=" + sortKey + "&dir=" + (sortDir != null ? sortDir : "asc");
+            }
+            baseUrl += (baseUrl.endsWith("?") ? "" : "&") + "page=";
+
             if (currentPage != null && totalPages != null) {
         %>
         <div class="pagination">

@@ -43,6 +43,14 @@ public class ViewPatientListServlet extends HttpServlet
         Model model = ModelFactory.getModel();
         Map<String, List<String>> allPatients = model.getPatientSummaries();
 
+        String sortKey = request.getParameter("sort");
+        String sortDir = request.getParameter("dir");
+        boolean ascending = !"desc".equals(sortDir);
+
+        if (sortKey != null && !sortKey.isEmpty()) {
+            allPatients = model.sortPatientSummaries(allPatients, sortKey, ascending);
+        }
+
         int pageSize = Model.DEFAULT_PAGE_SIZE;
         int page = 1;
         try {
@@ -56,6 +64,9 @@ public class ViewPatientListServlet extends HttpServlet
         int totalPages = (int) Math.ceil((double) totalPatients / pageSize);
 
         Map<String, List<String>> pageData = model.getPage(allPatients, page, pageSize);
+
+        request.setAttribute("sortKey", sortKey);
+        request.setAttribute("sortDir", sortDir);
 
         request.setAttribute("patientData", pageData);
         request.setAttribute("currentPage", page);
