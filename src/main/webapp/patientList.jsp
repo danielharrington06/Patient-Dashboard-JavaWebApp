@@ -25,7 +25,7 @@
                 <a href="/patientList" class="btn btn-secondary">Reset All</a>
             </div>
 
-            <%-- Pre-compute reset URLs before filter groups --%>
+            <%-- Pre-compute reset URLs and retrieve filter data before filter groups --%>
             <%
                 String st = request.getParameter("searchstring");
                 String gf = request.getParameter("gender");
@@ -34,7 +34,7 @@
                 String[] rfl = request.getParameterValues("race");
                 String[] efl = request.getParameterValues("ethnicity");
 
-                // URL without gender (keep everything else)
+                // URL without gender
                 StringBuilder noGenderUrl = new StringBuilder("/runsearch?");
                 if (st != null && !st.isEmpty()) noGenderUrl.append("searchstring=").append(st).append("&");
                 if (af != null && !af.isEmpty()) noGenderUrl.append("alive=").append(af).append("&");
@@ -42,7 +42,7 @@
                 if (rfl != null) for (String r : rfl) noGenderUrl.append("race=").append(r).append("&");
                 if (efl != null) for (String e : efl) noGenderUrl.append("ethnicity=").append(e).append("&");
 
-                // URL without alive (keep everything else)
+                // URL without alive
                 StringBuilder noAliveUrl = new StringBuilder("/runsearch?");
                 if (st != null && !st.isEmpty()) noAliveUrl.append("searchstring=").append(st).append("&");
                 if (gf != null && !gf.isEmpty()) noAliveUrl.append("gender=").append(gf).append("&");
@@ -50,7 +50,7 @@
                 if (rfl != null) for (String r : rfl) noAliveUrl.append("race=").append(r).append("&");
                 if (efl != null) for (String e : efl) noAliveUrl.append("ethnicity=").append(e).append("&");
 
-                // URL without marital (keep everything else)
+                // URL without marital
                 StringBuilder noMaritalUrl = new StringBuilder("/runsearch?");
                 if (st != null && !st.isEmpty()) noMaritalUrl.append("searchstring=").append(st).append("&");
                 if (gf != null && !gf.isEmpty()) noMaritalUrl.append("gender=").append(gf).append("&");
@@ -58,7 +58,7 @@
                 if (rfl != null) for (String r : rfl) noMaritalUrl.append("race=").append(r).append("&");
                 if (efl != null) for (String e : efl) noMaritalUrl.append("ethnicity=").append(e).append("&");
 
-                // URL without race (keep everything else)
+                // URL without race
                 StringBuilder noRaceUrl = new StringBuilder("/runsearch?");
                 if (st != null && !st.isEmpty()) noRaceUrl.append("searchstring=").append(st).append("&");
                 if (gf != null && !gf.isEmpty()) noRaceUrl.append("gender=").append(gf).append("&");
@@ -66,7 +66,7 @@
                 if (mf != null && !mf.isEmpty()) noRaceUrl.append("marital=").append(mf).append("&");
                 if (efl != null) for (String e : efl) noRaceUrl.append("ethnicity=").append(e).append("&");
 
-                // URL without ethnicity (keep everything else)
+                // URL without ethnicity
                 StringBuilder noEthnicityUrl = new StringBuilder("/runsearch?");
                 if (st != null && !st.isEmpty()) noEthnicityUrl.append("searchstring=").append(st).append("&");
                 if (gf != null && !gf.isEmpty()) noEthnicityUrl.append("gender=").append(gf).append("&");
@@ -96,16 +96,19 @@
                     <div class="filter-options">
                         <label class="filter-chip">
                             <input type="radio" name="gender" value=""
+                                onchange="this.form.submit()"
                                 <%= gf == null || gf.isEmpty() ? "checked" : "" %>>
                             Any
                         </label>
                         <label class="filter-chip">
                             <input type="radio" name="gender" value="M"
+                                onchange="this.form.submit()"
                                 <%= "M".equals(gf) ? "checked" : "" %>>
                             Male
                         </label>
                         <label class="filter-chip">
                             <input type="radio" name="gender" value="F"
+                                onchange="this.form.submit()"
                                 <%= "F".equals(gf) ? "checked" : "" %>>
                             Female
                         </label>
@@ -121,16 +124,19 @@
                     <div class="filter-options">
                         <label class="filter-chip">
                             <input type="radio" name="alive" value=""
+                                onchange="this.form.submit()"
                                 <%= af == null || af.isEmpty() ? "checked" : "" %>>
                             Any
                         </label>
                         <label class="filter-chip">
                             <input type="radio" name="alive" value="true"
+                                onchange="this.form.submit()"
                                 <%= "true".equals(af) ? "checked" : "" %>>
                             Alive
                         </label>
                         <label class="filter-chip">
                             <input type="radio" name="alive" value="false"
+                                onchange="this.form.submit()"
                                 <%= "false".equals(af) ? "checked" : "" %>>
                             Deceased
                         </label>
@@ -146,21 +152,25 @@
                     <div class="filter-options">
                         <label class="filter-chip">
                             <input type="radio" name="marital" value=""
+                                onchange="this.form.submit()"
                                 <%= mf == null || mf.isEmpty() ? "checked" : "" %>>
                             Any
                         </label>
                         <label class="filter-chip">
                             <input type="radio" name="marital" value="M"
+                                onchange="this.form.submit()"
                                 <%= "M".equals(mf) ? "checked" : "" %>>
                             Married
                         </label>
                         <label class="filter-chip">
                             <input type="radio" name="marital" value="S"
+                                onchange="this.form.submit()"
                                 <%= "S".equals(mf) ? "checked" : "" %>>
                             Single
                         </label>
                         <label class="filter-chip">
                             <input type="radio" name="marital" value="-"
+                                onchange="this.form.submit()"
                                 <%= "-".equals(mf) ? "checked" : "" %>>
                             Unknown
                         </label>
@@ -178,6 +188,7 @@
                             for (Map.Entry<String, String> opt : raceOptions.entrySet()) { %>
                             <label class="filter-chip">
                                 <input type="checkbox" name="race" value="<%= opt.getKey() %>"
+                                    onchange="this.form.submit()"
                                     <%= raceFilterList.contains(opt.getKey()) ? "checked" : "" %>>
                                 <%= opt.getValue() %>
                             </label>
@@ -196,13 +207,13 @@
                             for (Map.Entry<String, String> opt : ethnicityOptions.entrySet()) { %>
                             <label class="filter-chip">
                                 <input type="checkbox" name="ethnicity" value="<%= opt.getKey() %>"
+                                    onchange="this.form.submit()"
                                     <%= ethnicityFilterList.contains(opt.getKey()) ? "checked" : "" %>>
                                 <%= opt.getValue() %>
                             </label>
                         <% } } %>
                     </div>
                 </div>
-
             </div>
         </form>
     </div>
@@ -217,7 +228,7 @@
         }
     %>
 
-    <%-- Declare all variables up front --%>
+    <%-- Declare variables for table and pagination --%>
     <%
         Map<String, List<String>> patients = (Map<String, List<String>>) request.getAttribute("patientData");
         List<String> columnDisplayNames = (List<String>) request.getAttribute("columnDisplayNames");
