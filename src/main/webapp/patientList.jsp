@@ -1,4 +1,5 @@
 <%@ page import="java.util.Map" %>
+<%@ page import="java.util.LinkedHashMap" %>
 <%@ page import="java.util.List" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
@@ -13,7 +14,7 @@
     <h2>Patients</h2>
 
     <%-- Search bar --%>
-    <div class="search-card" style="margin-bottom: 1.5rem;">
+    <div class="search-card" style="margin-bottom: 1.5rem; max-width: 100%;">
         <form method="GET" action="/runsearch">
             <div class="search-row">
                 <input class="search-input" type="text" name="searchstring"
@@ -90,6 +91,55 @@
                                 <%= "-".equals(request.getParameter("marital")) ? "checked" : "" %>>
                             Unknown
                         </label>
+                    </div>
+                </div>
+                <%-- Race filter --%>
+                <%
+                    LinkedHashMap<String, String> raceOptions =
+                        (LinkedHashMap<String, String>) request.getAttribute("raceOptions");
+                    String raceFilter = (String) request.getAttribute("raceFilter");
+                %>
+                <div class="filter-group">
+                    <label class="filter-label">Race</label>
+                    <div class="filter-options">
+                        <label class="filter-chip">
+                            <input type="radio" name="race" value=""
+                                <%= (raceFilter == null || raceFilter.isEmpty()) ? "checked" : "" %>>
+                            Any
+                        </label>
+                        <% if (raceOptions != null) {
+                            for (Map.Entry<String, String> opt : raceOptions.entrySet()) { %>
+                            <label class="filter-chip">
+                                <input type="radio" name="race" value="<%= opt.getKey() %>"
+                                    <%= opt.getKey().equals(raceFilter) ? "checked" : "" %>>
+                                <%= opt.getValue() %>
+                            </label>
+                        <% } } %>
+                    </div>
+                </div>
+
+                <%-- Ethnicity filter --%>
+                <%
+                    LinkedHashMap<String, String> ethnicityOptions =
+                        (LinkedHashMap<String, String>) request.getAttribute("ethnicityOptions");
+                    String ethnicityFilter = (String) request.getAttribute("ethnicityFilter");
+                %>
+                <div class="filter-group">
+                    <label class="filter-label">Ethnicity</label>
+                    <div class="filter-options">
+                        <label class="filter-chip">
+                            <input type="radio" name="ethnicity" value=""
+                                <%= (ethnicityFilter == null || ethnicityFilter.isEmpty()) ? "checked" : "" %>>
+                            Any
+                        </label>
+                        <% if (ethnicityOptions != null) {
+                            for (Map.Entry<String, String> opt : ethnicityOptions.entrySet()) { %>
+                            <label class="filter-chip">
+                                <input type="radio" name="ethnicity" value="<%= opt.getKey() %>"
+                                    <%= opt.getKey().equals(ethnicityFilter) ? "checked" : "" %>>
+                                <%= opt.getValue() %>
+                            </label>
+                        <% } } %>
                     </div>
                 </div>
             </div>

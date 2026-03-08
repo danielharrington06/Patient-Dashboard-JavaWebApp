@@ -259,11 +259,13 @@ public class Model
         return sorted;
     }
 
-    public Map<String, List<String>> filterPatients(Map<String, List<String>> data, String gender, String alive, String marital) {
+    public Map<String, List<String>> filterPatients(Map<String, List<String>> data, String gender, String alive, String marital, String race, String ethnicity) {
         if ((gender == null || gender.isEmpty()) &&
             (alive == null || alive.isEmpty()) &&
-            (marital == null || marital.isEmpty())) {
-            return data; // no filters applied
+            (marital == null || marital.isEmpty()) &&
+            (race == null || race.isEmpty()) &&
+            (ethnicity == null || ethnicity.isEmpty())) {
+            return data;
         }
 
         Map<String, List<String>> results = new LinkedHashMap<>();
@@ -273,8 +275,7 @@ public class Model
 
             // gender filter
             if (gender != null && !gender.isEmpty()) {
-                String val = getValue("GENDER", row);
-                if (!gender.equalsIgnoreCase(val)) continue;
+                if (!gender.equalsIgnoreCase(getValue("GENDER", row))) continue;
             }
 
             // alive filter - check if DEATHDATE is empty
@@ -295,9 +296,36 @@ public class Model
                     if (!marital.equalsIgnoreCase(val)) continue;
                 }
             }
+            if (race != null && !race.isEmpty()) {
+                if (!race.equalsIgnoreCase(getValue("RACE", row))) continue;
+            }
+            if (ethnicity != null && !ethnicity.isEmpty()) {
+                if (!ethnicity.equalsIgnoreCase(getValue("ETHNICITY", row))) continue;
+            }
 
             results.put(id, entry.getValue());
         }
         return results;
+    }
+
+    public List<String> getDistinctValues(String columnName) {
+        List<String> distinct = new ArrayList<>();
+        for (int row = 0; row < getRowCount(); row++) {
+            String value = getValue(columnName, row);
+            if (value != null && !value.isEmpty() && !distinct.contains(value)) {
+                distinct.add(value);
+            }
+        }
+        distinct.sort(String::compareToIgnoreCase);
+        return distinct;
+    }
+
+    public LinkedHashMap<String, String> getDistinctValuesWithLabels(String columnName) {
+        List<String> distinct = getDistinctValues(columnName);
+        LinkedHashMap<String, String> result = new LinkedHashMap<>();
+        for (String value : distinct) {
+            result.put(value, formatValue(columnName, value));
+        }
+        return result;
     }
 }

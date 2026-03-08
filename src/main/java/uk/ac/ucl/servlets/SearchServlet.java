@@ -33,12 +33,16 @@ public class SearchServlet extends HttpServlet {
             String genderFilter = request.getParameter("gender");
             String aliveFilter = request.getParameter("alive");
             String maritalFilter = request.getParameter("marital");
+            String raceFilter = request.getParameter("race");
+            String ethnicityFilter = request.getParameter("ethnicity");
 
             // 2. If no search and no filters, redirect to full list
             boolean hasSearch = searchString != null && !searchString.trim().isEmpty();
             boolean hasFilters = (genderFilter != null && !genderFilter.isEmpty())
                               || (aliveFilter != null && !aliveFilter.isEmpty())
-                              || (maritalFilter != null && !maritalFilter.isEmpty());
+                              || (maritalFilter != null && !maritalFilter.isEmpty())
+                              || (raceFilter != null && !raceFilter.isEmpty())
+                              || (ethnicityFilter != null && !ethnicityFilter.isEmpty());
 
             if (!hasSearch && !hasFilters) {
                 response.sendRedirect("/patientList");
@@ -51,7 +55,7 @@ public class SearchServlet extends HttpServlet {
                 : model.getPatientSummaries();
 
             // 4. Apply filters
-            results = model.filterPatients(results, genderFilter, aliveFilter, maritalFilter);
+            results = model.filterPatients(results, genderFilter, aliveFilter, maritalFilter, raceFilter, ethnicityFilter);
 
             // 5. Sort
             String sortKey = request.getParameter("sort");
@@ -87,6 +91,10 @@ public class SearchServlet extends HttpServlet {
             request.setAttribute("genderFilter", genderFilter);
             request.setAttribute("aliveFilter", aliveFilter);
             request.setAttribute("maritalFilter", maritalFilter);
+            request.setAttribute("raceFilter", raceFilter);
+            request.setAttribute("ethnicityFilter", ethnicityFilter);
+            request.setAttribute("raceOptions", model.getDistinctValuesWithLabels("RACE"));
+            request.setAttribute("ethnicityOptions", model.getDistinctValuesWithLabels("ETHNICITY"));
 
             ServletContext context = getServletContext();
             RequestDispatcher dispatch = context.getRequestDispatcher("/patientList.jsp");
