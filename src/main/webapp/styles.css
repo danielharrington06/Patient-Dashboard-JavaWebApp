@@ -315,3 +315,24 @@ dd {
 .patient-table th.sort-active a {
     color: var(--colour-primary);
 }
+
+.sort-status {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    font-size: 0.85rem;
+    color: var(--colour-text-muted);
+    margin-bottom: var(--spacing-md);
+}
+
+.sort-status a {
+    color: var(--colour-primary);
+    text-decoration: none;
+}
+
+.sort-status a:hover {
+    text-decoration: underline;
+}
+
+.patient-table th.sortable {
+    cursor: pointer;
+    user-select: none;
+}

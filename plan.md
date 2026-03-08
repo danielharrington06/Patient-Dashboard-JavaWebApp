@@ -20,3 +20,7 @@ git branch -d feature/{featurename}
 # Plan for search
 2. filter
 3. sort
+
+sorting:
+    clear sorting button
+    make it so you can click on the entire box to sort, not just name
