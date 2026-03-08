@@ -98,21 +98,17 @@
                 <%
                     LinkedHashMap<String, String> raceOptions =
                         (LinkedHashMap<String, String>) request.getAttribute("raceOptions");
-                    String raceFilter = (String) request.getAttribute("raceFilter");
+                    String[] raceFilters = request.getParameterValues("race");
+                    List<String> raceFilterList = raceFilters != null ? java.util.Arrays.asList(raceFilters) : new java.util.ArrayList<>();
                 %>
                 <div class="filter-group">
                     <label class="filter-label">Race</label>
                     <div class="filter-options">
-                        <label class="filter-chip">
-                            <input type="radio" name="race" value=""
-                                <%= (raceFilter == null || raceFilter.isEmpty()) ? "checked" : "" %>>
-                            Any
-                        </label>
                         <% if (raceOptions != null) {
                             for (Map.Entry<String, String> opt : raceOptions.entrySet()) { %>
                             <label class="filter-chip">
-                                <input type="radio" name="race" value="<%= opt.getKey() %>"
-                                    <%= opt.getKey().equals(raceFilter) ? "checked" : "" %>>
+                                <input type="checkbox" name="race" value="<%= opt.getKey() %>"
+                                    <%= raceFilterList.contains(opt.getKey()) ? "checked" : "" %>>
                                 <%= opt.getValue() %>
                             </label>
                         <% } } %>
@@ -123,21 +119,17 @@
                 <%
                     LinkedHashMap<String, String> ethnicityOptions =
                         (LinkedHashMap<String, String>) request.getAttribute("ethnicityOptions");
-                    String ethnicityFilter = (String) request.getAttribute("ethnicityFilter");
+                    String[] ethnicityFilters = request.getParameterValues("ethnicity");
+                    List<String> ethnicityFilterList = ethnicityFilters != null ? java.util.Arrays.asList(ethnicityFilters) : new java.util.ArrayList<>();
                 %>
                 <div class="filter-group">
                     <label class="filter-label">Ethnicity</label>
                     <div class="filter-options">
-                        <label class="filter-chip">
-                            <input type="radio" name="ethnicity" value=""
-                                <%= (ethnicityFilter == null || ethnicityFilter.isEmpty()) ? "checked" : "" %>>
-                            Any
-                        </label>
                         <% if (ethnicityOptions != null) {
                             for (Map.Entry<String, String> opt : ethnicityOptions.entrySet()) { %>
                             <label class="filter-chip">
-                                <input type="radio" name="ethnicity" value="<%= opt.getKey() %>"
-                                    <%= opt.getKey().equals(ethnicityFilter) ? "checked" : "" %>>
+                                <input type="checkbox" name="ethnicity" value="<%= opt.getKey() %>"
+                                    <%= ethnicityFilterList.contains(opt.getKey()) ? "checked" : "" %>>
                                 <%= opt.getValue() %>
                             </label>
                         <% } } %>
