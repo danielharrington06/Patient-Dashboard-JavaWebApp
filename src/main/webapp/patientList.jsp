@@ -92,8 +92,15 @@
                                 : "/patientList?";
                             String sortUrl = base + (base.endsWith("?") ? "" : "&") + "sort=" + key + "&dir=" + nextDir;
                 %>
+                            <%
+                                String tooltipDir = (isActive && "asc".equals(sortDir)) ? "descending" : "ascending";
+                                String tooltip = isActive
+                                    ? "Sort by " + label + " (" + tooltipDir + ")"
+                                    : "Sort by " + label;
+                            %>
                             <th class="sortable <%= isActive ? "sort-active" : "" %>"
-                                onclick="window.location='<%= sortUrl %>'">
+                                onclick="window.location='<%= sortUrl %>'"
+                                title="<%= tooltip %>">
                                 <%= label %><%= arrow %>
                             </th>
                 <%
