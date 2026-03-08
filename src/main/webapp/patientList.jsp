@@ -93,6 +93,7 @@
                         </label>
                     </div>
                 </div>
+
                 <%-- Race filter --%>
                 <%
                     LinkedHashMap<String, String> raceOptions =
@@ -163,6 +164,11 @@
         String sortKey = (String) request.getAttribute("sortKey");
         String sortDir = (String) request.getAttribute("sortDir");
         String searchTerm = request.getParameter("searchstring");
+        String genderFilter = (String) request.getAttribute("genderFilter");
+        String aliveFilter = (String) request.getAttribute("aliveFilter");
+        String maritalFilter = (String) request.getAttribute("maritalFilter");
+        String raceFilterVal = (String) request.getAttribute("raceFilter");
+        String ethnicityFilterVal = (String) request.getAttribute("ethnicityFilter");
 
         String[][] headers = {
             {"First Name", "firstname"},
@@ -213,13 +219,11 @@
                                 ? "/runsearch?searchstring=" + searchTerm
                                 : "/patientList?";
                             String sortUrl = base + (base.endsWith("?") ? "" : "&") + "sort=" + key + "&dir=" + nextDir;
+                            String tooltipDir = (isActive && "asc".equals(sortDir)) ? "descending" : "ascending";
+                            String tooltip = isActive
+                                ? "Sort by " + label + " (" + tooltipDir + ")"
+                                : "Sort by " + label;
                 %>
-                            <%
-                                String tooltipDir = (isActive && "asc".equals(sortDir)) ? "descending" : "ascending";
-                                String tooltip = isActive
-                                    ? "Sort by " + label + " (" + tooltipDir + ")"
-                                    : "Sort by " + label;
-                            %>
                             <th class="sortable <%= isActive ? "sort-active" : "" %>"
                                 onclick="window.location='<%= sortUrl %>'"
                                 title="<%= tooltip %>">
@@ -240,8 +244,16 @@
                 for (Map.Entry<String, List<String>> entry : patients.entrySet()) {
                     String id = entry.getKey();
                     List<String> data = entry.getValue();
-                    String fromParam = (searchTerm != null && !searchTerm.isEmpty()) ? "&from=" + searchTerm : "";
-                    String href = "patientRecord?id=" + id + fromParam;
+
+                    StringBuilder fromBuilder = new StringBuilder();
+                    if (searchTerm != null && !searchTerm.isEmpty()) fromBuilder.append("&searchstring=").append(searchTerm);
+                    if (genderFilter != null && !genderFilter.isEmpty()) fromBuilder.append("&gender=").append(genderFilter);
+                    if (aliveFilter != null && !aliveFilter.isEmpty()) fromBuilder.append("&alive=").append(aliveFilter);
+                    if (maritalFilter != null && !maritalFilter.isEmpty()) fromBuilder.append("&marital=").append(maritalFilter);
+                    if (raceFilterVal != null && !raceFilterVal.isEmpty()) fromBuilder.append("&race=").append(raceFilterVal);
+                    if (ethnicityFilterVal != null && !ethnicityFilterVal.isEmpty()) fromBuilder.append("&ethnicity=").append(ethnicityFilterVal);
+                    String fromParam = fromBuilder.toString();
+                    String href = "patientRecord?id=" + id + (fromParam.isEmpty() ? "" : "&from=" + java.net.URLEncoder.encode(fromParam, "UTF-8"));
             %>
                 <tr data-href="<%= href %>">
                     <% for (int i = 0; i < data.size(); i++) { %>
@@ -303,6 +315,7 @@
     <%
         }
     %>
+
 </div>
 <jsp:include page="/footer.jsp"/>
 <script>
