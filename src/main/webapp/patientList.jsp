@@ -22,27 +22,91 @@
                     placeholder="Search patients by name, city, state..."
                     value="<%= request.getParameter("searchstring") != null ? request.getParameter("searchstring") : "" %>"/>
                 <input class="btn" type="submit" value="Search"/>
+                <a href="/patientList" class="btn btn-secondary">Reset All</a>
             </div>
+
+            <%-- Pre-compute reset URLs before filter groups --%>
+            <%
+                String st = request.getParameter("searchstring");
+                String gf = request.getParameter("gender");
+                String af = request.getParameter("alive");
+                String mf = request.getParameter("marital");
+                String[] rfl = request.getParameterValues("race");
+                String[] efl = request.getParameterValues("ethnicity");
+
+                // URL without gender (keep everything else)
+                StringBuilder noGenderUrl = new StringBuilder("/runsearch?");
+                if (st != null && !st.isEmpty()) noGenderUrl.append("searchstring=").append(st).append("&");
+                if (af != null && !af.isEmpty()) noGenderUrl.append("alive=").append(af).append("&");
+                if (mf != null && !mf.isEmpty()) noGenderUrl.append("marital=").append(mf).append("&");
+                if (rfl != null) for (String r : rfl) noGenderUrl.append("race=").append(r).append("&");
+                if (efl != null) for (String e : efl) noGenderUrl.append("ethnicity=").append(e).append("&");
+
+                // URL without alive (keep everything else)
+                StringBuilder noAliveUrl = new StringBuilder("/runsearch?");
+                if (st != null && !st.isEmpty()) noAliveUrl.append("searchstring=").append(st).append("&");
+                if (gf != null && !gf.isEmpty()) noAliveUrl.append("gender=").append(gf).append("&");
+                if (mf != null && !mf.isEmpty()) noAliveUrl.append("marital=").append(mf).append("&");
+                if (rfl != null) for (String r : rfl) noAliveUrl.append("race=").append(r).append("&");
+                if (efl != null) for (String e : efl) noAliveUrl.append("ethnicity=").append(e).append("&");
+
+                // URL without marital (keep everything else)
+                StringBuilder noMaritalUrl = new StringBuilder("/runsearch?");
+                if (st != null && !st.isEmpty()) noMaritalUrl.append("searchstring=").append(st).append("&");
+                if (gf != null && !gf.isEmpty()) noMaritalUrl.append("gender=").append(gf).append("&");
+                if (af != null && !af.isEmpty()) noMaritalUrl.append("alive=").append(af).append("&");
+                if (rfl != null) for (String r : rfl) noMaritalUrl.append("race=").append(r).append("&");
+                if (efl != null) for (String e : efl) noMaritalUrl.append("ethnicity=").append(e).append("&");
+
+                // URL without race (keep everything else)
+                StringBuilder noRaceUrl = new StringBuilder("/runsearch?");
+                if (st != null && !st.isEmpty()) noRaceUrl.append("searchstring=").append(st).append("&");
+                if (gf != null && !gf.isEmpty()) noRaceUrl.append("gender=").append(gf).append("&");
+                if (af != null && !af.isEmpty()) noRaceUrl.append("alive=").append(af).append("&");
+                if (mf != null && !mf.isEmpty()) noRaceUrl.append("marital=").append(mf).append("&");
+                if (efl != null) for (String e : efl) noRaceUrl.append("ethnicity=").append(e).append("&");
+
+                // URL without ethnicity (keep everything else)
+                StringBuilder noEthnicityUrl = new StringBuilder("/runsearch?");
+                if (st != null && !st.isEmpty()) noEthnicityUrl.append("searchstring=").append(st).append("&");
+                if (gf != null && !gf.isEmpty()) noEthnicityUrl.append("gender=").append(gf).append("&");
+                if (af != null && !af.isEmpty()) noEthnicityUrl.append("alive=").append(af).append("&");
+                if (mf != null && !mf.isEmpty()) noEthnicityUrl.append("marital=").append(mf).append("&");
+                if (rfl != null) for (String r : rfl) noEthnicityUrl.append("race=").append(r).append("&");
+
+                LinkedHashMap<String, String> raceOptions =
+                    (LinkedHashMap<String, String>) request.getAttribute("raceOptions");
+                List<String> raceFilterList = (List<String>) request.getAttribute("raceFilterList");
+                if (raceFilterList == null) raceFilterList = new java.util.ArrayList<>();
+
+                LinkedHashMap<String, String> ethnicityOptions =
+                    (LinkedHashMap<String, String>) request.getAttribute("ethnicityOptions");
+                List<String> ethnicityFilterList = (List<String>) request.getAttribute("ethnicityFilterList");
+                if (ethnicityFilterList == null) ethnicityFilterList = new java.util.ArrayList<>();
+            %>
 
             <div class="filter-row">
 
                 <%-- Gender filter --%>
                 <div class="filter-group">
-                    <label class="filter-label">Gender</label>
+                    <div class="filter-label-row">
+                        <label class="filter-label">Gender</label>
+                        <a href="<%= noGenderUrl %>" class="filter-clear-link">Reset</a>
+                    </div>
                     <div class="filter-options">
                         <label class="filter-chip">
                             <input type="radio" name="gender" value=""
-                                <%= request.getParameter("gender") == null || request.getParameter("gender").isEmpty() ? "checked" : "" %>>
+                                <%= gf == null || gf.isEmpty() ? "checked" : "" %>>
                             Any
                         </label>
                         <label class="filter-chip">
                             <input type="radio" name="gender" value="M"
-                                <%= "M".equals(request.getParameter("gender")) ? "checked" : "" %>>
+                                <%= "M".equals(gf) ? "checked" : "" %>>
                             Male
                         </label>
                         <label class="filter-chip">
                             <input type="radio" name="gender" value="F"
-                                <%= "F".equals(request.getParameter("gender")) ? "checked" : "" %>>
+                                <%= "F".equals(gf) ? "checked" : "" %>>
                             Female
                         </label>
                     </div>
@@ -50,21 +114,24 @@
 
                 <%-- Status filter --%>
                 <div class="filter-group">
-                    <label class="filter-label">Status</label>
+                    <div class="filter-label-row">
+                        <label class="filter-label">Status</label>
+                        <a href="<%= noAliveUrl %>" class="filter-clear-link">Reset</a>
+                    </div>
                     <div class="filter-options">
                         <label class="filter-chip">
                             <input type="radio" name="alive" value=""
-                                <%= request.getParameter("alive") == null || request.getParameter("alive").isEmpty() ? "checked" : "" %>>
+                                <%= af == null || af.isEmpty() ? "checked" : "" %>>
                             Any
                         </label>
                         <label class="filter-chip">
                             <input type="radio" name="alive" value="true"
-                                <%= "true".equals(request.getParameter("alive")) ? "checked" : "" %>>
+                                <%= "true".equals(af) ? "checked" : "" %>>
                             Alive
                         </label>
                         <label class="filter-chip">
                             <input type="radio" name="alive" value="false"
-                                <%= "false".equals(request.getParameter("alive")) ? "checked" : "" %>>
+                                <%= "false".equals(af) ? "checked" : "" %>>
                             Deceased
                         </label>
                     </div>
@@ -72,40 +139,40 @@
 
                 <%-- Marital filter --%>
                 <div class="filter-group">
-                    <label class="filter-label">Marital Status</label>
+                    <div class="filter-label-row">
+                        <label class="filter-label">Marital Status</label>
+                        <a href="<%= noMaritalUrl %>" class="filter-clear-link">Reset</a>
+                    </div>
                     <div class="filter-options">
                         <label class="filter-chip">
                             <input type="radio" name="marital" value=""
-                                <%= request.getParameter("marital") == null || request.getParameter("marital").isEmpty() ? "checked" : "" %>>
+                                <%= mf == null || mf.isEmpty() ? "checked" : "" %>>
                             Any
                         </label>
                         <label class="filter-chip">
                             <input type="radio" name="marital" value="M"
-                                <%= "M".equals(request.getParameter("marital")) ? "checked" : "" %>>
+                                <%= "M".equals(mf) ? "checked" : "" %>>
                             Married
                         </label>
                         <label class="filter-chip">
                             <input type="radio" name="marital" value="S"
-                                <%= "S".equals(request.getParameter("marital")) ? "checked" : "" %>>
+                                <%= "S".equals(mf) ? "checked" : "" %>>
                             Single
                         </label>
                         <label class="filter-chip">
                             <input type="radio" name="marital" value="-"
-                                <%= "-".equals(request.getParameter("marital")) ? "checked" : "" %>>
+                                <%= "-".equals(mf) ? "checked" : "" %>>
                             Unknown
                         </label>
                     </div>
                 </div>
 
                 <%-- Race filter --%>
-                <%
-                    LinkedHashMap<String, String> raceOptions =
-                        (LinkedHashMap<String, String>) request.getAttribute("raceOptions");
-                    List<String> raceFilterList = (List<String>) request.getAttribute("raceFilterList");
-                    if (raceFilterList == null) raceFilterList = new java.util.ArrayList<>();
-                %>
                 <div class="filter-group">
-                    <label class="filter-label">Race</label>
+                    <div class="filter-label-row">
+                        <label class="filter-label">Race</label>
+                        <a href="<%= noRaceUrl %>" class="filter-clear-link">Reset</a>
+                    </div>
                     <div class="filter-options">
                         <% if (raceOptions != null) {
                             for (Map.Entry<String, String> opt : raceOptions.entrySet()) { %>
@@ -119,14 +186,11 @@
                 </div>
 
                 <%-- Ethnicity filter --%>
-                <%
-                    LinkedHashMap<String, String> ethnicityOptions =
-                        (LinkedHashMap<String, String>) request.getAttribute("ethnicityOptions");
-                    List<String> ethnicityFilterList = (List<String>) request.getAttribute("ethnicityFilterList");
-                    if (ethnicityFilterList == null) ethnicityFilterList = new java.util.ArrayList<>();
-                %>
                 <div class="filter-group">
-                    <label class="filter-label">Ethnicity</label>
+                    <div class="filter-label-row">
+                        <label class="filter-label">Ethnicity</label>
+                        <a href="<%= noEthnicityUrl %>" class="filter-clear-link">Reset</a>
+                    </div>
                     <div class="filter-options">
                         <% if (ethnicityOptions != null) {
                             for (Map.Entry<String, String> opt : ethnicityOptions.entrySet()) { %>
