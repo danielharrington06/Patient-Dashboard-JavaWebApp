@@ -17,9 +17,81 @@
         <form method="GET" action="/runsearch">
             <div class="search-row">
                 <input class="search-input" type="text" name="searchstring"
-                       placeholder="Search patients by name, city, state..."
-                       value="<%= request.getParameter("searchstring") != null ? request.getParameter("searchstring") : "" %>"/>
+                    placeholder="Search patients by name, city, state..."
+                    value="<%= request.getParameter("searchstring") != null ? request.getParameter("searchstring") : "" %>"/>
                 <input class="btn" type="submit" value="Search"/>
+            </div>
+            <div class="filter-row">
+                <%-- Gender filter --%>
+                <div class="filter-group">
+                    <label class="filter-label">Gender</label>
+                    <div class="filter-options">
+                        <label class="filter-chip">
+                            <input type="radio" name="gender" value=""
+                                <%= request.getParameter("gender") == null || request.getParameter("gender").isEmpty() ? "checked" : "" %>>
+                            Any
+                        </label>
+                        <label class="filter-chip">
+                            <input type="radio" name="gender" value="M"
+                                <%= "M".equals(request.getParameter("gender")) ? "checked" : "" %>>
+                            Male
+                        </label>
+                        <label class="filter-chip">
+                            <input type="radio" name="gender" value="F"
+                                <%= "F".equals(request.getParameter("gender")) ? "checked" : "" %>>
+                            Female
+                        </label>
+                    </div>
+                </div>
+
+                <%-- Alive filter --%>
+                <div class="filter-group">
+                    <label class="filter-label">Status</label>
+                    <div class="filter-options">
+                        <label class="filter-chip">
+                            <input type="radio" name="alive" value=""
+                                <%= request.getParameter("alive") == null || request.getParameter("alive").isEmpty() ? "checked" : "" %>>
+                            Any
+                        </label>
+                        <label class="filter-chip">
+                            <input type="radio" name="alive" value="true"
+                                <%= "true".equals(request.getParameter("alive")) ? "checked" : "" %>>
+                            Alive
+                        </label>
+                        <label class="filter-chip">
+                            <input type="radio" name="alive" value="false"
+                                <%= "false".equals(request.getParameter("alive")) ? "checked" : "" %>>
+                            Deceased
+                        </label>
+                    </div>
+                </div>
+
+                <%-- Marital filter --%>
+                <div class="filter-group">
+                    <label class="filter-label">Marital Status</label>
+                    <div class="filter-options">
+                        <label class="filter-chip">
+                            <input type="radio" name="marital" value=""
+                                <%= request.getParameter("marital") == null || request.getParameter("marital").isEmpty() ? "checked" : "" %>>
+                            Any
+                        </label>
+                        <label class="filter-chip">
+                            <input type="radio" name="marital" value="M"
+                                <%= "M".equals(request.getParameter("marital")) ? "checked" : "" %>>
+                            Married
+                        </label>
+                        <label class="filter-chip">
+                            <input type="radio" name="marital" value="S"
+                                <%= "S".equals(request.getParameter("marital")) ? "checked" : "" %>>
+                            Single
+                        </label>
+                        <label class="filter-chip">
+                            <input type="radio" name="marital" value="-"
+                                <%= "-".equals(request.getParameter("marital")) ? "checked" : "" %>>
+                            Unknown
+                        </label>
+                    </div>
+                </div>
             </div>
         </form>
     </div>

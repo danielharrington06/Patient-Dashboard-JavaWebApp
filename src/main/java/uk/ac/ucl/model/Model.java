@@ -258,4 +258,46 @@ public class Model
         }
         return sorted;
     }
+
+    public Map<String, List<String>> filterPatients(Map<String, List<String>> data, String gender, String alive, String marital) {
+        if ((gender == null || gender.isEmpty()) &&
+            (alive == null || alive.isEmpty()) &&
+            (marital == null || marital.isEmpty())) {
+            return data; // no filters applied
+        }
+
+        Map<String, List<String>> results = new LinkedHashMap<>();
+        for (Map.Entry<String, List<String>> entry : data.entrySet()) {
+            String id = entry.getKey();
+            int row = getRowNumFromId(id);
+
+            // gender filter
+            if (gender != null && !gender.isEmpty()) {
+                String val = getValue("GENDER", row);
+                if (!gender.equalsIgnoreCase(val)) continue;
+            }
+
+            // alive filter - check if DEATHDATE is empty
+            if (alive != null && !alive.isEmpty()) {
+                String deathDate = getValue("DEATHDATE", row);
+                boolean isAlive = (deathDate == null || deathDate.isEmpty());
+                if ("true".equals(alive) && !isAlive) continue;
+                if ("false".equals(alive) && isAlive) continue;
+            }
+
+            // marital filter
+            if (marital != null && !marital.isEmpty()) {
+                String val = getValue("MARITAL", row);
+                if ("-".equals(marital)) {
+                    // filter for unknown/blank
+                    if (val != null && !val.isEmpty()) continue;
+                } else {
+                    if (!marital.equalsIgnoreCase(val)) continue;
+                }
+            }
+
+            results.put(id, entry.getValue());
+        }
+        return results;
+    }
 }
