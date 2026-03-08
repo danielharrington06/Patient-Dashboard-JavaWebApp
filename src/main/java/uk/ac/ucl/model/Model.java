@@ -259,14 +259,7 @@ public class Model
         return sorted;
     }
 
-    public Map<String, List<String>> filterPatients(Map<String, List<String>> data, String gender, String alive, String marital, String race, String ethnicity) {
-        if ((gender == null || gender.isEmpty()) &&
-            (alive == null || alive.isEmpty()) &&
-            (marital == null || marital.isEmpty()) &&
-            (race == null || race.isEmpty()) &&
-            (ethnicity == null || ethnicity.isEmpty())) {
-            return data;
-        }
+    public Map<String, List<String>> filterPatients(Map<String, List<String>> data, String gender, String alive, String marital, List<String> races, List<String> ethnicities) {
 
         Map<String, List<String>> results = new LinkedHashMap<>();
         for (Map.Entry<String, List<String>> entry : data.entrySet()) {
@@ -296,11 +289,11 @@ public class Model
                     if (!marital.equalsIgnoreCase(val)) continue;
                 }
             }
-            if (race != null && !race.isEmpty()) {
-                if (!race.equalsIgnoreCase(getValue("RACE", row))) continue;
+            if (races != null && !races.isEmpty()) {
+                if (!races.contains(getValue("RACE", row))) continue;
             }
-            if (ethnicity != null && !ethnicity.isEmpty()) {
-                if (!ethnicity.equalsIgnoreCase(getValue("ETHNICITY", row))) continue;
+            if (ethnicities != null && !ethnicities.isEmpty()) {
+                if (!ethnicities.contains(getValue("ETHNICITY", row))) continue;
             }
 
             results.put(id, entry.getValue());

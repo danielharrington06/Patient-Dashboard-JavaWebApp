@@ -1,6 +1,8 @@
 package uk.ac.ucl.servlets;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -24,40 +26,43 @@ public class SearchServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String searchString = request.getParameter("searchstring");
-
         try {
             Model model = ModelFactory.getModel();
 
-            // 1. Get filter parameters
+            // Read search term
+            String searchString = request.getParameter("searchstring");
+
+            // Read filter parameters
             String genderFilter = request.getParameter("gender");
             String aliveFilter = request.getParameter("alive");
             String maritalFilter = request.getParameter("marital");
-            String raceFilter = request.getParameter("race");
-            String ethnicityFilter = request.getParameter("ethnicity");
+            String[] raceFilters = request.getParameterValues("race");
+            String[] ethnicityFilters = request.getParameterValues("ethnicity");
+            List<String> raceFilterList = raceFilters != null ? Arrays.asList(raceFilters) : new ArrayList<>();
+            List<String> ethnicityFilterList = ethnicityFilters != null ? Arrays.asList(ethnicityFilters) : new ArrayList<>();
 
-            // 2. If no search and no filters, redirect to full list
+            // Redirect if nothing to search or filter
             boolean hasSearch = searchString != null && !searchString.trim().isEmpty();
             boolean hasFilters = (genderFilter != null && !genderFilter.isEmpty())
                               || (aliveFilter != null && !aliveFilter.isEmpty())
                               || (maritalFilter != null && !maritalFilter.isEmpty())
-                              || (raceFilter != null && !raceFilter.isEmpty())
-                              || (ethnicityFilter != null && !ethnicityFilter.isEmpty());
+                              || !raceFilterList.isEmpty()
+                              || !ethnicityFilterList.isEmpty();
 
             if (!hasSearch && !hasFilters) {
                 response.sendRedirect("/patientList");
                 return;
             }
 
-            // 3. Search (or get all if no search term but filters are present)
+            // Fetch data (search or full list)
             Map<String, List<String>> results = hasSearch
                 ? model.searchPatientSummaries(searchString)
                 : model.getPatientSummaries();
 
-            // 4. Apply filters
-            results = model.filterPatients(results, genderFilter, aliveFilter, maritalFilter, raceFilter, ethnicityFilter);
+            // Apply filters
+            results = model.filterPatients(results, genderFilter, aliveFilter, maritalFilter, raceFilterList, ethnicityFilterList);
 
-            // 5. Sort
+            // Apply sort 
             String sortKey = request.getParameter("sort");
             String sortDir = request.getParameter("dir");
             boolean ascending = !"desc".equals(sortDir);
@@ -66,7 +71,7 @@ public class SearchServlet extends HttpServlet {
                 results = model.sortPatientSummaries(results, sortKey, ascending);
             }
 
-            // 6. Paginate
+            // Paginate
             int pageSize = Model.DEFAULT_PAGE_SIZE;
             int page = 1;
             try {
@@ -80,7 +85,7 @@ public class SearchServlet extends HttpServlet {
             int totalPages = (int) Math.ceil((double) totalPatients / pageSize);
             Map<String, List<String>> pageData = model.getPage(results, page, pageSize);
 
-            // 7. Set attributes
+            // Get request attributes for JSP
             request.setAttribute("patientData", pageData);
             request.setAttribute("currentPage", page);
             request.setAttribute("totalPages", totalPages);
@@ -91,11 +96,12 @@ public class SearchServlet extends HttpServlet {
             request.setAttribute("genderFilter", genderFilter);
             request.setAttribute("aliveFilter", aliveFilter);
             request.setAttribute("maritalFilter", maritalFilter);
-            request.setAttribute("raceFilter", raceFilter);
-            request.setAttribute("ethnicityFilter", ethnicityFilter);
+            request.setAttribute("raceFilterList", raceFilterList);
+            request.setAttribute("ethnicityFilterList", ethnicityFilterList);
             request.setAttribute("raceOptions", model.getDistinctValuesWithLabels("RACE"));
             request.setAttribute("ethnicityOptions", model.getDistinctValuesWithLabels("ETHNICITY"));
 
+            // Forward to JSP
             ServletContext context = getServletContext();
             RequestDispatcher dispatch = context.getRequestDispatcher("/patientList.jsp");
             dispatch.forward(request, response);
