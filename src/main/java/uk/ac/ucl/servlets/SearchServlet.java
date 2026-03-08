@@ -1,6 +1,8 @@
 package uk.ac.ucl.servlets;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -14,59 +16,62 @@ import jakarta.servlet.http.HttpServletResponse;
 import uk.ac.ucl.model.Model;
 import uk.ac.ucl.model.ModelFactory;
 
-/**
- * The SearchServlet handles HTTP requests for performing patient searches.
- * It is mapped to the URL "/runsearch".
- *
- * This servlet demonstrates:
- * 1. Handling both GET and POST requests.
- * 2. Interacting with a Model via a Factory pattern.
- * 3. Input validation.
- * 4. Error handling and forwarding to error pages.
- * 5. Request-scoped attribute passing to JSPs for rendering results.
- */
 @WebServlet("/runsearch")
 public class SearchServlet extends HttpServlet {
 
-    /**
-     * Handles HTTP GET requests.
-     *
-     * By calling doPost, this allows search results to be bookmarked and refreshed
-     * (since many browsers default to GET for URL-based navigation).
-     *
-     * @param request  the HttpServletRequest object that contains the request the client has made of the servlet
-     * @param response the HttpServletResponse object that contains the response the servlet sends to the client
-     * @throws ServletException if the request for the GET could not be handled
-     * @throws IOException      if an input or output error is detected when the servlet handles the GET request
-     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         doPost(request, response);
     }
 
-    /**
-     * Handles HTTP POST requests.
-     * This is where the core search logic resides.
-     *
-     * @param request  the HttpServletRequest object that contains the request the client has made of the servlet
-     * @param response the HttpServletResponse object that contains the response the servlet sends to the client
-     * @throws ServletException if the request for the POST could not be handled
-     * @throws IOException      if an input or output error is detected when the servlet handles the POST request
-     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String searchString = request.getParameter("searchstring");
-
         try {
             Model model = ModelFactory.getModel();
 
-            if (searchString == null || searchString.trim().isEmpty()) {
+            // Read search term
+            String searchString = request.getParameter("searchstring");
+
+            // Read filter parameters
+            String genderFilter = request.getParameter("gender");
+            String aliveFilter = request.getParameter("alive");
+            String maritalFilter = request.getParameter("marital");
+            String[] raceFilters = request.getParameterValues("race");
+            String[] ethnicityFilters = request.getParameterValues("ethnicity");
+            List<String> raceFilterList = raceFilters != null ? Arrays.asList(raceFilters) : new ArrayList<>();
+            List<String> ethnicityFilterList = ethnicityFilters != null ? Arrays.asList(ethnicityFilters) : new ArrayList<>();
+
+            // Redirect if nothing to search or filter
+            boolean hasSearch = searchString != null && !searchString.trim().isEmpty();
+            boolean hasFilters = (genderFilter != null && !genderFilter.isEmpty())
+                              || (aliveFilter != null && !aliveFilter.isEmpty())
+                              || (maritalFilter != null && !maritalFilter.isEmpty())
+                              || !raceFilterList.isEmpty()
+                              || !ethnicityFilterList.isEmpty();
+
+            if (!hasSearch && !hasFilters) {
                 response.sendRedirect("/patientList");
                 return;
             }
 
-            Map<String, List<String>> results = model.searchPatientSummaries(searchString);
+            // Fetch data (search or full list)
+            Map<String, List<String>> results = hasSearch
+                ? model.searchPatientSummaries(searchString)
+                : model.getPatientSummaries();
 
+            // Apply filters
+            results = model.filterPatients(results, genderFilter, aliveFilter, maritalFilter, raceFilterList, ethnicityFilterList);
+
+            // Apply sort 
+            String sortKey = request.getParameter("sort");
+            String sortDir = request.getParameter("dir");
+            boolean ascending = !"desc".equals(sortDir);
+
+            if (sortKey != null && !sortKey.isEmpty()) {
+                results = model.sortPatientSummaries(results, sortKey, ascending);
+            }
+
+            // Paginate
             int pageSize = Model.DEFAULT_PAGE_SIZE;
             int page = 1;
             try {
@@ -78,15 +83,25 @@ public class SearchServlet extends HttpServlet {
 
             int totalPatients = results.size();
             int totalPages = (int) Math.ceil((double) totalPatients / pageSize);
-
             Map<String, List<String>> pageData = model.getPage(results, page, pageSize);
 
+            // Get request attributes for JSP
             request.setAttribute("patientData", pageData);
             request.setAttribute("currentPage", page);
             request.setAttribute("totalPages", totalPages);
             request.setAttribute("totalPatients", totalPatients);
             request.setAttribute("columnDisplayNames", model.getSummaryColumnDisplayNames());
+            request.setAttribute("sortKey", sortKey);
+            request.setAttribute("sortDir", sortDir);
+            request.setAttribute("genderFilter", genderFilter);
+            request.setAttribute("aliveFilter", aliveFilter);
+            request.setAttribute("maritalFilter", maritalFilter);
+            request.setAttribute("raceFilterList", raceFilterList);
+            request.setAttribute("ethnicityFilterList", ethnicityFilterList);
+            request.setAttribute("raceOptions", model.getDistinctValuesWithLabels("RACE"));
+            request.setAttribute("ethnicityOptions", model.getDistinctValuesWithLabels("ETHNICITY"));
 
+            // Forward to JSP
             ServletContext context = getServletContext();
             RequestDispatcher dispatch = context.getRequestDispatcher("/patientList.jsp");
             dispatch.forward(request, response);
