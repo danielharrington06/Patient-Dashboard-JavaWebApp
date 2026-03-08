@@ -188,7 +188,6 @@ dd {
     border-radius: var(--radius);
     box-shadow: var(--shadow);
     padding: var(--spacing-lg);
-    max-width: 600px;
 }
 
 .search-row {

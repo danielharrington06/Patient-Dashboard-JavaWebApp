@@ -43,6 +43,25 @@ public class ViewPatientListServlet extends HttpServlet
         Model model = ModelFactory.getModel();
         Map<String, List<String>> allPatients = model.getPatientSummaries();
 
+        String genderFilter = request.getParameter("gender");
+        String aliveFilter = request.getParameter("alive");
+        String maritalFilter = request.getParameter("marital");
+        String raceFilter = request.getParameter("race");
+        String ethnicityFilter = request.getParameter("ethnicity");
+
+        allPatients = model.filterPatients(allPatients, genderFilter, aliveFilter, maritalFilter, raceFilter, ethnicityFilter);
+
+        request.setAttribute("genderFilter", genderFilter);
+        request.setAttribute("aliveFilter", aliveFilter);
+        request.setAttribute("maritalFilter", maritalFilter);
+        request.setAttribute("raceFilter", raceFilter);
+        request.setAttribute("ethnicityFilter", ethnicityFilter);
+
+        request.setAttribute("raceOptions", model.getDistinctValuesWithLabels("RACE"));
+        request.setAttribute("ethnicityOptions", model.getDistinctValuesWithLabels("ETHNICITY"));
+        request.setAttribute("raceFilter", raceFilter);
+        request.setAttribute("ethnicityFilter", ethnicityFilter);
+
         String sortKey = request.getParameter("sort");
         String sortDir = request.getParameter("dir");
         boolean ascending = !"desc".equals(sortDir);
