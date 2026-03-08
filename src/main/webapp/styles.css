@@ -336,3 +336,71 @@ dd {
     cursor: pointer;
     user-select: none;
 }
+
+.search-card {
+    background: var(--colour-surface);
+    border: 1px solid var(--colour-border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: var(--spacing-lg);
+    /* removed max-width so it stretches to table width */
+}
+
+.filter-row {
+    display: flex;
+    gap: var(--spacing-lg);
+    margin-top: var(--spacing-md);
+    padding-top: var(--spacing-md);
+    border-top: 1px solid var(--colour-border);
+    flex-wrap: wrap;
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+}
+
+.filter-label {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--colour-text-muted);
+}
+
+.filter-options {
+    display: flex;
+    gap: var(--spacing-sm);
+    flex-wrap: wrap;
+}
+
+.filter-chip {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 0.25rem 0.65rem;
+    border: 1.5px solid var(--colour-border);
+    border-radius: 999px;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    font-size: 0.825rem;
+    cursor: pointer;
+    transition: all 0.15s;
+    color: var(--colour-text);
+    background: var(--colour-bg);
+}
+
+.filter-chip input[type="radio"] {
+    display: none;
+}
+
+.filter-chip:has(input:checked) {
+    background: var(--colour-primary);
+    border-color: var(--colour-primary);
+    color: white;
+}
+
+.filter-chip:hover {
+    border-color: var(--colour-primary);
+}
