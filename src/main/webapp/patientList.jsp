@@ -11,9 +11,10 @@
 <body>
 <jsp:include page="/header.jsp"/>
 <div class="main">
+
     <h2>Patients</h2>
 
-    <%-- Search bar --%>
+    <%-- Search bar and filters --%>
     <div class="search-card" style="margin-bottom: 1.5rem; max-width: 100%;">
         <form method="GET" action="/runsearch">
             <div class="search-row">
@@ -22,7 +23,9 @@
                     value="<%= request.getParameter("searchstring") != null ? request.getParameter("searchstring") : "" %>"/>
                 <input class="btn" type="submit" value="Search"/>
             </div>
+
             <div class="filter-row">
+
                 <%-- Gender filter --%>
                 <div class="filter-group">
                     <label class="filter-label">Gender</label>
@@ -45,7 +48,7 @@
                     </div>
                 </div>
 
-                <%-- Alive filter --%>
+                <%-- Status filter --%>
                 <div class="filter-group">
                     <label class="filter-label">Status</label>
                     <div class="filter-options">
@@ -98,8 +101,8 @@
                 <%
                     LinkedHashMap<String, String> raceOptions =
                         (LinkedHashMap<String, String>) request.getAttribute("raceOptions");
-                    String[] raceFilters = request.getParameterValues("race");
-                    List<String> raceFilterList = raceFilters != null ? java.util.Arrays.asList(raceFilters) : new java.util.ArrayList<>();
+                    List<String> raceFilterList = (List<String>) request.getAttribute("raceFilterList");
+                    if (raceFilterList == null) raceFilterList = new java.util.ArrayList<>();
                 %>
                 <div class="filter-group">
                     <label class="filter-label">Race</label>
@@ -119,8 +122,8 @@
                 <%
                     LinkedHashMap<String, String> ethnicityOptions =
                         (LinkedHashMap<String, String>) request.getAttribute("ethnicityOptions");
-                    String[] ethnicityFilters = request.getParameterValues("ethnicity");
-                    List<String> ethnicityFilterList = ethnicityFilters != null ? java.util.Arrays.asList(ethnicityFilters) : new java.util.ArrayList<>();
+                    List<String> ethnicityFilterList = (List<String>) request.getAttribute("ethnicityFilterList");
+                    if (ethnicityFilterList == null) ethnicityFilterList = new java.util.ArrayList<>();
                 %>
                 <div class="filter-group">
                     <label class="filter-label">Ethnicity</label>
@@ -135,6 +138,7 @@
                         <% } } %>
                     </div>
                 </div>
+
             </div>
         </form>
     </div>
@@ -159,8 +163,6 @@
         String genderFilter = (String) request.getAttribute("genderFilter");
         String aliveFilter = (String) request.getAttribute("aliveFilter");
         String maritalFilter = (String) request.getAttribute("maritalFilter");
-        String raceFilterVal = (String) request.getAttribute("raceFilter");
-        String ethnicityFilterVal = (String) request.getAttribute("ethnicityFilter");
 
         String[][] headers = {
             {"First Name", "firstname"},
@@ -242,8 +244,12 @@
                     if (genderFilter != null && !genderFilter.isEmpty()) fromBuilder.append("&gender=").append(genderFilter);
                     if (aliveFilter != null && !aliveFilter.isEmpty()) fromBuilder.append("&alive=").append(aliveFilter);
                     if (maritalFilter != null && !maritalFilter.isEmpty()) fromBuilder.append("&marital=").append(maritalFilter);
-                    if (raceFilterVal != null && !raceFilterVal.isEmpty()) fromBuilder.append("&race=").append(raceFilterVal);
-                    if (ethnicityFilterVal != null && !ethnicityFilterVal.isEmpty()) fromBuilder.append("&ethnicity=").append(ethnicityFilterVal);
+                    if (raceFilterList != null) {
+                        for (String r : raceFilterList) fromBuilder.append("&race=").append(r);
+                    }
+                    if (ethnicityFilterList != null) {
+                        for (String e : ethnicityFilterList) fromBuilder.append("&ethnicity=").append(e);
+                    }
                     String fromParam = fromBuilder.toString();
                     String href = "patientRecord?id=" + id + (fromParam.isEmpty() ? "" : "&from=" + java.net.URLEncoder.encode(fromParam, "UTF-8"));
             %>
