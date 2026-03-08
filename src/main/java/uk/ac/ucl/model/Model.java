@@ -10,7 +10,7 @@ import java.util.Map;
 public class Model
 {
     DataFrame dataFrame;
-    public static final int DEFAULT_PAGE_SIZE = 25;
+    public static final int DEFAULT_PAGE_SIZE = 40;
 
     public Model() {
         DataLoader loader = new DataLoader();
