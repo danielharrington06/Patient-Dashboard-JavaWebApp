@@ -2,7 +2,7 @@ package uk.ac.ucl.model;
 
 import java.util.ArrayList;
 
-class Column {
+public class Column {
     // need to decide consistent way to deal with out of bounds
     
     private String name;

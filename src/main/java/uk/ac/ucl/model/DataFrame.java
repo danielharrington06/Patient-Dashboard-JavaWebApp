@@ -2,7 +2,7 @@ package uk.ac.ucl.model;
 
 import java.util.ArrayList;
 
-class DataFrame {
+public class DataFrame {
     // need to decide a consistent way to deal with out of range
 
     private final ArrayList<Column> columns;
