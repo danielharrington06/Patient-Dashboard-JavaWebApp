@@ -321,4 +321,9 @@ public class Model
         }
         return result;
     }
+
+    public void saveToCSV() throws IOException {
+        DataWriter writer = new DataWriter();
+        writer.save("data/patients100.csv", dataFrame);
+    }
 }

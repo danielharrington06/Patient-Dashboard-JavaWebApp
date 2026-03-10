@@ -11,7 +11,7 @@ import org.apache.commons.csv.CSVRecord;
 class DataLoader {
 
     public DataLoader() {
-        // no fields
+        
     }
 
     public DataFrame load(String csvFilePath) throws IOException {
