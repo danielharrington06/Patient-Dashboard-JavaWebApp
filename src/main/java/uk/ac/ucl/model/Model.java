@@ -45,6 +45,13 @@ public class Model
         throw new IllegalArgumentException("Invalid id: " + id);
     }
 
+    public boolean idExists(String id) {
+        for (int row = 0; row < getRowCount(); row++) {
+            if (id.equals(getValue("ID", row))) return true;
+        }
+        return false;
+    }
+
     public String formatColumnName(String columnName) {
         switch (columnName.toUpperCase()) {
             case "ID" -> {return "Patient ID";}
@@ -346,10 +353,9 @@ public class Model
         saveToCSV();
     }
 
-    public boolean idExists(String id) {
-        for (int row = 0; row < getRowCount(); row++) {
-            if (id.equals(getValue("ID", row))) return true;
-        }
-        return false;
+    public void editPatient(String id, Map<String, String> values) throws IOException {
+        int row = getRowNumFromId(id);
+        dataFrame.editRow(row, values);
+        saveToCSV();
     }
 }
