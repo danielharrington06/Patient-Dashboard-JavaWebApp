@@ -327,4 +327,10 @@ public class Model
         DataWriter writer = new DataWriter();
         writer.save(dataFrame, DATA_FILE);
     }
+
+    public void deletePatient(String id) throws IOException {
+        int row = getRowNumFromId(id);
+        dataFrame.removeRow(row);
+        saveToCSV();
+    }
 }

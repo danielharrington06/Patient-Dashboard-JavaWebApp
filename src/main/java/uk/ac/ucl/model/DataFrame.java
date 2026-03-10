@@ -43,4 +43,13 @@ public class DataFrame {
         int i = getColumnNames().indexOf(columnName);
         columns.get(i).addRowValue(value);
     }
+
+    public void removeRow(int row) {
+        if (row < 0 || row >= getRowCount()) {
+            throw new IndexOutOfBoundsException("Row " + row + " out of bounds for size " + getRowCount());
+        }
+        for (Column column : columns) {
+            column.removeRowValue(row);
+        }
+    }
 }
