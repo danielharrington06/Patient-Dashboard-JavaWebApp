@@ -12,7 +12,7 @@ public class DataWriter {
         
     }
     
-    public void save(String csvFilePath, DataFrame dataFrame) throws IOException {
+    public void save(DataFrame dataFrame, String csvFilePath) throws IOException {
         File file = new File(csvFilePath);
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
             List<String> columnNames = dataFrame.getColumnNames();

@@ -11,11 +11,12 @@ public class Model
 {
     DataFrame dataFrame;
     public static final int DEFAULT_PAGE_SIZE = 40;
+    public static final String DATA_FILE = "data/patients100.csv";
 
     public Model() {
         DataLoader loader = new DataLoader();
         try {
-            this.dataFrame = loader.load("data/patients100.csv");
+            this.dataFrame = loader.load(DATA_FILE);
         } catch (IOException e) {
             System.err.println("Error loading CSV file: " + e.getMessage());
             this.dataFrame = new DataFrame(); // fallback to empty frame
@@ -324,6 +325,6 @@ public class Model
 
     public void saveToCSV() throws IOException {
         DataWriter writer = new DataWriter();
-        writer.save("data/patients100.csv", dataFrame);
+        writer.save(dataFrame, DATA_FILE);
     }
 }
