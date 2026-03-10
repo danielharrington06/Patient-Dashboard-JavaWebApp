@@ -84,6 +84,10 @@ body {
     padding: 0 var(--spacing-lg);
 }
 
+.main h2 {
+    margin-bottom: var(--spacing-sm);
+}
+
 /* ── Footer ── */
 .site-footer {
     background: var(--colour-surface);
@@ -425,4 +429,36 @@ dd {
 .filter-clear-link:hover {
     border-color: var(--colour-primary);
     color: var(--colour-primary);
+}
+
+.record-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: var(--spacing-sm);
+    margin-bottom: var(--spacing-lg);
+}
+
+.record-actions-right {
+    display: flex;
+    gap: var(--spacing-sm);
+    align-items: center;
+}
+
+.record-actions-right form {
+    display: flex;
+    align-items: stretch;
+}
+
+.btn-danger {
+    background-color: #dc2626;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    font-size: 0.95rem;
+}
+
+.btn-danger:hover {
+    background-color: #b91c1c;
 }

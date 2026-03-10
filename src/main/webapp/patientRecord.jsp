@@ -18,7 +18,16 @@
         ? "/runsearch?searchstring=" + fromSearch
         : "/patientList";
     %>
-    <a href="<%= backHref %>" class="btn btn-secondary" style="margin-bottom: 1rem;">← Back to patients</a>
+    <div class="record-actions">
+        <a href="<%= backHref %>" class="btn btn-secondary">← Back</a>
+        <div class="record-actions-right">
+            <form method="POST" action="/deletePatient" style="display:inline"
+                onsubmit="return confirm('Are you sure you want to delete this patient?')">
+                <input type="hidden" name="id" value="<%= request.getParameter("id") %>"/>
+                <button type="submit" class="btn btn-danger">Delete Patient</button>
+            </form>
+        </div>
+    </div>
     <%
         String errorMessage = (String) request.getAttribute("errorMessage");
         if (errorMessage != null)
@@ -33,14 +42,14 @@
     List<String> columns = (List<String>) request.getAttribute("columnNames");
     %>
     <dl>
-    <%
+        <%
         for (Map.Entry<String, String> entry : patientRecord.entrySet()) {
-    %>
-        <dt><%= entry.getKey() %></dt>
-        <dd><%= entry.getValue() != null && !entry.getValue().isEmpty() ? entry.getValue() : "—" %></dd>
-    <%
-    }
-    %>
+            %>
+            <dt><%= entry.getKey() %></dt>
+            <dd><%= entry.getValue() != null && !entry.getValue().isEmpty() ? entry.getValue() : "—" %></dd>
+            <%
+        }
+        %>
     </dl>
 </div>
 <jsp:include page="/footer.jsp"/>
