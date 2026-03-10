@@ -1,6 +1,7 @@
 package uk.ac.ucl.model;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 public class DataFrame {
     // need to decide a consistent way to deal with out of range
@@ -50,6 +51,13 @@ public class DataFrame {
         }
         for (Column column : columns) {
             column.removeRowValue(row);
+        }
+    }
+
+    public void addRow(Map<String, String> values) {
+        for (Column column : columns) {
+            String val = values.getOrDefault(column.getName(), "");
+            column.addRowValue(val);
         }
     }
 }

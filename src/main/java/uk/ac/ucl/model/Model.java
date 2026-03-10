@@ -333,4 +333,23 @@ public class Model
         dataFrame.removeRow(row);
         saveToCSV();
     }
+
+    public void addPatient(Map<String, String> values) throws IOException {
+        // unlikely for a UUID to clash with an existing one, but worth ensuring it cannot happen
+        String newId;
+        do {
+            newId = java.util.UUID.randomUUID().toString();
+        } while (idExists(newId));
+
+        values.put("ID", newId);
+        dataFrame.addRow(values);
+        saveToCSV();
+    }
+
+    public boolean idExists(String id) {
+        for (int row = 0; row < getRowCount(); row++) {
+            if (id.equals(getValue("ID", row))) return true;
+        }
+        return false;
+    }
 }
