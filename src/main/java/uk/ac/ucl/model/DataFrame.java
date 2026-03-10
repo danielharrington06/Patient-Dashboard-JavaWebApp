@@ -35,7 +35,7 @@ public class DataFrame {
         return columns.get(i).getRowValue(row);
     }
 
-    public void putValue(String columnName, int row, String value) {
+    public void putValue(int row, String columnName, String value) {
         int i = getColumnNames().indexOf(columnName);
         columns.get(i).setRowValue(row, value);
     }
@@ -58,6 +58,12 @@ public class DataFrame {
         for (Column column : columns) {
             String val = values.getOrDefault(column.getName(), "");
             column.addRowValue(val);
+        }
+    }
+
+    public void editRow(int row, Map<String, String> values) {
+        for (Map.Entry<String, String> entry : values.entrySet()) {
+            putValue(row, entry.getKey(), entry.getValue());
         }
     }
 }
