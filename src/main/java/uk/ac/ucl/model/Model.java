@@ -127,7 +127,7 @@ public class Model
     }
 
     public List<String> getSummaryColumnDisplayNames() {
-        List<String> summaryColumns = List.of("FIRST", "LAST", "BIRTHDATE", "DEATHDATE", "GENDER", "MARITAL", "RACE", "ETHNICITY", "CITY", "STATE");
+        List<String> summaryColumns = List.of("FIRST", "LAST", "BIRTHDATE", "DEATHDATE", "GENDER", "MARITAL", "RACE", "ETHNICITY", "CITY");
         List<String> displayNames = new ArrayList<>();
         for (String col : summaryColumns) {
             displayNames.add(formatColumnName(col));
@@ -146,7 +146,6 @@ public class Model
         info.add(formatValue("RACE", dataFrame.getValue("RACE", row)));
         info.add(formatValue("ETHNICITY", dataFrame.getValue("ETHNICITY", row)));
         info.add(formatValue("CITY", dataFrame.getValue("CITY", row)));
-        info.add(formatValue("STATE", dataFrame.getValue("STATE", row)));
         return info;
     }
 
