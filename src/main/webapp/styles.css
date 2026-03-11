@@ -434,8 +434,25 @@ dd {
     align-items: stretch;
 }
 
-/* ── Active nav link ── */
-.nav a.nav-active {
-    background: var(--colour-primary-dark);
-    color: white;
+.record-input {
+    width: 100%;
+    padding: 0.2rem 0.4rem;
+    border: 1px solid var(--colour-border);
+    border-radius: var(--radius);
+    font-size: 0.95rem;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    color: var(--colour-text);
+    background: var(--colour-bg);
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.record-input:focus {
+    border-color: var(--colour-primary);
+    background: var(--colour-surface);
+}
+
+.record-input.input-error {
+    border-color: var(--colour-error);
+    background: var(--colour-error-bg);
 }
