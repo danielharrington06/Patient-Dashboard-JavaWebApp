@@ -4,6 +4,7 @@
         <nav class="nav">
             <a href="/">Home</a>
             <a href="/patientList">Patients</a>
+            <a href="/addPatient">Add Patient</a>
         </nav>
     </div>
 </header>

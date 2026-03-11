@@ -11,11 +11,12 @@ public class Model
 {
     DataFrame dataFrame;
     public static final int DEFAULT_PAGE_SIZE = 40;
+    public static final String DATA_FILE = "data/patients100.csv";
 
     public Model() {
         DataLoader loader = new DataLoader();
         try {
-            this.dataFrame = loader.load("data/patients100.csv");
+            this.dataFrame = loader.load(DATA_FILE);
         } catch (IOException e) {
             System.err.println("Error loading CSV file: " + e.getMessage());
             this.dataFrame = new DataFrame(); // fallback to empty frame
@@ -42,6 +43,13 @@ public class Model
         }
         // not found, so invalid ID and incorrect code
         throw new IllegalArgumentException("Invalid id: " + id);
+    }
+
+    public boolean idExists(String id) {
+        for (int row = 0; row < getRowCount(); row++) {
+            if (id.equals(getValue("ID", row))) return true;
+        }
+        return false;
     }
 
     public String formatColumnName(String columnName) {
@@ -115,6 +123,15 @@ public class Model
             }
             default -> { return value; }
         }
+    }
+
+    public LinkedHashMap<String, String> getRawPatientRecord(String id) {
+        LinkedHashMap<String, String> record = new LinkedHashMap<>();
+        for (String column : getColumnNames()) {
+            int row = getRowNumFromId(id);
+            record.put(column, getValue(column, row));
+        }
+        return record;
     }
 
     public LinkedHashMap<String, String> getFormattedPatientRecord(String id) {
@@ -319,5 +336,36 @@ public class Model
             result.put(value, formatValue(columnName, value));
         }
         return result;
+    }
+
+    public void saveToCSV() throws IOException {
+        DataWriter writer = new DataWriter();
+        writer.save(dataFrame, DATA_FILE);
+    }
+
+    public void deletePatient(String id) throws IOException {
+        int row = getRowNumFromId(id);
+        dataFrame.removeRow(row);
+        saveToCSV();
+    }
+
+    public void addPatient(Map<String, String> values) throws IOException {
+        dataFrame.addRow(values);
+        saveToCSV();
+    }
+
+    public String generateUUID() {
+        // unlikely for a UUID to clash with an existing one, but worth ensuring it cannot happen
+        String newId;
+        do {
+            newId = java.util.UUID.randomUUID().toString();
+        } while (idExists(newId));
+        return newId;
+    }
+
+    public void editPatient(String id, Map<String, String> values) throws IOException {
+        int row = getRowNumFromId(id);
+        dataFrame.editRow(row, values);
+        saveToCSV();
     }
 }
