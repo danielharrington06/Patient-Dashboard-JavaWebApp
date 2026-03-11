@@ -593,16 +593,6 @@ span.field-error {
     color: var(--colour-error);
 }
 
-/* ── Misc ── */
-.result-count {
-    font-size: 0.85rem;
-    color: var(--colour-text-muted);
-}
-
-.text-muted {
-    color: var(--colour-text-muted);
-}
-
 /* ── Modal ── */
 .modal-overlay {
     display: none;
@@ -645,4 +635,26 @@ span.field-error {
 
 .modal-actions form {
     display: flex;
+}
+
+/* ── Misc ── */
+.result-count {
+    font-size: 0.85rem;
+    color: var(--colour-text-muted);
+}
+
+.text-muted {
+    color: var(--colour-text-muted);
+}
+
+.visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
 }

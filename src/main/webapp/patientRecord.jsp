@@ -13,6 +13,7 @@
 <jsp:include page="/header.jsp"/>
 <div class="main">
     <h2>Patient Record</h2>
+    <p class="visually-hidden">Patient medical record details. This is all in english so should not be recognised as French.</p>
     <%
         String id = request.getParameter("id");
         String fromEncoded = request.getParameter("from");
