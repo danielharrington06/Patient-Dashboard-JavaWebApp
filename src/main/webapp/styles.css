@@ -602,3 +602,47 @@ span.field-error {
 .text-muted {
     color: var(--colour-text-muted);
 }
+
+/* ── Modal ── */
+.modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.4);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal {
+    background: var(--colour-surface);
+    border-radius: var(--radius);
+    padding: var(--spacing-lg);
+    max-width: 400px;
+    width: 90%;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+}
+
+.modal-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--colour-text);
+    margin-bottom: var(--spacing-sm);
+}
+
+.modal-body {
+    color: var(--colour-text-muted);
+    margin-bottom: var(--spacing-lg);
+    line-height: 1.5;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--spacing-sm);
+    align-items: center;
+}
+
+.modal-actions form {
+    display: flex;
+}

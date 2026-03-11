@@ -31,12 +31,29 @@
         <a href="<%= backHref %>" class="btn btn-secondary">← Back</a>
         <div class="record-actions-right">
             <a href="/editPatient?id=<%= id %>&from=<%= fromParam %>" class="btn btn-secondary">Edit Patient</a>
-            <form method="POST" action="/deletePatient" style="display:flex"
-                  onsubmit="return confirm('Are you sure you want to delete this patient?')">
-                <input type="hidden" name="id" value="<%= id %>"/>
-                <input type="hidden" name="from" value="<%= fromParam %>"/>
-                <button type="submit" class="btn btn-danger">Delete Patient</button>
-            </form>
+            <button type="button" class="btn btn-danger" onclick="document.getElementById('delete-modal').style.display='flex'">
+                Delete Patient
+            </button>
+
+            <div id="delete-modal" class="modal-overlay">
+                <div class="modal">
+                    <h3 class="modal-title">Delete Patient</h3>
+                    <p class="modal-body">
+                        Are you sure you want to delete this patient? This action cannot be undone.
+                    </p>
+                    <div class="modal-actions">
+                        <button type="button" class="btn btn-secondary"
+                                onclick="document.getElementById('delete-modal').style.display='none'">
+                            Cancel
+                        </button>
+                        <form method="POST" action="/deletePatient" style="display:inline">
+                            <input type="hidden" name="id" value="<%= id %>"/>
+                            <input type="hidden" name="from" value="<%= fromParam %>"/>
+                            <button type="submit" class="btn btn-danger">Yes, Delete</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
     <%
