@@ -77,6 +77,11 @@ public class ViewPatientListServlet extends HttpServlet {
             request.setAttribute("ethnicityFilterList", ethnicityFilterList);
             request.setAttribute("raceOptions", model.getDistinctValuesWithLabels("RACE"));
             request.setAttribute("ethnicityOptions", model.getDistinctValuesWithLabels("ETHNICITY"));
+            
+            // Save current list URL to session for back navigation
+            String queryString = request.getQueryString();
+            String currentUrl = "/patientList" + (queryString != null ? "?" + queryString : "");
+            request.getSession().setAttribute("lastListUrl", currentUrl);
 
             // Forward to JSP 
             ServletContext context = getServletContext();

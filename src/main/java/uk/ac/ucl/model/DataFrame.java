@@ -1,8 +1,9 @@
 package uk.ac.ucl.model;
 
 import java.util.ArrayList;
+import java.util.Map;
 
-class DataFrame {
+public class DataFrame {
     // need to decide a consistent way to deal with out of range
 
     private final ArrayList<Column> columns;
@@ -34,7 +35,7 @@ class DataFrame {
         return columns.get(i).getRowValue(row);
     }
 
-    public void putValue(String columnName, int row, String value) {
+    public void putValue(int row, String columnName, String value) {
         int i = getColumnNames().indexOf(columnName);
         columns.get(i).setRowValue(row, value);
     }
@@ -42,5 +43,27 @@ class DataFrame {
     public void addValue(String columnName, String value) {
         int i = getColumnNames().indexOf(columnName);
         columns.get(i).addRowValue(value);
+    }
+
+    public void removeRow(int row) {
+        if (row < 0 || row >= getRowCount()) {
+            throw new IndexOutOfBoundsException("Row " + row + " out of bounds for size " + getRowCount());
+        }
+        for (Column column : columns) {
+            column.removeRowValue(row);
+        }
+    }
+
+    public void addRow(Map<String, String> values) {
+        for (Column column : columns) {
+            String val = values.getOrDefault(column.getName(), "");
+            column.addRowValue(val);
+        }
+    }
+
+    public void editRow(int row, Map<String, String> values) {
+        for (Map.Entry<String, String> entry : values.entrySet()) {
+            putValue(row, entry.getKey(), entry.getValue());
+        }
     }
 }

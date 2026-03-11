@@ -312,20 +312,7 @@
                 for (Map.Entry<String, List<String>> entry : patients.entrySet()) {
                     String id = entry.getKey();
                     List<String> data = entry.getValue();
-
-                    StringBuilder fromBuilder = new StringBuilder();
-                    if (searchTerm != null && !searchTerm.isEmpty()) fromBuilder.append("&searchstring=").append(searchTerm);
-                    if (genderFilter != null && !genderFilter.isEmpty()) fromBuilder.append("&gender=").append(genderFilter);
-                    if (aliveFilter != null && !aliveFilter.isEmpty()) fromBuilder.append("&alive=").append(aliveFilter);
-                    if (maritalFilter != null && !maritalFilter.isEmpty()) fromBuilder.append("&marital=").append(maritalFilter);
-                    if (raceFilterList != null) {
-                        for (String r : raceFilterList) fromBuilder.append("&race=").append(r);
-                    }
-                    if (ethnicityFilterList != null) {
-                        for (String e : ethnicityFilterList) fromBuilder.append("&ethnicity=").append(e);
-                    }
-                    String fromParam = fromBuilder.toString();
-                    String href = "patientRecord?id=" + id + (fromParam.isEmpty() ? "" : "&from=" + java.net.URLEncoder.encode(fromParam, "UTF-8"));
+                    String href = "patientRecord?id=" + id;
             %>
                 <tr data-href="<%= href %>">
                     <% for (int i = 0; i < data.size(); i++) { %>

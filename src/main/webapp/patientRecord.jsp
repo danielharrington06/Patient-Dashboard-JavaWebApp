@@ -3,7 +3,7 @@
 <%@ page import="java.util.Map" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
-<html lang="en">   
+<html lang="en">
 <head>
     <jsp:include page="/meta.jsp"/>
     <title>Patient Data App</title>
@@ -12,35 +12,59 @@
 <jsp:include page="/header.jsp"/>
 <div class="main">
     <h2>Patient Record</h2>
+    <p class="visually-hidden">Patient medical record details. This is all in english so should not be recognised as French.</p>
     <%
-    String fromSearch = request.getParameter("from");
-    String backHref = (fromSearch != null && !fromSearch.isEmpty())
-        ? "/runsearch?searchstring=" + fromSearch
-        : "/patientList";
+        String id = request.getParameter("id");
+        String backHref = (String) session.getAttribute("lastListUrl");
+        if (backHref == null) backHref = "/patientList";
     %>
-    <a href="<%= backHref %>" class="btn btn-secondary" style="margin-bottom: 1rem;">← Back to patients</a>
+
+    <div class="record-actions">
+        <a href="<%= backHref %>" class="btn btn-secondary">← Back</a>
+        <div class="record-actions-right">
+            <a href="/editPatient?id=<%= id %>" class="btn btn-secondary">Edit Patient</a>
+            <button type="button" class="btn btn-danger" onclick="document.getElementById('delete-modal').style.display='flex'">
+                Delete Patient
+            </button>
+
+            <div id="delete-modal" class="modal-overlay">
+                <div class="modal">
+                    <h3 class="modal-title">Delete Patient</h3>
+                    <p class="modal-body">
+                        Are you sure you want to delete this patient? This action cannot be undone.
+                    </p>
+                    <div class="modal-actions">
+                        <button type="button" class="btn btn-secondary"
+                                onclick="document.getElementById('delete-modal').style.display='none'">
+                            Cancel
+                        </button>
+                        <form method="POST" action="/deletePatient" style="display:inline">
+                            <input type="hidden" name="id" value="<%= id %>"/>
+                            <button type="submit" class="btn btn-danger">Yes, Delete</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <%
         String errorMessage = (String) request.getAttribute("errorMessage");
-        if (errorMessage != null)
-        {
+        if (errorMessage != null) {
     %>
         <p class="error"><%= errorMessage %></p>
     <%
         }
     %>
     <%
-    LinkedHashMap<String, String> patientRecord = (LinkedHashMap<String, String>) request.getAttribute("patientRecord");
-    List<String> columns = (List<String>) request.getAttribute("columnNames");
+        LinkedHashMap<String, String> patientRecord =
+            (LinkedHashMap<String, String>) request.getAttribute("patientRecord");
     %>
     <dl>
-    <%
-        for (Map.Entry<String, String> entry : patientRecord.entrySet()) {
-    %>
-        <dt><%= entry.getKey() %></dt>
-        <dd><%= entry.getValue() != null && !entry.getValue().isEmpty() ? entry.getValue() : "—" %></dd>
-    <%
-    }
-    %>
+        <% for (Map.Entry<String, String> entry : patientRecord.entrySet()) { %>
+            <dt><%= entry.getKey() %></dt>
+            <dd><%= entry.getValue() != null && !entry.getValue().isEmpty() ? entry.getValue() : "—" %></dd>
+        <% } %>
     </dl>
 </div>
 <jsp:include page="/footer.jsp"/>
