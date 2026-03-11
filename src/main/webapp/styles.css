@@ -1,14 +1,14 @@
 /* ── Variables ── */
 :root {
-    --colour-primary: #1a6faf;
+    --colour-primary:      #1a6faf;
     --colour-primary-dark: #14538a;
-    --colour-bg: #f4f7fb;
-    --colour-surface: #ffffff;
-    --colour-text: #1a1a2e;
-    --colour-text-muted: #5f6b7a;
-    --colour-border: #dce3ed;
-    --colour-error: #c0392b;
-    --colour-error-bg: #fdecea;
+    --colour-bg:           #f4f7fb;
+    --colour-surface:      #ffffff;
+    --colour-text:         #1a1a2e;
+    --colour-text-muted:   #5f6b7a;
+    --colour-border:       #dce3ed;
+    --colour-error:        #c0392b;
+    --colour-error-bg:     #fdecea;
 
     --spacing-xs: 0.25rem;
     --spacing-sm: 0.5rem;
@@ -71,7 +71,8 @@ body {
     transition: background 0.2s;
 }
 
-.nav a:hover {
+.nav a:hover,
+.nav a.nav-active {
     background: var(--colour-primary-dark);
     color: white;
 }
@@ -99,7 +100,7 @@ body {
     font-size: 0.85rem;
 }
 
-/* ── Error message ── */
+/* ── Error banner ── */
 .error {
     background: var(--colour-error-bg);
     color: var(--colour-error);
@@ -136,6 +137,21 @@ dd {
     border-bottom: 1px solid var(--colour-border);
 }
 
+/* ── Field errors inside dl ── */
+dd .field-error {
+    display: block;
+    font-size: 0.78rem;
+    color: var(--colour-error) !important;
+    min-height: 1em;
+    margin-top: 2px;
+}
+
+dd input.input-error,
+dd select.input-error {
+    border-color: var(--colour-error) !important;
+    background: var(--colour-error-bg) !important;
+}
+
 /* ── Welcome card ── */
 .welcome-card {
     background: var(--colour-surface);
@@ -169,6 +185,9 @@ dd {
     padding: var(--spacing-sm) var(--spacing-lg);
     border-radius: var(--radius);
     font-size: 0.95rem;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    border: none;
+    cursor: pointer;
     transition: background 0.2s;
 }
 
@@ -326,7 +345,6 @@ dd {
 }
 
 .sort-status {
-    font-family: 'Segoe UI', system-ui, sans-serif;
     font-size: 0.85rem;
     color: var(--colour-text-muted);
     margin-bottom: var(--spacing-md);
@@ -358,12 +376,18 @@ dd {
 }
 
 .filter-label {
-    font-family: 'Segoe UI', system-ui, sans-serif;
     font-size: 0.75rem;
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.07em;
     color: var(--colour-text-muted);
+}
+
+.filter-label-row {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    margin-bottom: 2px;
 }
 
 .filter-options {
@@ -386,7 +410,8 @@ dd {
     background: var(--colour-bg);
 }
 
-.filter-chip input[type="radio"] {
+.filter-chip input[type="radio"],
+.filter-chip input[type="checkbox"] {
     display: none;
 }
 
@@ -407,6 +432,7 @@ dd {
     border: 1px solid var(--colour-border);
     border-radius: 999px;
     padding: 1px 6px;
+    transition: all 0.15s;
 }
 
 .filter-clear-link:hover {
@@ -434,6 +460,7 @@ dd {
     align-items: stretch;
 }
 
+/* ── Edit patient inputs inside dl ── */
 .record-input {
     width: 100%;
     padding: 0.2rem 0.4rem;
@@ -452,7 +479,126 @@ dd {
     background: var(--colour-surface);
 }
 
-.record-input.input-error {
-    border-color: var(--colour-error);
-    background: var(--colour-error-bg);
+input.record-input.input-error,
+select.record-input.input-error {
+    border-color: var(--colour-error) !important;
+    background: var(--colour-error-bg) !important;
+}
+
+.field-error,
+dd .field-error {
+    display: block;
+    font-size: 0.78rem;
+    color: var(--colour-error) !important;
+    min-height: 1em;
+    margin-top: 2px;
+}
+
+span.field-error {
+    display: block;
+    font-size: 0.78rem;
+    color: var(--colour-error) !important;
+    min-height: 1em;
+    margin-top: 2px;
+}
+
+.field-hint {
+    font-size: 0.78rem;
+    color: var(--colour-text-muted);
+}
+
+/* ── Patient form (add/edit page) ── */
+.patient-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+}
+
+.form-section {
+    background: var(--colour-surface);
+    border: 1px solid var(--colour-border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: var(--spacing-lg);
+}
+
+.form-section-title {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--colour-text-muted);
+    margin-bottom: var(--spacing-md);
+    padding-bottom: var(--spacing-sm);
+    border-bottom: 1px solid var(--colour-border);
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: var(--spacing-md) var(--spacing-lg);
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+}
+
+.form-group--wide {
+    grid-column: span 2;
+}
+
+.form-group label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--colour-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+}
+
+.form-group input,
+.form-group select {
+    padding: var(--spacing-sm) var(--spacing-md);
+    border: 1px solid var(--colour-border);
+    border-radius: var(--radius);
+    font-size: 0.95rem;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    color: var(--colour-text);
+    background: var(--colour-surface);
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    border-color: var(--colour-primary);
+    background: var(--colour-surface);
+}
+
+.form-group input.input-error,
+.form-group select.input-error {
+    border-color: var(--colour-error) !important;
+    background: var(--colour-error-bg) !important;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--spacing-md);
+    padding-top: var(--spacing-sm);
+}
+
+.req-star {
+    color: var(--colour-error);
+}
+
+/* ── Misc ── */
+.result-count {
+    font-size: 0.85rem;
+    color: var(--colour-text-muted);
+}
+
+.text-muted {
+    color: var(--colour-text-muted);
 }

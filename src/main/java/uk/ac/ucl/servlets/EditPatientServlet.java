@@ -25,8 +25,7 @@ public class EditPatientServlet extends HttpServlet {
     };
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String id = request.getParameter("id");
         try {
             Model model = ModelFactory.getModel();
@@ -68,8 +67,8 @@ public class EditPatientServlet extends HttpServlet {
         }
 
         String zip = values.get("ZIP");
-        if (!zip.isEmpty() && !zip.matches("\\d{5}(-\\d{4})?")) {
-            errors.append("ZIP code must be 5 digits, optionally followed by -XXXX. ");
+        if (!zip.isEmpty() && !zip.matches("\\d{5}")) {
+            errors.append("ZIP code must be 5 digits");
         }
 
         LocalDate today = LocalDate.now();
