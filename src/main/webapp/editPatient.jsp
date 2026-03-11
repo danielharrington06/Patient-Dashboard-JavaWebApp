@@ -22,8 +22,11 @@
             : (String) request.getAttribute("from");
         if (fromEncoded == null) fromEncoded = "";
         String fromParam = fromEncoded;
-
         String cancelHref = "/patientRecord?id=" + id + (fromParam.isEmpty() ? "" : "&from=" + fromParam);
+
+        java.util.Set<String> requiredFields = new java.util.HashSet<>(
+            java.util.Arrays.asList("FIRST", "LAST", "BIRTHDATE", "GENDER", "SSN")
+        );
     %>
 
     <div class="record-actions">
@@ -35,8 +38,14 @@
 
     <% String errorMessage = (String) request.getAttribute("errorMessage");
        if (errorMessage != null) { %>
-        <p class="error"><%= errorMessage %></p>
+        <div class="error" style="margin-bottom: var(--spacing-md);">
+            <strong>Please fix the following errors:</strong> <%= errorMessage %>
+        </div>
     <% } %>
+
+    <p class="text-muted" style="margin-bottom: var(--spacing-md);">
+        Fields marked <span style="color: var(--colour-error)">*</span> are required.
+    </p>
 
     <%
         LinkedHashMap<String, String> rawRecord =
@@ -51,23 +60,25 @@
         <% for (Map.Entry<String, String> entry : rawRecord.entrySet()) {
                String col = entry.getKey();
                String val = entry.getValue() != null ? entry.getValue() : "";
-               // Patient ID is not editable
+               boolean isRequired = requiredFields.contains(col);
+
                if ("ID".equals(col)) { %>
                 <dt>Patient ID</dt>
                 <dd><%= val %></dd>
         <%     continue;
-           }
-           // formatted display name
-           String label = col; // will be replaced by model's formatColumnName output
-        %>
-            <dt><label for="field-<%= col %>"><%= col %></label></dt>
+           } %>
+            <dt>
+                <label for="field-<%= col %>">
+                    <%= col %><% if (isRequired) { %> <span style="color: var(--colour-error)">*</span><% } %>
+                </label>
+            </dt>
             <dd>
             <% if ("BIRTHDATE".equals(col) || "DEATHDATE".equals(col)) { %>
                 <input class="record-input" type="date" id="field-<%= col %>" name="<%= col %>"
                        value="<%= val %>"
                        max="<%= java.time.LocalDate.now().toString() %>"
                        min="1900-01-01"
-                       <%= "BIRTHDATE".equals(col) ? "required" : "" %>>
+                       <%= isRequired ? "required" : "" %>>
                 <span class="field-error" id="err-<%= col %>"></span>
             <% } else if ("GENDER".equals(col)) { %>
                 <select class="record-input" id="field-<%= col %>" name="<%= col %>" required>
@@ -75,13 +86,14 @@
                     <option value="M" <%= "M".equals(val) ? "selected" : "" %>>Male</option>
                     <option value="F" <%= "F".equals(val) ? "selected" : "" %>>Female</option>
                 </select>
-                <span class="field-error" id="err-GENDER"></span>
+                <span class="field-error" id="err-<%= col %>"></span>
             <% } else if ("MARITAL".equals(col)) { %>
                 <select class="record-input" id="field-<%= col %>" name="<%= col %>">
                     <option value="">— Select —</option>
                     <option value="M" <%= "M".equals(val) ? "selected" : "" %>>Married</option>
                     <option value="S" <%= "S".equals(val) ? "selected" : "" %>>Single</option>
                 </select>
+                <span class="field-error" id="err-<%= col %>"></span>
             <% } else if ("PREFIX".equals(col)) { %>
                 <select class="record-input" id="field-<%= col %>" name="<%= col %>">
                     <option value="">— None —</option>
@@ -91,12 +103,11 @@
                     <option value="Dr."  <%= "Dr.".equals(val)  ? "selected" : "" %>>Dr.</option>
                     <option value="Prof."<%= "Prof.".equals(val)? "selected" : "" %>>Prof.</option>
                 </select>
+                <span class="field-error" id="err-<%= col %>"></span>
             <% } else { %>
                 <input class="record-input" type="text" id="field-<%= col %>" name="<%= col %>"
                        value="<%= val %>"
-                       <%= "FIRST".equals(col) || "LAST".equals(col) || "SSN".equals(col) ? "required" : "" %>>
-                <% if ("SSN".equals(col)) { %><span class="field-hint">Format: 999-12-3456</span><% } %>
-                <% if ("ZIP".equals(col)) { %><span class="field-hint">5-digit ZIP, optionally +4</span><% } %>
+                       <%= isRequired ? "required" : "" %>>
                 <span class="field-error" id="err-<%= col %>"></span>
             <% } %>
             </dd>
@@ -136,6 +147,10 @@
 
     form.addEventListener('submit', function (e) {
         let valid = true;
+        let errorBanner = document.getElementById('validation-banner');
+
+        // clear previous banner
+        if (errorBanner) errorBanner.remove();
 
         [
             { id: 'field-FIRST',     errId: 'err-FIRST',     msg: 'First name is required.' },
@@ -159,21 +174,32 @@
         const ssn = document.getElementById('field-SSN');
         const ssnErr = document.getElementById('err-SSN');
         if (ssn.value && !/^\d{3}-\d{2}-\d{4}$/.test(ssn.value)) {
-            ssnErr.textContent = 'SSN must be in format 999-12-3456.';
+            ssnErr.textContent = 'Format: 999-12-3456';
             ssn.classList.add('input-error');
             valid = false;
         }
 
         const zip = document.getElementById('field-ZIP');
         const zipErr = document.getElementById('err-ZIP');
-        if (zip && zip.value && !/^\d{5}(-\d{4})?$/.test(zip.value)) {
-            zipErr.textContent = 'ZIP must be 5 digits, optionally +4.';
+        if (zip && zip.value && !/^\d{5}$/.test(zip.value)) {
+            zipErr.textContent = 'ZIP must be exactly 5 digits.';
             zip.classList.add('input-error');
             valid = false;
         }
 
         if (!validateDates()) valid = false;
-        if (!valid) e.preventDefault();
+
+        if (!valid) {
+            e.preventDefault();
+            // insert banner after record-actions div
+            const banner = document.createElement('div');
+            banner.id = 'validation-banner';
+            banner.className = 'error';
+            banner.style.marginBottom = 'var(--spacing-md)';
+            banner.textContent = 'One or more fields have errors — please review and correct them before saving.';
+            form.insertBefore(banner, form.firstChild);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
     });
 
     form.querySelectorAll('input, select').forEach(el => {
