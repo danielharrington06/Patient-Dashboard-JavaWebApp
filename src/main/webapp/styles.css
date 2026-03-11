@@ -1,21 +1,22 @@
 /* ── Variables ── */
 :root {
-    --colour-primary:    #1a6faf;
+    --colour-primary: #1a6faf;
     --colour-primary-dark: #14538a;
-    --colour-bg:         #f4f7fb;
-    --colour-surface:    #ffffff;
-    --colour-text:       #1a1a2e;
+    --colour-bg: #f4f7fb;
+    --colour-surface: #ffffff;
+    --colour-text: #1a1a2e;
     --colour-text-muted: #5f6b7a;
-    --colour-border:     #dce3ed;
-    --colour-error:      #c0392b;
-    --colour-error-bg:   #fdecea;
+    --colour-border: #dce3ed;
+    --colour-error: #c0392b;
+    --colour-error-bg: #fdecea;
 
-    --spacing-sm:  0.5rem;
-    --spacing-md:  1rem;
-    --spacing-lg:  2rem;
+    --spacing-xs: 0.25rem;
+    --spacing-sm: 0.5rem;
+    --spacing-md: 1rem;
+    --spacing-lg: 2rem;
 
-    --radius:      8px;
-    --shadow:      0 2px 8px rgba(0,0,0,0.08);
+    --radius: 8px;
+    --shadow: 0 2px 8px rgba(0,0,0,0.08);
 }
 
 /* ── Reset ── */
@@ -185,6 +186,24 @@ dd {
     background: var(--colour-bg);
 }
 
+.btn-sm {
+    padding: 0.25rem 0.75rem;
+    font-size: 0.8rem;
+}
+
+.btn-danger {
+    background-color: #dc2626;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    font-size: 0.95rem;
+}
+
+.btn-danger:hover {
+    background-color: #b91c1c;
+}
+
 /* ── Search ── */
 .search-card {
     background: var(--colour-surface);
@@ -259,23 +278,6 @@ dd {
     background: var(--colour-bg);
 }
 
-.btn-sm {
-    padding: 0.25rem 0.75rem;
-    font-size: 0.8rem;
-}
-
-.result-count {
-    margin-top: var(--spacing-md);
-    font-size: 0.85rem;
-    color: var(--colour-text-muted);
-    font-family: 'Segoe UI', system-ui, sans-serif;
-}
-
-.text-muted {
-    color: var(--colour-text-muted);
-    font-family: 'Segoe UI', system-ui, sans-serif;
-}
-
 .patient-table tbody tr[data-href] {
     cursor: pointer;
 }
@@ -296,7 +298,12 @@ dd {
     flex-wrap: wrap;
 }
 
-/* ── Sortable column headers ── */
+/* ── Sorting ── */
+.patient-table th.sortable {
+    cursor: pointer;
+    user-select: none;
+}
+
 .patient-table th.sortable a {
     color: inherit;
     text-decoration: none;
@@ -307,7 +314,6 @@ dd {
 
 .patient-table th.sortable:hover {
     background: var(--colour-border);
-    cursor: pointer;
 }
 
 .patient-table th.sort-active {
@@ -335,20 +341,7 @@ dd {
     text-decoration: underline;
 }
 
-.patient-table th.sortable {
-    cursor: pointer;
-    user-select: none;
-}
-
-.search-card {
-    background: var(--colour-surface);
-    border: 1px solid var(--colour-border);
-    border-radius: var(--radius);
-    box-shadow: var(--shadow);
-    padding: var(--spacing-lg);
-    /* removed max-width so it stretches to table width */
-}
-
+/* ── Filters ── */
 .filter-row {
     display: flex;
     gap: var(--spacing-lg);
@@ -386,7 +379,6 @@ dd {
     padding: 0.25rem 0.65rem;
     border: 1.5px solid var(--colour-border);
     border-radius: 999px;
-    font-family: 'Segoe UI', system-ui, sans-serif;
     font-size: 0.825rem;
     cursor: pointer;
     transition: all 0.15s;
@@ -408,22 +400,13 @@ dd {
     border-color: var(--colour-primary);
 }
 
-.filter-label-row {
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-sm);
-    margin-bottom: 2px;
-}
-
 .filter-clear-link {
-    font-family: 'Segoe UI', system-ui, sans-serif;
     font-size: 0.7rem;
     color: var(--colour-text-muted);
     text-decoration: none;
     border: 1px solid var(--colour-border);
     border-radius: 999px;
     padding: 1px 6px;
-    transition: all 0.15s;
 }
 
 .filter-clear-link:hover {
@@ -431,6 +414,7 @@ dd {
     color: var(--colour-primary);
 }
 
+/* ── Record actions ── */
 .record-actions {
     display: flex;
     justify-content: space-between;
@@ -450,15 +434,8 @@ dd {
     align-items: stretch;
 }
 
-.btn-danger {
-    background-color: #dc2626;
+/* ── Active nav link ── */
+.nav a.nav-active {
+    background: var(--colour-primary-dark);
     color: white;
-    border: none;
-    cursor: pointer;
-    font-family: 'Segoe UI', system-ui, sans-serif;
-    font-size: 0.95rem;
-}
-
-.btn-danger:hover {
-    background-color: #b91c1c;
 }
