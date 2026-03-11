@@ -32,7 +32,6 @@ public class EditPatientServlet extends HttpServlet {
             Map<String, String> rawRecord = model.getRawPatientRecord(id);
             request.setAttribute("rawRecord", rawRecord);
             request.setAttribute("patientId", id);
-            request.setAttribute("from", request.getParameter("from"));
             getServletContext().getRequestDispatcher("/editPatient.jsp").forward(request, response);
         } catch (IllegalArgumentException e) {
             request.setAttribute("errorMessage", "Patient not found: " + e.getMessage());
@@ -43,7 +42,6 @@ public class EditPatientServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String id = request.getParameter("id");
-        String from = request.getParameter("from");
         Model model = ModelFactory.getModel();
 
         // Collect values
@@ -101,7 +99,6 @@ public class EditPatientServlet extends HttpServlet {
             }
         }
 
-        // ── Helper to set common bounce-back attributes ──
         if (errors.length() > 0) {
             Map<String, String> columnLabels = new LinkedHashMap<>();
             for (String col : model.getColumnNames()) {
@@ -110,7 +107,6 @@ public class EditPatientServlet extends HttpServlet {
             request.setAttribute("columnLabels", columnLabels);
             request.setAttribute("errorMessage", errors.toString().trim());
             request.setAttribute("patientId", id);
-            request.setAttribute("from", from);
             request.setAttribute("rawRecord", new LinkedHashMap<>(values));
             getServletContext().getRequestDispatcher("/editPatient.jsp").forward(request, response);
             return;
@@ -119,7 +115,7 @@ public class EditPatientServlet extends HttpServlet {
         // Save
         try {
             model.editPatient(id, values);
-            response.sendRedirect("/patientRecord?id=" + id + (from != null && !from.isEmpty() ? "&from=" + from : ""));
+            response.sendRedirect("/patientRecord?id=" + id);
         } catch (IOException e) {
             Map<String, String> columnLabels = new LinkedHashMap<>();
             for (String col : model.getColumnNames()) {
@@ -128,7 +124,6 @@ public class EditPatientServlet extends HttpServlet {
             request.setAttribute("columnLabels", columnLabels);
             request.setAttribute("errorMessage", "Failed to save patient: " + e.getMessage());
             request.setAttribute("patientId", id);
-            request.setAttribute("from", from);
             request.setAttribute("rawRecord", new LinkedHashMap<>(values));
             getServletContext().getRequestDispatcher("/editPatient.jsp").forward(request, response);
         }
