@@ -350,15 +350,17 @@ public class Model
     }
 
     public void addPatient(Map<String, String> values) throws IOException {
+        dataFrame.addRow(values);
+        saveToCSV();
+    }
+
+    public String generateUUID() {
         // unlikely for a UUID to clash with an existing one, but worth ensuring it cannot happen
         String newId;
         do {
             newId = java.util.UUID.randomUUID().toString();
         } while (idExists(newId));
-
-        values.put("ID", newId);
-        dataFrame.addRow(values);
-        saveToCSV();
+        return newId;
     }
 
     public void editPatient(String id, Map<String, String> values) throws IOException {
