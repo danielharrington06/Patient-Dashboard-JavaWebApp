@@ -44,6 +44,7 @@ public class EditPatientServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String id = request.getParameter("id");
         String from = request.getParameter("from");
+        Model model = ModelFactory.getModel();
 
         // Collect values
         Map<String, String> values = new LinkedHashMap<>();
@@ -68,7 +69,7 @@ public class EditPatientServlet extends HttpServlet {
 
         String zip = values.get("ZIP");
         if (!zip.isEmpty() && !zip.matches("\\d{5}")) {
-            errors.append("ZIP code must be 5 digits");
+            errors.append("ZIP code must be 5 digits. ");
         }
 
         LocalDate today = LocalDate.now();
@@ -100,26 +101,35 @@ public class EditPatientServlet extends HttpServlet {
             }
         }
 
-        // If invalid, bounce back with errors and preserved values
+        // ── Helper to set common bounce-back attributes ──
         if (errors.length() > 0) {
+            Map<String, String> columnLabels = new LinkedHashMap<>();
+            for (String col : model.getColumnNames()) {
+                columnLabels.put(col, model.formatColumnName(col));
+            }
+            request.setAttribute("columnLabels", columnLabels);
             request.setAttribute("errorMessage", errors.toString().trim());
             request.setAttribute("patientId", id);
             request.setAttribute("from", from);
-            request.setAttribute("rawRecord", new java.util.LinkedHashMap<>(values)); // fix
+            request.setAttribute("rawRecord", new LinkedHashMap<>(values));
             getServletContext().getRequestDispatcher("/editPatient.jsp").forward(request, response);
             return;
         }
 
         // Save
         try {
-            Model model = ModelFactory.getModel();
             model.editPatient(id, values);
             response.sendRedirect("/patientRecord?id=" + id + (from != null && !from.isEmpty() ? "&from=" + from : ""));
         } catch (IOException e) {
+            Map<String, String> columnLabels = new LinkedHashMap<>();
+            for (String col : model.getColumnNames()) {
+                columnLabels.put(col, model.formatColumnName(col));
+            }
+            request.setAttribute("columnLabels", columnLabels);
             request.setAttribute("errorMessage", "Failed to save patient: " + e.getMessage());
             request.setAttribute("patientId", id);
             request.setAttribute("from", from);
-            request.setAttribute("rawRecord", new java.util.LinkedHashMap<>(values)); // fix
+            request.setAttribute("rawRecord", new LinkedHashMap<>(values));
             getServletContext().getRequestDispatcher("/editPatient.jsp").forward(request, response);
         }
     }
