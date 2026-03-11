@@ -48,8 +48,8 @@
     </p>
 
     <%
-        LinkedHashMap<String, String> rawRecord =
-            (LinkedHashMap<String, String>) request.getAttribute("rawRecord");
+        LinkedHashMap<String, String> rawRecord = (LinkedHashMap<String, String>) request.getAttribute("rawRecord");
+        LinkedHashMap<String, String> columnLabels = (LinkedHashMap<String, String>) request.getAttribute("columnLabels");
     %>
 
     <form id="edit-form" method="POST" action="/editPatient" novalidate>
@@ -63,13 +63,14 @@
                boolean isRequired = requiredFields.contains(col);
 
                if ("ID".equals(col)) { %>
-                <dt>Patient ID</dt>
+                <dt><%= columnLabels != null ? columnLabels.getOrDefault("ID", "Patient ID") : "Patient ID" %></dt>
                 <dd><%= val %></dd>
         <%     continue;
            } %>
             <dt>
                 <label for="field-<%= col %>">
-                    <%= col %><% if (isRequired) { %> <span style="color: var(--colour-error)">*</span><% } %>
+                    <%= columnLabels != null && columnLabels.containsKey(col) ? columnLabels.get(col) : col %>
+                    <% if (isRequired) { %><span style="color: var(--colour-error)">*</span><% } %>
                 </label>
             </dt>
             <dd>
