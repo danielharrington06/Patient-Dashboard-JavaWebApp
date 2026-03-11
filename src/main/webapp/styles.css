@@ -36,6 +36,11 @@ body {
 }
 
 /* ── Header / Nav ── */
+.site-title {
+    color: white;
+    text-decoration: none;
+}
+
 .site-header {
     background: var(--colour-primary);
     color: white;
