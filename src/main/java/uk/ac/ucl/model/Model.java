@@ -125,6 +125,15 @@ public class Model
         }
     }
 
+    public LinkedHashMap<String, String> getRawPatientRecord(String id) {
+        LinkedHashMap<String, String> record = new LinkedHashMap<>();
+        for (String column : getColumnNames()) {
+            int row = getRowNumFromId(id);
+            record.put(column, getValue(column, row));
+        }
+        return record;
+    }
+
     public LinkedHashMap<String, String> getFormattedPatientRecord(String id) {
         LinkedHashMap<String, String> formatted = new LinkedHashMap<>();
         for (String column : getColumnNames()) {
