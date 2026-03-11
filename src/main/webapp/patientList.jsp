@@ -248,8 +248,7 @@
             {"Marital", null},
             {"Race", null},
             {"Ethnicity", null},
-            {"City", "city"},
-            {"State", null}
+            {"City", "city"}
         };
 
         if (patients != null && !patients.isEmpty()) {
