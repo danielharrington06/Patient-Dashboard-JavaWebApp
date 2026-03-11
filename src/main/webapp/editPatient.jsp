@@ -45,7 +45,7 @@
         LinkedHashMap<String, String> columnLabels = (LinkedHashMap<String, String>) request.getAttribute("columnLabels");
     %>
 
-    <form id="edit-form" method="POST" action="/editPatient">
+    <form id="edit-form" method="POST" action="/editPatient" novalidate>
         <input type="hidden" name="id" value="<%= id %>"/>
 
         <dl>
@@ -69,8 +69,6 @@
             <% if ("BIRTHDATE".equals(col) || "DEATHDATE".equals(col)) { %>
                 <input class="record-input" type="date" id="field-<%= col %>" name="<%= col %>"
                        value="<%= val %>"
-                       max="<%= java.time.LocalDate.now().toString() %>"
-                       min="1900-01-01"
                        <%= isRequired ? "required" : "" %>>
                 <span class="field-error" id="err-<%= col %>"></span>
             <% } else if ("GENDER".equals(col)) { %>
@@ -161,6 +159,30 @@
                 el.classList.remove('input-error');
             }
         });
+
+        const today = new Date().toISOString().split('T')[0];
+
+        const birthEl = document.getElementById('field-BIRTHDATE');
+        const birthErr = document.getElementById('err-BIRTHDATE');
+        if (birthEl.value) {
+            if (birthEl.value > today) {
+                birthErr.textContent = 'Date of birth cannot be in the future.';
+                birthEl.classList.add('input-error');
+                valid = false;
+            } else if (birthEl.value < '1900-01-01') {
+                birthErr.textContent = 'Date of birth must be on or after 01/01/1900.';
+                birthEl.classList.add('input-error');
+                valid = false;
+            }
+        }
+
+        const deathEl = document.getElementById('field-DEATHDATE');
+        const deathErr = document.getElementById('err-DEATHDATE');
+        if (deathEl.value && deathEl.value > today) {
+            deathErr.textContent = 'Date of death cannot be in the future.';
+            deathEl.classList.add('input-error');
+            valid = false;
+        }
 
         const ssn = document.getElementById('field-SSN');
         const ssnErr = document.getElementById('err-SSN');
