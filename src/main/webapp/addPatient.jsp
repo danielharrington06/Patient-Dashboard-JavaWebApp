@@ -13,11 +13,8 @@
     <h2>Add Patient</h2>
 
     <%
-        String from = request.getParameter("from") != null
-            ? request.getParameter("from")
-            : (String) request.getAttribute("from");
-        if (from == null) from = "";
-        String cancelHref = from.isEmpty() ? "/patientList" : from;
+        String backHref = (String) session.getAttribute("lastListUrl");
+        if (backHref == null) backHref = "/patientList";
 
         String generatedId = (String) request.getAttribute("generatedId");
         if (generatedId == null) generatedId = "";
@@ -59,7 +56,7 @@
     %>
 
     <div class="record-actions">
-        <a href="<%= cancelHref %>" class="btn btn-secondary">← Cancel</a>
+        <a href="<%= backHref %>" class="btn btn-secondary">← Cancel</a>
         <div class="record-actions-right">
             <button type="submit" form="add-form" class="btn">Add Patient</button>
         </div>
@@ -77,7 +74,6 @@
     </p>
 
     <form id="add-form" method="POST" action="/addPatient">
-        <input type="hidden" name="from"        value="<%= from %>"/>
         <input type="hidden" name="generatedId" value="<%= generatedId %>"/>
 
         <dl>

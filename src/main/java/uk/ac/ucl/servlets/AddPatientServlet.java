@@ -25,20 +25,14 @@ public class AddPatientServlet extends HttpServlet {
     };
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         Model model = ModelFactory.getModel();
         request.setAttribute("generatedId", model.generateUUID());
-        request.setAttribute("from", request.getParameter("from"));
         getServletContext().getRequestDispatcher("/addPatient.jsp").forward(request, response);
     }
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-
-        String from = request.getParameter("from");
-        if (from == null) from = "";
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         Model model = ModelFactory.getModel();
 
         // Collect values
@@ -106,7 +100,6 @@ public class AddPatientServlet extends HttpServlet {
         if (errors.length() > 0) {
             request.setAttribute("errorMessage", errors.toString().trim());
             request.setAttribute("generatedId", generatedId);
-            request.setAttribute("from", from);
             for (Map.Entry<String, String> entry : values.entrySet()) {
                 request.setAttribute(entry.getKey(), entry.getValue());
             }
@@ -117,12 +110,9 @@ public class AddPatientServlet extends HttpServlet {
         // Save
         try {
             model.addPatient(values);
-            // Redirect to a fresh add patient page
-            response.sendRedirect("/addPatient" + (from.isEmpty() ? "" : "?from=" + from));
         } catch (IOException e) {
             request.setAttribute("errorMessage", "Failed to save patient: " + e.getMessage());
             request.setAttribute("generatedId", generatedId);
-            request.setAttribute("from", from);
             for (Map.Entry<String, String> entry : values.entrySet()) {
                 request.setAttribute(entry.getKey(), entry.getValue());
             }

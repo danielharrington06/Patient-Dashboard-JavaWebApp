@@ -16,17 +16,10 @@ public class DeletePatientServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String id = request.getParameter("id");
-        String from = request.getParameter("from");
         try {
             Model model = ModelFactory.getModel();
             model.deletePatient(id);
-            if (from != null && !from.isEmpty()) {
-                String fromDecoded = java.net.URLDecoder.decode(from, "UTF-8");
-                boolean hasSearch = fromDecoded.contains("searchstring=");
-                response.sendRedirect((hasSearch ? "/runsearch?" : "/patientList?") + fromDecoded.substring(1));
-            } else {
-                response.sendRedirect("/patientList");
-            }
+            response.sendRedirect("/patientList");
         } catch (IllegalArgumentException e) {
             request.setAttribute("errorMessage", "Patient not found: " + e.getMessage());
             getServletContext().getRequestDispatcher("/error.jsp").forward(request, response);

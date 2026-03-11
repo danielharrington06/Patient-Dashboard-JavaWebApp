@@ -1,6 +1,5 @@
 <%@ page import="java.util.LinkedHashMap" %>
 <%@ page import="java.util.Map" %>
-<%@ page import="java.net.URLDecoder" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
 <html lang="en">
@@ -17,12 +16,6 @@
         String id = request.getParameter("id") != null
             ? request.getParameter("id")
             : (String) request.getAttribute("patientId");
-        String fromEncoded = request.getParameter("from") != null
-            ? request.getParameter("from")
-            : (String) request.getAttribute("from");
-        if (fromEncoded == null) fromEncoded = "";
-        String fromParam = fromEncoded;
-        String cancelHref = "/patientRecord?id=" + id + (fromParam.isEmpty() ? "" : "&from=" + fromParam);
 
         java.util.Set<String> requiredFields = new java.util.HashSet<>(
             java.util.Arrays.asList("FIRST", "LAST", "BIRTHDATE", "GENDER", "SSN")
@@ -30,7 +23,7 @@
     %>
 
     <div class="record-actions">
-        <a href="<%= cancelHref %>" class="btn btn-secondary">← Cancel</a>
+        <a href="/patientRecord?id=<%= id %>" class="btn btn-secondary">← Cancel</a>
         <div class="record-actions-right">
             <button type="submit" form="edit-form" class="btn">Save Changes</button>
         </div>
@@ -52,9 +45,8 @@
         LinkedHashMap<String, String> columnLabels = (LinkedHashMap<String, String>) request.getAttribute("columnLabels");
     %>
 
-    <form id="edit-form" method="POST" action="/editPatient" novalidate>
-        <input type="hidden" name="id"   value="<%= id %>"/>
-        <input type="hidden" name="from" value="<%= fromParam %>"/>
+    <form id="edit-form" method="POST" action="/editPatient">
+        <input type="hidden" name="id" value="<%= id %>"/>
 
         <dl>
         <% for (Map.Entry<String, String> entry : rawRecord.entrySet()) {
@@ -120,7 +112,6 @@
 
 <script>
     const form = document.getElementById('edit-form');
-    const today = new Date().toISOString().split('T')[0];
 
     document.getElementById('field-SSN').addEventListener('input', function () {
         let v = this.value.replace(/\D/g, '');
@@ -148,10 +139,9 @@
 
     form.addEventListener('submit', function (e) {
         let valid = true;
-        let errorBanner = document.getElementById('validation-banner');
 
-        // clear previous banner
-        if (errorBanner) errorBanner.remove();
+        const existingBanner = document.getElementById('validation-banner');
+        if (existingBanner) existingBanner.remove();
 
         [
             { id: 'field-FIRST',     errId: 'err-FIRST',     msg: 'First name is required.' },
@@ -192,7 +182,6 @@
 
         if (!valid) {
             e.preventDefault();
-            // insert banner after record-actions div
             const banner = document.createElement('div');
             banner.id = 'validation-banner';
             banner.className = 'error';
