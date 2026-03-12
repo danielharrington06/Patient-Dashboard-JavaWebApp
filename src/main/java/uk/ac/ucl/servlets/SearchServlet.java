@@ -62,7 +62,7 @@ public class SearchServlet extends HttpServlet {
             // Apply filters
             results = model.filterPatients(results, genderFilter, aliveFilter, maritalFilter, raceFilterList, ethnicityFilterList);
 
-            // Apply sort 
+            // Apply sort
             String sortKey = request.getParameter("sort");
             String sortDir = request.getParameter("dir");
             boolean ascending = !"desc".equals(sortDir);
@@ -85,7 +85,7 @@ public class SearchServlet extends HttpServlet {
             int totalPages = (int) Math.ceil((double) totalPatients / pageSize);
             Map<String, List<String>> pageData = model.getPage(results, page, pageSize);
 
-            // Get request attributes for JSP
+            // Set request attributes for JSP
             request.setAttribute("patientData", pageData);
             request.setAttribute("currentPage", page);
             request.setAttribute("totalPages", totalPages);
@@ -100,7 +100,13 @@ public class SearchServlet extends HttpServlet {
             request.setAttribute("ethnicityFilterList", ethnicityFilterList);
             request.setAttribute("raceOptions", model.getDistinctValuesWithLabels("RACE"));
             request.setAttribute("ethnicityOptions", model.getDistinctValuesWithLabels("ETHNICITY"));
-            
+            request.setAttribute("resetUrls", model.buildResetUrls(
+                searchString, genderFilter, aliveFilter, maritalFilter, raceFilterList, ethnicityFilterList
+            ));
+            request.setAttribute("paginationBaseUrl", model.buildPaginationBaseUrl(
+                searchString, genderFilter, aliveFilter, maritalFilter, raceFilterList, ethnicityFilterList, sortKey, sortDir
+            ));
+
             // Save current list URL to session for back navigation
             String queryString = request.getQueryString();
             String currentUrl = "/runsearch" + (queryString != null ? "?" + queryString : "");

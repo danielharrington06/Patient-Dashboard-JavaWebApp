@@ -24,6 +24,8 @@ public class ViewPatientListServlet extends HttpServlet {
         try {
             Model model = ModelFactory.getModel();
 
+            String searchTerm = request.getParameter("searchstring");
+            
             // Read filter parameters 
             String genderFilter = request.getParameter("gender");
             String aliveFilter = request.getParameter("alive");
@@ -77,6 +79,9 @@ public class ViewPatientListServlet extends HttpServlet {
             request.setAttribute("ethnicityFilterList", ethnicityFilterList);
             request.setAttribute("raceOptions", model.getDistinctValuesWithLabels("RACE"));
             request.setAttribute("ethnicityOptions", model.getDistinctValuesWithLabels("ETHNICITY"));
+
+            request.setAttribute("resetUrls", model.buildResetUrls(searchTerm, genderFilter, aliveFilter, maritalFilter, raceFilterList, ethnicityFilterList));
+            request.setAttribute("paginationBaseUrl", model.buildPaginationBaseUrl(searchTerm, genderFilter, aliveFilter, maritalFilter, raceFilterList, ethnicityFilterList, sortKey, sortDir));
             
             // Save current list URL to session for back navigation
             String queryString = request.getQueryString();

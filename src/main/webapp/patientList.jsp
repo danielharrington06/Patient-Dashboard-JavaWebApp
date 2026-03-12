@@ -1,6 +1,7 @@
 <%@ page import="java.util.Map" %>
 <%@ page import="java.util.LinkedHashMap" %>
 <%@ page import="java.util.List" %>
+<%@ page import="java.util.ArrayList" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
 <html lang="en">
@@ -25,64 +26,19 @@
                 <a href="/patientList" class="btn btn-secondary">Reset All</a>
             </div>
 
-            <%-- Pre-compute reset URLs and retrieve filter data before filter groups --%>
+            <%-- Retrieve filter data and reset URLs from request attributes --%>
             <%
-                String st = request.getParameter("searchstring");
-                String gf = request.getParameter("gender");
-                String af = request.getParameter("alive");
-                String mf = request.getParameter("marital");
-                String[] rfl = request.getParameterValues("race");
-                String[] efl = request.getParameterValues("ethnicity");
-
-                // URL without gender
-                StringBuilder noGenderUrl = new StringBuilder("/runsearch?");
-                if (st != null && !st.isEmpty()) noGenderUrl.append("searchstring=").append(st).append("&");
-                if (af != null && !af.isEmpty()) noGenderUrl.append("alive=").append(af).append("&");
-                if (mf != null && !mf.isEmpty()) noGenderUrl.append("marital=").append(mf).append("&");
-                if (rfl != null) for (String r : rfl) noGenderUrl.append("race=").append(r).append("&");
-                if (efl != null) for (String e : efl) noGenderUrl.append("ethnicity=").append(e).append("&");
-
-                // URL without alive
-                StringBuilder noAliveUrl = new StringBuilder("/runsearch?");
-                if (st != null && !st.isEmpty()) noAliveUrl.append("searchstring=").append(st).append("&");
-                if (gf != null && !gf.isEmpty()) noAliveUrl.append("gender=").append(gf).append("&");
-                if (mf != null && !mf.isEmpty()) noAliveUrl.append("marital=").append(mf).append("&");
-                if (rfl != null) for (String r : rfl) noAliveUrl.append("race=").append(r).append("&");
-                if (efl != null) for (String e : efl) noAliveUrl.append("ethnicity=").append(e).append("&");
-
-                // URL without marital
-                StringBuilder noMaritalUrl = new StringBuilder("/runsearch?");
-                if (st != null && !st.isEmpty()) noMaritalUrl.append("searchstring=").append(st).append("&");
-                if (gf != null && !gf.isEmpty()) noMaritalUrl.append("gender=").append(gf).append("&");
-                if (af != null && !af.isEmpty()) noMaritalUrl.append("alive=").append(af).append("&");
-                if (rfl != null) for (String r : rfl) noMaritalUrl.append("race=").append(r).append("&");
-                if (efl != null) for (String e : efl) noMaritalUrl.append("ethnicity=").append(e).append("&");
-
-                // URL without race
-                StringBuilder noRaceUrl = new StringBuilder("/runsearch?");
-                if (st != null && !st.isEmpty()) noRaceUrl.append("searchstring=").append(st).append("&");
-                if (gf != null && !gf.isEmpty()) noRaceUrl.append("gender=").append(gf).append("&");
-                if (af != null && !af.isEmpty()) noRaceUrl.append("alive=").append(af).append("&");
-                if (mf != null && !mf.isEmpty()) noRaceUrl.append("marital=").append(mf).append("&");
-                if (efl != null) for (String e : efl) noRaceUrl.append("ethnicity=").append(e).append("&");
-
-                // URL without ethnicity
-                StringBuilder noEthnicityUrl = new StringBuilder("/runsearch?");
-                if (st != null && !st.isEmpty()) noEthnicityUrl.append("searchstring=").append(st).append("&");
-                if (gf != null && !gf.isEmpty()) noEthnicityUrl.append("gender=").append(gf).append("&");
-                if (af != null && !af.isEmpty()) noEthnicityUrl.append("alive=").append(af).append("&");
-                if (mf != null && !mf.isEmpty()) noEthnicityUrl.append("marital=").append(mf).append("&");
-                if (rfl != null) for (String r : rfl) noEthnicityUrl.append("race=").append(r).append("&");
-
-                LinkedHashMap<String, String> raceOptions =
-                    (LinkedHashMap<String, String>) request.getAttribute("raceOptions");
+                Map<String, String> resetUrls = (Map<String, String>) request.getAttribute("resetUrls");
+                String paginationBaseUrl = (String) request.getAttribute("paginationBaseUrl");
+                String gf = (String) request.getAttribute("genderFilter");
+                String af = (String) request.getAttribute("aliveFilter");
+                String mf = (String) request.getAttribute("maritalFilter");
                 List<String> raceFilterList = (List<String>) request.getAttribute("raceFilterList");
-                if (raceFilterList == null) raceFilterList = new java.util.ArrayList<>();
-
-                LinkedHashMap<String, String> ethnicityOptions =
-                    (LinkedHashMap<String, String>) request.getAttribute("ethnicityOptions");
                 List<String> ethnicityFilterList = (List<String>) request.getAttribute("ethnicityFilterList");
-                if (ethnicityFilterList == null) ethnicityFilterList = new java.util.ArrayList<>();
+                LinkedHashMap<String, String> raceOptions = (LinkedHashMap<String, String>) request.getAttribute("raceOptions");
+                LinkedHashMap<String, String> ethnicityOptions = (LinkedHashMap<String, String>) request.getAttribute("ethnicityOptions");
+                if (raceFilterList == null) raceFilterList = new ArrayList<>();
+                if (ethnicityFilterList == null) ethnicityFilterList = new ArrayList<>();
             %>
 
             <div class="filter-row">
@@ -91,7 +47,7 @@
                 <div class="filter-group">
                     <div class="filter-label-row">
                         <label class="filter-label">Gender</label>
-                        <a href="<%= noGenderUrl %>" class="filter-clear-link">Reset</a>
+                        <a href="<%= resetUrls.get("gender") %>" class="filter-clear-link">Reset</a>
                     </div>
                     <div class="filter-options">
                         <label class="filter-chip">
@@ -119,7 +75,7 @@
                 <div class="filter-group">
                     <div class="filter-label-row">
                         <label class="filter-label">Status</label>
-                        <a href="<%= noAliveUrl %>" class="filter-clear-link">Reset</a>
+                        <a href="<%= resetUrls.get("alive") %>" class="filter-clear-link">Reset</a>
                     </div>
                     <div class="filter-options">
                         <label class="filter-chip">
@@ -147,7 +103,7 @@
                 <div class="filter-group">
                     <div class="filter-label-row">
                         <label class="filter-label">Marital Status</label>
-                        <a href="<%= noMaritalUrl %>" class="filter-clear-link">Reset</a>
+                        <a href="<%= resetUrls.get("marital") %>" class="filter-clear-link">Reset</a>
                     </div>
                     <div class="filter-options">
                         <label class="filter-chip">
@@ -181,7 +137,7 @@
                 <div class="filter-group">
                     <div class="filter-label-row">
                         <label class="filter-label">Race</label>
-                        <a href="<%= noRaceUrl %>" class="filter-clear-link">Reset</a>
+                        <a href="<%= resetUrls.get("race") %>" class="filter-clear-link">Reset</a>
                     </div>
                     <div class="filter-options">
                         <% if (raceOptions != null) {
@@ -200,7 +156,7 @@
                 <div class="filter-group">
                     <div class="filter-label-row">
                         <label class="filter-label">Ethnicity</label>
-                        <a href="<%= noEthnicityUrl %>" class="filter-clear-link">Reset</a>
+                        <a href="<%= resetUrls.get("ethnicity") %>" class="filter-clear-link">Reset</a>
                     </div>
                     <div class="filter-options">
                         <% if (ethnicityOptions != null) {
@@ -331,24 +287,7 @@
         Integer currentPage = (Integer) request.getAttribute("currentPage");
         Integer totalPages = (Integer) request.getAttribute("totalPages");
         Integer totalPatients = (Integer) request.getAttribute("totalPatients");
-
-        StringBuilder baseUrlBuilder = new StringBuilder("/runsearch?");
-        if (searchTerm != null && !searchTerm.isEmpty())
-            baseUrlBuilder.append("searchstring=").append(searchTerm).append("&");
-        if (genderFilter != null && !genderFilter.isEmpty())
-            baseUrlBuilder.append("gender=").append(genderFilter).append("&");
-        if (aliveFilter != null && !aliveFilter.isEmpty())
-            baseUrlBuilder.append("alive=").append(aliveFilter).append("&");
-        if (maritalFilter != null && !maritalFilter.isEmpty())
-            baseUrlBuilder.append("marital=").append(maritalFilter).append("&");
-        if (raceFilterList != null)
-            for (String r : raceFilterList) baseUrlBuilder.append("race=").append(r).append("&");
-        if (ethnicityFilterList != null)
-            for (String e : ethnicityFilterList) baseUrlBuilder.append("ethnicity=").append(e).append("&");
-        if (sortKey != null && !sortKey.isEmpty())
-            baseUrlBuilder.append("sort=").append(sortKey).append("&dir=").append(sortDir != null ? sortDir : "asc").append("&");
-        baseUrlBuilder.append("page=");
-        String baseUrl = baseUrlBuilder.toString();
+        String baseUrl = paginationBaseUrl;
 
         if (currentPage != null && totalPages != null) {
     %>

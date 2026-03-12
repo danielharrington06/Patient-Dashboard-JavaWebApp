@@ -401,4 +401,40 @@ public class Model
         Path outputPath = Paths.get("data", "patients.json");
         writer.write(dataFrame, outputPath.toString());
     }
+
+    public Map<String, String> buildResetUrls(String search, String gender, String alive, String marital, List<String> race, List<String> ethnicity) {
+        Map<String, String> urls = new HashMap<>();
+        urls.put("gender", buildUrl(search, null, alive, marital, race, ethnicity));
+        urls.put("alive",  buildUrl(search, gender, null, marital, race, ethnicity));
+        urls.put("marital",buildUrl(search, gender, alive, null, race, ethnicity));
+        urls.put("race",   buildUrl(search, gender, alive, marital, null, ethnicity));
+        urls.put("ethnicity", buildUrl(search, gender, alive, marital, race, null));
+        return urls;
+    }
+
+    private String buildUrl(String search, String gender, String alive, String marital, List<String> race, List<String> ethnicity) {
+        StringBuilder sb = new StringBuilder("/runsearch?");
+        if (search != null && !search.isEmpty()) sb.append("searchstring=").append(search).append("&");
+        if (gender != null && !gender.isEmpty()) sb.append("gender=").append(gender).append("&");
+        if (alive != null && !alive.isEmpty()) sb.append("alive=").append(alive).append("&");
+        if (marital != null && !marital.isEmpty()) sb.append("marital=").append(marital).append("&");
+        if (race != null) race.forEach(r -> sb.append("race=").append(r).append("&"));
+        if (ethnicity != null) ethnicity.forEach(e -> sb.append("ethnicity=").append(e).append("&"));
+        return sb.toString();
+    }
+
+    public String buildPaginationBaseUrl(String search, String gender, String alive, String marital, List<String> race, List<String> ethnicity, String sortKey, String sortDir) {
+        StringBuilder sb = new StringBuilder(
+            (search != null && !search.isEmpty()) ? "/runsearch?" : "/patientList?"
+        );
+        if (search != null && !search.isEmpty()) sb.append("searchstring=").append(search).append("&");
+        if (gender != null && !gender.isEmpty()) sb.append("gender=").append(gender).append("&");
+        if (alive != null && !alive.isEmpty()) sb.append("alive=").append(alive).append("&");
+        if (marital != null && !marital.isEmpty()) sb.append("marital=").append(marital).append("&");
+        if (race != null) race.forEach(r -> sb.append("race=").append(r).append("&"));
+        if (ethnicity != null) ethnicity.forEach(e -> sb.append("ethnicity=").append(e).append("&"));
+        if (sortKey != null && !sortKey.isEmpty()) sb.append("sort=").append(sortKey).append("&dir=").append(sortDir != null ? sortDir : "asc").append("&");
+        sb.append("page=");
+        return sb.toString();
+    }
 }
