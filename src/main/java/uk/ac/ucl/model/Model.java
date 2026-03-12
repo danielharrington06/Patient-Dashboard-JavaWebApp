@@ -1,6 +1,7 @@
 package uk.ac.ucl.model;
 
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -11,7 +12,7 @@ public class Model
 {
     DataFrame dataFrame;
     public static final int DEFAULT_PAGE_SIZE = 40;
-    public static final String DATA_FILE = "data/patients100.csv";
+    public static final String DATA_FILE = Paths.get("data", "patients100.csv").toString();
 
     public Model() {
         DataLoader loader = new DataLoader();
