@@ -17,17 +17,15 @@ public class Model
     public String currentDataFile;
 
     public Model() {
-        this.currentDataFile = DEFAULT_FILE;
-        CSVLoader loader = new CSVLoader();
         try {
-            this.dataFrame = loader.load(DEFAULT_FILE);
+            reloadData(DEFAULT_FILE);
         } catch (IOException e) {
             System.err.println("Error loading CSV file: " + e.getMessage());
             this.dataFrame = new DataFrame(); // fallback to empty frame
         }
     }
 
-    public void reloadData(String filename) throws IOException {
+    public final void reloadData(String filename) throws IOException {
         CSVLoader loader = new CSVLoader();
         this.dataFrame = loader.load(filename);
         this.currentDataFile = filename;
