@@ -1,6 +1,7 @@
 package uk.ac.ucl.model;
 
 import java.io.IOException;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -15,7 +16,7 @@ public class Model
     public static final String DATA_FILE = Paths.get("data", "patients100.csv").toString();
 
     public Model() {
-        DataLoader loader = new DataLoader();
+        CSVLoader loader = new CSVLoader();
         try {
             this.dataFrame = loader.load(DATA_FILE);
         } catch (IOException e) {
@@ -365,7 +366,7 @@ public class Model
     }
 
     public void saveToCSV() throws IOException {
-        DataWriter writer = new DataWriter();
+        CSVWriter writer = new CSVWriter();
         writer.save(dataFrame, DATA_FILE);
     }
 
@@ -393,5 +394,11 @@ public class Model
         int row = getRowNumFromId(id);
         dataFrame.editRow(row, values);
         saveToCSV();
+    }
+
+    public void exportToJSON() throws IOException {
+        JSONWriter writer = new JSONWriter();
+        Path outputPath = Paths.get("data", "patients.json");
+        writer.write(dataFrame, outputPath.toString());
     }
 }

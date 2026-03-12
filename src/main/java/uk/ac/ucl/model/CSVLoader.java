@@ -8,8 +8,15 @@ import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 
-class DataLoader {
+class CSVLoader {
 
+<<<<<<< HEAD:src/main/java/uk/ac/ucl/model/DataLoader.java
+=======
+    public CSVLoader() {
+        
+    }
+
+>>>>>>> feature/export-json:src/main/java/uk/ac/ucl/model/CSVLoader.java
     public DataFrame load(String csvFilePath) throws IOException {
         DataFrame dataFrame = new DataFrame();
         try (BufferedReader reader = new BufferedReader(new FileReader(csvFilePath));
