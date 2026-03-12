@@ -1,5 +1,9 @@
-<%@ page import="java.util.LinkedHashMap" %>
 <%@ page import="java.util.Map" %>
+<%@ page import="java.util.LinkedHashMap" %>
+<%@ page import="java.util.Set" %>
+<%@ page import="java.util.HashSet" %>
+<%@ page import="java.util.List" %>
+<%@ page import="java.util.Arrays" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
 <html lang="en">
@@ -17,9 +21,7 @@
             ? request.getParameter("id")
             : (String) request.getAttribute("patientId");
 
-        java.util.Set<String> requiredFields = new java.util.HashSet<>(
-            java.util.Arrays.asList("FIRST", "LAST", "BIRTHDATE", "GENDER", "SSN")
-        );
+        Set<String> requiredFields = new HashSet<>(Arrays.asList("FIRST", "LAST", "BIRTHDATE", "GENDER", "SSN"));
     %>
 
     <div class="record-actions">
@@ -49,27 +51,28 @@
         <input type="hidden" name="id" value="<%= id %>"/>
 
         <dl>
-        <% for (Map.Entry<String, String> entry : rawRecord.entrySet()) {
-               String col = entry.getKey();
-               String val = entry.getValue() != null ? entry.getValue() : "";
-               boolean isRequired = requiredFields.contains(col);
+        <% for (Map.Entry<String, String> entry : columnLabels.entrySet()) {
+            String col = entry.getKey();
+            String label = entry.getValue();
+            String val = rawRecord != null && rawRecord.get(col) != null ? rawRecord.get(col) : "";
+            boolean isRequired = requiredFields.contains(col);
 
-               if ("ID".equals(col)) { %>
-                <dt><%= columnLabels != null ? columnLabels.getOrDefault("ID", "Patient ID") : "Patient ID" %></dt>
+            if ("ID".equals(col)) { %>
+                <dt>Patient ID</dt>
                 <dd><%= val %></dd>
         <%     continue;
-           } %>
+        } %>
             <dt>
                 <label for="field-<%= col %>">
-                    <%= columnLabels != null && columnLabels.containsKey(col) ? columnLabels.get(col) : col %>
+                    <%= label %>
                     <% if (isRequired) { %><span style="color: var(--colour-error)">*</span><% } %>
                 </label>
             </dt>
             <dd>
             <% if ("BIRTHDATE".equals(col) || "DEATHDATE".equals(col)) { %>
                 <input class="record-input" type="date" id="field-<%= col %>" name="<%= col %>"
-                       value="<%= val %>"
-                       <%= isRequired ? "required" : "" %>>
+                    value="<%= val %>"
+                    <%= isRequired ? "required" : "" %>>
                 <span class="field-error" id="err-<%= col %>"></span>
             <% } else if ("GENDER".equals(col)) { %>
                 <select class="record-input" id="field-<%= col %>" name="<%= col %>" required>
@@ -97,8 +100,8 @@
                 <span class="field-error" id="err-<%= col %>"></span>
             <% } else { %>
                 <input class="record-input" type="text" id="field-<%= col %>" name="<%= col %>"
-                       value="<%= val %>"
-                       <%= isRequired ? "required" : "" %>>
+                    value="<%= val %>"
+                    <%= isRequired ? "required" : "" %>>
                 <span class="field-error" id="err-<%= col %>"></span>
             <% } %>
             </dd>

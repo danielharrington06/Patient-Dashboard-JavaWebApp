@@ -1,7 +1,6 @@
 package uk.ac.ucl.servlets;
 
 import java.io.IOException;
-import java.util.LinkedHashMap;
 
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletContext;
@@ -46,8 +45,8 @@ public class ViewPatientRecordServlet extends HttpServlet
 
             // get id from URL
             String id = request.getParameter("id");
-            LinkedHashMap<String, String> patientRecord = model.getFormattedPatientRecord(id);
-            request.setAttribute("patientRecord", patientRecord);
+            request.setAttribute("patientRecord", model.getFormattedPatientRecord(id));
+            request.setAttribute("columnLabels", model.getAllColumnNamesFormatted());
 
             RequestDispatcher dispatch = getServletContext().getRequestDispatcher("/patientRecord.jsp");
             dispatch.forward(request, response);

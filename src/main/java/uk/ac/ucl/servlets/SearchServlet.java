@@ -90,7 +90,7 @@ public class SearchServlet extends HttpServlet {
             request.setAttribute("currentPage", page);
             request.setAttribute("totalPages", totalPages);
             request.setAttribute("totalPatients", totalPatients);
-            request.setAttribute("columnDisplayNames", model.getSummaryColumnDisplayNames());
+            request.setAttribute("columnDisplayNames", model.getSummaryColumnNamesFormatted());
             request.setAttribute("sortKey", sortKey);
             request.setAttribute("sortDir", sortDir);
             request.setAttribute("genderFilter", genderFilter);

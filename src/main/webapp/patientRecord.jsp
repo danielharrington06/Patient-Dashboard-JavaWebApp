@@ -57,13 +57,14 @@
         }
     %>
     <%
-        LinkedHashMap<String, String> patientRecord =
-            (LinkedHashMap<String, String>) request.getAttribute("patientRecord");
+        Map<String, String> patientRecord = (Map<String, String>) request.getAttribute("patientRecord");
+        Map<String, String> columnLabels = (Map<String, String>) request.getAttribute("columnLabels");
     %>
     <dl>
-        <% for (Map.Entry<String, String> entry : patientRecord.entrySet()) { %>
-            <dt><%= entry.getKey() %></dt>
-            <dd><%= entry.getValue() != null && !entry.getValue().isEmpty() ? entry.getValue() : "—" %></dd>
+        <% for (Map.Entry<String, String> entry : columnLabels.entrySet()) { %>
+            <dt><%= entry.getValue() %></dt>
+            <% String val = patientRecord.get(entry.getKey());%>
+            <dd><%= val != null && !val.isEmpty() ? val : "—" %></dd>
         <% } %>
     </dl>
 </div>
