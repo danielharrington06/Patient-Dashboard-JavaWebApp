@@ -13,7 +13,7 @@ public class Model
 {
     DataFrame dataFrame;
     public static final int DEFAULT_PAGE_SIZE = 40;
-    public static final String DATA_FILE = "data/patients100.csv";
+    public static final String DATA_FILE = Paths.get("data", "patients100.csv").toString();
 
     public Model() {
         CSVLoader loader = new CSVLoader();
