@@ -1,6 +1,8 @@
 package uk.ac.ucl.model;
 
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -392,5 +394,11 @@ public class Model
         int row = getRowNumFromId(id);
         dataFrame.editRow(row, values);
         saveToCSV();
+    }
+
+    public void exportToJSON() throws IOException {
+        JSONWriter writer = new JSONWriter();
+        Path outputPath = Paths.get("data", "patients.json");
+        writer.write(dataFrame, outputPath.toString());
     }
 }
