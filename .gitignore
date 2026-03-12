@@ -245,3 +245,8 @@ GitHub.sublime-settings
 logfile.txt
 logfile.txt.lck
 *.txt.*
+
+### Data Files larger than 100
+patients1000.csv
+patients10000.csv
+patients100000.csv

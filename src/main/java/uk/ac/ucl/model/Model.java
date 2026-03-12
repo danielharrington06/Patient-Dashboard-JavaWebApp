@@ -14,7 +14,7 @@ public class Model
     public static final String DATA_FILE = "data/patients100.csv";
 
     public Model() {
-        DataLoader loader = new DataLoader();
+        CSVLoader loader = new CSVLoader();
         try {
             this.dataFrame = loader.load(DATA_FILE);
         } catch (IOException e) {
@@ -364,7 +364,7 @@ public class Model
     }
 
     public void saveToCSV() throws IOException {
-        DataWriter writer = new DataWriter();
+        CSVWriter writer = new CSVWriter();
         writer.save(dataFrame, DATA_FILE);
     }
 

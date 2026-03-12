@@ -8,9 +8,9 @@ import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 
-class DataLoader {
+class CSVLoader {
 
-    public DataLoader() {
+    public CSVLoader() {
         
     }
 
