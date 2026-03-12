@@ -23,7 +23,7 @@ import uk.ac.ucl.model.ModelFactory;
  * 4. Request-scoped attribute passing to JSPs for rendering lists.
  */
 @WebServlet("/patientRecord")
-public class ViewPatientRecordServlet extends HttpServlet
+public class PatientRecordServlet extends HttpServlet
 {
 
     /**

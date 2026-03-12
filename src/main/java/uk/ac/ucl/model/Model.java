@@ -6,8 +6,10 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class Model
 {
@@ -15,6 +17,8 @@ public class Model
     public static final int DEFAULT_PAGE_SIZE = 40;
     public static final String DEFAULT_FILE = Paths.get("data", "patients100.csv").toString();
     public String currentDataFile;
+    private Map<String, Integer> idToRowIndex = new HashMap<>();
+
 
     public Model() {
         try {
@@ -29,6 +33,14 @@ public class Model
         CSVLoader loader = new CSVLoader();
         this.dataFrame = loader.load(filename);
         this.currentDataFile = filename;
+        buildIndex();
+    }
+
+    private void buildIndex() {
+        idToRowIndex = new HashMap<>();
+        for (int row = 0; row < dataFrame.getRowCount(); row++) {
+            idToRowIndex.put(dataFrame.getValue("ID", row), row);
+        }
     }
 
     public String getCurrentDataFile() {
@@ -48,20 +60,13 @@ public class Model
     }
 
     public int getRowNumFromId(String id) {
-        for (int row = 0; row < getRowCount(); row++) {
-            if (id.equals(getValue("ID", row))) {
-                return row;
-            }
-        }
-        // not found, so invalid ID and incorrect code
-        throw new IllegalArgumentException("Invalid id: " + id);
+        Integer row = idToRowIndex.get(id);
+        if (row == null) throw new IllegalArgumentException("Invalid id: " + id);
+        return row;
     }
 
     public boolean idExists(String id) {
-        for (int row = 0; row < getRowCount(); row++) {
-            if (id.equals(getValue("ID", row))) return true;
-        }
-        return false;
+        return idToRowIndex.containsKey(id);
     }
 
     public String formatColumnName(String columnName) {
@@ -139,8 +144,8 @@ public class Model
 
     public LinkedHashMap<String, String> getRawPatientRecord(String id) {
         LinkedHashMap<String, String> record = new LinkedHashMap<>();
+        int row = getRowNumFromId(id);
         for (String column : getColumnNames()) {
-            int row = getRowNumFromId(id);
             record.put(column, getValue(column, row));
         }
         return record;
@@ -148,8 +153,8 @@ public class Model
 
     public Map<String, String> getFormattedPatientRecord(String id) {
         Map<String, String> formatted = new LinkedHashMap<>();
+        int row = getRowNumFromId(id);
         for (String column : getColumnNames()) {
-            int row = getRowNumFromId(id);
             formatted.put(column, formatValue(column, getValue(column, row)));
         }
         return formatted;
@@ -355,13 +360,14 @@ public class Model
     }
 
     public List<String> getDistinctValues(String columnName) {
-        List<String> distinct = new ArrayList<>();
+        Set<String> seen = new LinkedHashSet<>();
         for (int row = 0; row < getRowCount(); row++) {
             String value = getValue(columnName, row);
-            if (value != null && !value.isEmpty() && !distinct.contains(value)) {
-                distinct.add(value);
+            if (value != null && !value.isEmpty()) {
+                seen.add(value);
             }
         }
+        List<String> distinct = new ArrayList<>(seen);
         distinct.sort(String::compareToIgnoreCase);
         return distinct;
     }

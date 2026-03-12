@@ -23,6 +23,6 @@ public class SwitchDatasetServlet extends HttpServlet {
             Model model = ModelFactory.getModel();
             model.reloadData(Paths.get("data", "patients" + size + ".csv").toString());
         }
-        response.sendRedirect("/patientList");
+        request.getRequestDispatcher("/index.jsp").forward(request, response);
     }
 }
