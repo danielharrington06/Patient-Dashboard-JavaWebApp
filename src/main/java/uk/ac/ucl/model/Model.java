@@ -13,16 +13,28 @@ public class Model
 {
     DataFrame dataFrame;
     public static final int DEFAULT_PAGE_SIZE = 40;
-    public static final String DATA_FILE = Paths.get("data", "patients100.csv").toString();
+    public static final String DEFAULT_FILE = Paths.get("data", "patients100.csv").toString();
+    public String currentDataFile;
 
     public Model() {
+        this.currentDataFile = DEFAULT_FILE;
         CSVLoader loader = new CSVLoader();
         try {
-            this.dataFrame = loader.load(DATA_FILE);
+            this.dataFrame = loader.load(DEFAULT_FILE);
         } catch (IOException e) {
             System.err.println("Error loading CSV file: " + e.getMessage());
             this.dataFrame = new DataFrame(); // fallback to empty frame
         }
+    }
+
+    public void reloadData(String filename) throws IOException {
+        CSVLoader loader = new CSVLoader();
+        this.dataFrame = loader.load(filename);
+        this.currentDataFile = filename;
+    }
+
+    public String getCurrentDataFile() {
+        return currentDataFile;
     }
 
     public List<String> getColumnNames() {
@@ -367,7 +379,7 @@ public class Model
 
     public void saveToCSV() throws IOException {
         CSVWriter writer = new CSVWriter();
-        writer.save(dataFrame, DATA_FILE);
+        writer.save(dataFrame, currentDataFile);
     }
 
     public void deletePatient(String id) throws IOException {
