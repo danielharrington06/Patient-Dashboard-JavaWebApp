@@ -10,10 +10,6 @@ import org.apache.commons.csv.CSVRecord;
 
 class DataLoader {
 
-    public DataLoader() {
-        
-    }
-
     public DataFrame load(String csvFilePath) throws IOException {
         DataFrame dataFrame = new DataFrame();
         try (BufferedReader reader = new BufferedReader(new FileReader(csvFilePath));
