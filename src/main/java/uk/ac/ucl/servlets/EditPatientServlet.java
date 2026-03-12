@@ -3,7 +3,9 @@ package uk.ac.ucl.servlets;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import jakarta.servlet.ServletException;
@@ -17,13 +19,6 @@ import uk.ac.ucl.model.ModelFactory;
 @WebServlet("/editPatient")
 public class EditPatientServlet extends HttpServlet {
 
-    private static final String[] COLUMNS = {
-        "BIRTHDATE", "DEATHDATE", "SSN", "DRIVERS", "PASSPORT",
-        "PREFIX", "FIRST", "LAST", "SUFFIX", "MAIDEN",
-        "MARITAL", "RACE", "ETHNICITY", "GENDER", "BIRTHPLACE",
-        "ADDRESS", "CITY", "STATE", "ZIP"
-    };
-
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String id = request.getParameter("id");
@@ -32,6 +27,7 @@ public class EditPatientServlet extends HttpServlet {
             Map<String, String> rawRecord = model.getRawPatientRecord(id);
             request.setAttribute("rawRecord", rawRecord);
             request.setAttribute("patientId", id);
+            request.setAttribute("columnLabels", model.getAllColumnNamesFormatted());
             getServletContext().getRequestDispatcher("/editPatient.jsp").forward(request, response);
         } catch (IllegalArgumentException e) {
             request.setAttribute("errorMessage", "Patient not found: " + e.getMessage());
@@ -43,10 +39,13 @@ public class EditPatientServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String id = request.getParameter("id");
         Model model = ModelFactory.getModel();
+        
+        List<String> columns = new ArrayList<>(model.getColumnNames()); // make sure to copy
+        columns.remove("ID");
 
         // Collect values
         Map<String, String> values = new LinkedHashMap<>();
-        for (String col : COLUMNS) {
+        for (String col : columns) {
             String val = request.getParameter(col);
             values.put(col, val != null ? val.trim() : "");
         }
@@ -100,13 +99,9 @@ public class EditPatientServlet extends HttpServlet {
         }
 
         if (errors.length() > 0) {
-            Map<String, String> columnLabels = new LinkedHashMap<>();
-            for (String col : model.getColumnNames()) {
-                columnLabels.put(col, model.formatColumnName(col));
-            }
-            request.setAttribute("columnLabels", columnLabels);
             request.setAttribute("errorMessage", errors.toString().trim());
             request.setAttribute("patientId", id);
+            request.setAttribute("columnLabels", model.getAllColumnNamesFormatted());
             request.setAttribute("rawRecord", new LinkedHashMap<>(values));
             getServletContext().getRequestDispatcher("/editPatient.jsp").forward(request, response);
             return;
@@ -117,11 +112,7 @@ public class EditPatientServlet extends HttpServlet {
             model.editPatient(id, values);
             response.sendRedirect("/patientRecord?id=" + id);
         } catch (IOException e) {
-            Map<String, String> columnLabels = new LinkedHashMap<>();
-            for (String col : model.getColumnNames()) {
-                columnLabels.put(col, model.formatColumnName(col));
-            }
-            request.setAttribute("columnLabels", columnLabels);
+            request.setAttribute("columnLabels", model.getAllColumnNamesFormatted());
             request.setAttribute("errorMessage", "Failed to save patient: " + e.getMessage());
             request.setAttribute("patientId", id);
             request.setAttribute("rawRecord", new LinkedHashMap<>(values));

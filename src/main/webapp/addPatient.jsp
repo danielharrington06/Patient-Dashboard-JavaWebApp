@@ -1,5 +1,9 @@
-<%@ page import="java.util.LinkedHashMap" %>
 <%@ page import="java.util.Map" %>
+<%@ page import="java.util.LinkedHashMap" %>
+<%@ page import="java.util.Set" %>
+<%@ page import="java.util.HashSet" %>
+<%@ page import="java.util.List" %>
+<%@ page import="java.util.Arrays" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
 <html lang="en">
@@ -19,40 +23,9 @@
         String generatedId = (String) request.getAttribute("generatedId");
         if (generatedId == null) generatedId = "";
 
-        java.util.Set<String> requiredFields = new java.util.HashSet<>(
-            java.util.Arrays.asList("FIRST", "LAST", "BIRTHDATE", "GENDER", "SSN")
-        );
+        Set<String> requiredFields = new HashSet<>(Arrays.asList("FIRST", "LAST", "BIRTHDATE", "GENDER", "SSN"));
 
-        // Column display labels — mirrors editPatient
-        java.util.Map<String, String> columnLabels = new java.util.LinkedHashMap<>();
-        columnLabels.put("ID",         "Patient ID");
-        columnLabels.put("BIRTHDATE",  "Date of Birth");
-        columnLabels.put("DEATHDATE",  "Date of Death");
-        columnLabels.put("SSN",        "SSN");
-        columnLabels.put("DRIVERS",    "Driver's Licence");
-        columnLabels.put("PASSPORT",   "Passport");
-        columnLabels.put("PREFIX",     "Prefix");
-        columnLabels.put("FIRST",      "First Name");
-        columnLabels.put("LAST",       "Last Name");
-        columnLabels.put("SUFFIX",     "Suffix");
-        columnLabels.put("MAIDEN",     "Maiden Name");
-        columnLabels.put("MARITAL",    "Marital Status");
-        columnLabels.put("RACE",       "Race");
-        columnLabels.put("ETHNICITY",  "Ethnicity");
-        columnLabels.put("GENDER",     "Gender");
-        columnLabels.put("BIRTHPLACE", "Birthplace");
-        columnLabels.put("ADDRESS",    "Address");
-        columnLabels.put("CITY",       "City");
-        columnLabels.put("STATE",      "State");
-        columnLabels.put("ZIP",        "ZIP Code");
-
-        // All editable columns in order
-        String[] columns = {
-            "BIRTHDATE", "DEATHDATE", "SSN", "DRIVERS", "PASSPORT",
-            "PREFIX", "FIRST", "LAST", "SUFFIX", "MAIDEN",
-            "MARITAL", "RACE", "ETHNICITY", "GENDER", "BIRTHPLACE",
-            "ADDRESS", "CITY", "STATE", "ZIP"
-        };
+        Map<String, String> columnLabels = (Map<String, String>) request.getAttribute("columnLabels");
     %>
 
     <div class="record-actions">
@@ -80,18 +53,26 @@
             <%-- ID row — read only --%>
             <dt><%= columnLabels.get("ID") %></dt>
             <dd><%= generatedId %></dd>
+            
 
-            <% for (String col : columns) {
-                   // Retrieve preserved value on validation bounce-back, otherwise empty
-                   String val = request.getAttribute(col) != null
-                       ? (String) request.getAttribute(col)
-                       : "";
-                   boolean isRequired = requiredFields.contains(col);
+            <% columnLabels.remove("ID"); // no longer needed
+            
+            for (Map.Entry<String, String> entry : columnLabels.entrySet()) {
+                String col = entry.getKey();        // unformatted column name
+                String label = entry.getValue();    // formatted column name
+
+                String val = request.getAttribute(col) != null
+                    ? (String) request.getAttribute(col)
+                    : "";
+
+                boolean isRequired = requiredFields.contains(col);
             %>
             <dt>
                 <label for="field-<%= col %>">
-                    <%= columnLabels.getOrDefault(col, col) %>
-                    <% if (isRequired) { %><span style="color: var(--colour-error)">*</span><% } %>
+                    <%= label %>
+                    <% if (isRequired) { %>
+                        <span style="color: var(--colour-error)">*</span>
+                    <% } %>
                 </label>
             </dt>
             <dd>

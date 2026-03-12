@@ -134,22 +134,47 @@ public class Model
         return record;
     }
 
-    public LinkedHashMap<String, String> getFormattedPatientRecord(String id) {
-        LinkedHashMap<String, String> formatted = new LinkedHashMap<>();
+    public Map<String, String> getFormattedPatientRecord(String id) {
+        Map<String, String> formatted = new LinkedHashMap<>();
         for (String column : getColumnNames()) {
             int row = getRowNumFromId(id);
-            formatted.put(formatColumnName(column), formatValue(column, getValue(column, row)));
+            formatted.put(column, formatValue(column, getValue(column, row)));
         }
         return formatted;
     }
 
-    public List<String> getSummaryColumnDisplayNames() {
+    public List<String> getSummaryColumnNamesFormatted() {
         List<String> summaryColumns = List.of("FIRST", "LAST", "BIRTHDATE", "DEATHDATE", "GENDER", "MARITAL", "RACE", "ETHNICITY", "CITY");
         List<String> displayNames = new ArrayList<>();
         for (String col : summaryColumns) {
             displayNames.add(formatColumnName(col));
         }
         return displayNames;
+    }
+
+    public Map<String, String> getAllColumnNamesFormatted() {
+        Map<String, String> columnLabels = new LinkedHashMap<>();
+        columnLabels.put("ID",         "Patient ID");
+        columnLabels.put("PREFIX",     "Prefix");
+        columnLabels.put("FIRST",      "First Name");
+        columnLabels.put("LAST",       "Last Name");
+        columnLabels.put("SUFFIX",     "Suffix");
+        columnLabels.put("MAIDEN",     "Maiden Name");
+        columnLabels.put("GENDER",     "Gender");
+        columnLabels.put("BIRTHDATE",  "Date of Birth");
+        columnLabels.put("DEATHDATE",  "Date of Death");
+        columnLabels.put("MARITAL",    "Marital Status");
+        columnLabels.put("RACE",       "Race");
+        columnLabels.put("ETHNICITY",  "Ethnicity");
+        columnLabels.put("BIRTHPLACE", "Birthplace");
+        columnLabels.put("SSN",        "SSN");
+        columnLabels.put("DRIVERS",    "Driver's Licence");
+        columnLabels.put("PASSPORT",   "Passport");
+        columnLabels.put("ADDRESS",    "Address");
+        columnLabels.put("CITY",       "City");
+        columnLabels.put("STATE",      "State");
+        columnLabels.put("ZIP",        "ZIP Code");
+        return columnLabels;
     }
 
     public List<String> packagePatientSummaryInfo(int row) {

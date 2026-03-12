@@ -3,7 +3,9 @@ package uk.ac.ucl.servlets;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import jakarta.servlet.ServletException;
@@ -17,27 +19,24 @@ import uk.ac.ucl.model.ModelFactory;
 @WebServlet("/addPatient")
 public class AddPatientServlet extends HttpServlet {
 
-    private static final String[] COLUMNS = {
-        "BIRTHDATE", "DEATHDATE", "SSN", "DRIVERS", "PASSPORT",
-        "PREFIX", "FIRST", "LAST", "SUFFIX", "MAIDEN",
-        "MARITAL", "RACE", "ETHNICITY", "GENDER", "BIRTHPLACE",
-        "ADDRESS", "CITY", "STATE", "ZIP"
-    };
-
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         Model model = ModelFactory.getModel();
         request.setAttribute("generatedId", model.generateUUID());
+        request.setAttribute("columnLabels", model.getAllColumnNamesFormatted());
+        request.setAttribute("columnNames", model.getColumnNames());
         getServletContext().getRequestDispatcher("/addPatient.jsp").forward(request, response);
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         Model model = ModelFactory.getModel();
+        List<String> columns = new ArrayList<>(model.getColumnNames());
+        columns.remove("ID");
 
         // Collect values
         Map<String, String> values = new LinkedHashMap<>();
-        for (String col : COLUMNS) {
+        for (String col : columns) {
             String val = request.getParameter(col);
             values.put(col, val != null ? val.trim() : "");
         }
@@ -100,6 +99,7 @@ public class AddPatientServlet extends HttpServlet {
         if (errors.length() > 0) {
             request.setAttribute("errorMessage", errors.toString().trim());
             request.setAttribute("generatedId", generatedId);
+            request.setAttribute("columnLabels", model.getAllColumnNamesFormatted());
             for (Map.Entry<String, String> entry : values.entrySet()) {
                 request.setAttribute(entry.getKey(), entry.getValue());
             }
@@ -110,9 +110,11 @@ public class AddPatientServlet extends HttpServlet {
         // Save
         try {
             model.addPatient(values);
+            response.sendRedirect("/patientRecord?id=" + values.get("ID"));
         } catch (IOException e) {
             request.setAttribute("errorMessage", "Failed to save patient: " + e.getMessage());
             request.setAttribute("generatedId", generatedId);
+            request.setAttribute("columnLabels", model.getAllColumnNamesFormatted());
             for (Map.Entry<String, String> entry : values.entrySet()) {
                 request.setAttribute(entry.getKey(), entry.getValue());
             }
