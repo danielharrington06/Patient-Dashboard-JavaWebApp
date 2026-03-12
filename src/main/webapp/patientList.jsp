@@ -332,13 +332,23 @@
         Integer totalPages = (Integer) request.getAttribute("totalPages");
         Integer totalPatients = (Integer) request.getAttribute("totalPatients");
 
-        String baseUrl = (searchTerm != null && !searchTerm.isEmpty())
-            ? "/runsearch?searchstring=" + searchTerm
-            : "/patientList?";
-        if (sortKey != null && !sortKey.isEmpty()) {
-            baseUrl += (baseUrl.endsWith("?") ? "" : "&") + "sort=" + sortKey + "&dir=" + (sortDir != null ? sortDir : "asc");
-        }
-        baseUrl += (baseUrl.endsWith("?") ? "" : "&") + "page=";
+        StringBuilder baseUrlBuilder = new StringBuilder("/runsearch?");
+        if (searchTerm != null && !searchTerm.isEmpty())
+            baseUrlBuilder.append("searchstring=").append(searchTerm).append("&");
+        if (genderFilter != null && !genderFilter.isEmpty())
+            baseUrlBuilder.append("gender=").append(genderFilter).append("&");
+        if (aliveFilter != null && !aliveFilter.isEmpty())
+            baseUrlBuilder.append("alive=").append(aliveFilter).append("&");
+        if (maritalFilter != null && !maritalFilter.isEmpty())
+            baseUrlBuilder.append("marital=").append(maritalFilter).append("&");
+        if (raceFilterList != null)
+            for (String r : raceFilterList) baseUrlBuilder.append("race=").append(r).append("&");
+        if (ethnicityFilterList != null)
+            for (String e : ethnicityFilterList) baseUrlBuilder.append("ethnicity=").append(e).append("&");
+        if (sortKey != null && !sortKey.isEmpty())
+            baseUrlBuilder.append("sort=").append(sortKey).append("&dir=").append(sortDir != null ? sortDir : "asc").append("&");
+        baseUrlBuilder.append("page=");
+        String baseUrl = baseUrlBuilder.toString();
 
         if (currentPage != null && totalPages != null) {
     %>
