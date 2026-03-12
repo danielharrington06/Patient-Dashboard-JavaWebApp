@@ -19,10 +19,15 @@ public class SwitchDatasetServlet extends HttpServlet {
         String size = request.getParameter("datasize");
         List<String> valid = List.of("100", "1000", "10000", "100000");
         if (valid.contains(size)) {
-            ModelFactory.reset();
-            Model model = ModelFactory.getModel();
-            model.reloadData(Paths.get("data", "patients" + size + ".csv").toString());
+            try {
+                ModelFactory.reset();
+                Model model = ModelFactory.getModel();
+                model.reloadData(Paths.get("data", "patients" + size + ".csv").toString());
+                request.getSession().setAttribute("switchSuccess", size);
+            } catch (IOException e) {
+                request.getSession().setAttribute("switchError", e.getMessage());
+            }
         }
-        request.getRequestDispatcher("/index.jsp").forward(request, response);
+        response.sendRedirect(request.getContextPath() + "/");
     }
 }

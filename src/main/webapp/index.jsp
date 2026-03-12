@@ -25,21 +25,62 @@
 
     <div class="search-card" style="margin-top: 2rem;">
         <h3 style="margin-bottom: 1rem;">Select Dataset</h3>
-        <form method="POST" action="/switchdataset">
-            <div class="filter-options" style="gap: 1rem;">
-                <% for (String size : new String[]{"100", "1000", "10000", "100000"}) {
-                    String file = "data/patients" + size + ".csv";
-                    boolean active = currentFile.equals(file);
-                %>
-                <label class="filter-chip dataset-chip <%= active ? "dataset-chip-active" : "" %>">
-                    <input type="radio" name="datasize" value="<%= size %>"
-                        onchange="this.form.submit()"
-                        <%= active ? "checked" : "" %>>
-                    <%= size %> patients
-                </label>
-                <% } %>
-            </div>
-        </form>
+        <div style="display: flex; align-items: center; gap: 1.5rem; flex-wrap: wrap;">
+            <form method="POST" action="/switchdataset">
+                <div class="filter-options" style="gap: 1rem;">
+                    <% for (String size : new String[]{"100", "1000", "10000", "100000"}) {
+                        String file = "data/patients" + size + ".csv";
+                        boolean active = currentFile.equals(file);
+                    %>
+                    <label class="filter-chip dataset-chip <%= active ? "dataset-chip-active" : "" %>">
+                        <input type="radio" name="datasize" value="<%= size %>"
+                            onchange="this.form.submit()"
+                            <%= active ? "checked" : "" %>>
+                        <%= size %> patients
+                    </label>
+                    <% } %>
+                </div>
+            </form>
+
+            <form method="POST" action="/exportJSON">
+                <button type="submit" class="btn btn-primary">Export to JSON</button>
+            </form>
+            
+            <%
+                Boolean exportSuccess = (Boolean) session.getAttribute("exportSuccess");
+                String exportError = (String) session.getAttribute("exportError");
+                String switchSuccess = (String) session.getAttribute("switchSuccess");
+                String switchError = (String) session.getAttribute("switchError");
+                session.removeAttribute("exportSuccess");
+                session.removeAttribute("exportError");
+                session.removeAttribute("switchSuccess");
+                session.removeAttribute("switchError");
+            %>
+            <% if (Boolean.TRUE.equals(exportSuccess)) { %>
+                <p class="success" id="flash-msg">Data exported to data/patients.json successfully.</p>
+            <% } %>
+            <% if (exportError != null) { %>
+                <p class="error" id="flash-msg">Export failed: <%= exportError %></p>
+            <% } %>
+            <% if (switchSuccess != null) { %>
+                <p class="success" id="flash-msg">Dataset switched to <%= switchSuccess %> patients.</p>
+            <% } %>
+            <% if (switchError != null) { %>
+                <p class="error" id="flash-msg">Failed to switch dataset: <%= switchError %></p>
+            <% } %>
+
+            <script>
+                const msg = document.getElementById("flash-msg");
+                if (msg) {
+                    setTimeout(() => {
+                        msg.style.transition = "opacity 0.5s ease";
+                        msg.style.opacity = "0";
+                        setTimeout(() => msg.remove(), 500);
+                    }, 2500);
+                }
+            </script>
+
+        </div>
     </div>
 </div>
 
