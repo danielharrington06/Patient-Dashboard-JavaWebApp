@@ -30,4 +30,19 @@ public class JSONWriter {
 
         mapper.writerWithDefaultPrettyPrinter().writeValue(new File(jsonFilePath), rows);
     }
+
+    // Helper method in StatsServlet
+    public static String[] mapChartToJson(Map<String, Integer> map) {
+        StringBuilder labels = new StringBuilder("[");
+        StringBuilder values = new StringBuilder("[");
+        boolean first = true;
+        for (Map.Entry<String, Integer> e : map.entrySet()) {
+            if (!first) { labels.append(","); values.append(","); }
+            labels.append("\"").append(e.getKey().replace("\"", "\\\"")).append("\"");
+            values.append(e.getValue());
+            first = false;
+        }
+        labels.append("]"); values.append("]");
+        return new String[]{labels.toString(), values.toString()};
+    }
 }

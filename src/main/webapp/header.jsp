@@ -5,6 +5,7 @@
             <a href="/">Home</a>
             <a href="/patientList">Patients</a>
             <a href="/addPatient">Add Patient</a>
+            <a href="/stats">Statistics</a>
         </nav>
     </div>
 </header>

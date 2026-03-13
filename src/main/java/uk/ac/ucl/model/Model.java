@@ -18,11 +18,12 @@ import java.util.Set;
 public class Model
 {
     DataFrame dataFrame;
-    public static final int DEFAULT_PAGE_SIZE = 40;
     public static final String DEFAULT_FILE = Paths.get("data", "patients100.csv").toString();
     public String currentDataFile;
     private Map<String, Integer> idToRowIndex = new HashMap<>();
 
+    public static final int DEFAULT_PAGE_SIZE = 40;
+    public static final int ETHNICITY_CHART_TOP_N = 8;
 
     public Model() {
         try {
