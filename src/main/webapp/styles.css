@@ -747,3 +747,20 @@ span.field-error {
 @media (max-width: 640px) {
     .charts-grid { grid-template-columns: 1fr; }
 }
+
+.chart-card--wide {
+    grid-column: span 2;
+}
+
+.page-title {
+    margin-bottom: 1.5rem;
+}
+
+.section-heading--spaced {
+    margin-top: 2rem;
+}
+
+.stat-unit {
+    font-size: 1rem;
+    font-weight: 400;
+}

@@ -24,6 +24,7 @@ public class Model
 
     public static final int DEFAULT_PAGE_SIZE = 40;
     public static final int ETHNICITY_CHART_TOP_N = 8;
+    public static final int CITY_CHART_TOP_N = 10; 
 
     public Model() {
         try {
@@ -633,5 +634,77 @@ public class Model
         Map<String, Integer> sorted = new LinkedHashMap<>();
         for (Map.Entry<String, Integer> e : entries) sorted.put(e.getKey(), e.getValue());
         return sorted;
+    }
+
+    public String getMostCommonRace() {
+        Map<String, Integer> counts = new HashMap<>();
+        for (int row = 0; row < dataFrame.getRowCount(); row++) {
+            String val = dataFrame.getValue("RACE", row);
+            if (val != null && !val.isBlank()) counts.merge(val, 1, Integer::sum);
+        }
+        return counts.entrySet().stream()
+                .max(Map.Entry.comparingByValue())
+                .map(e -> formatValue("RACE", e.getKey()))
+                .orElse("N/A");
+    }
+
+    public int getLivingCount() {
+        int count = 0;
+        for (int row = 0; row < dataFrame.getRowCount(); row++) {
+            String death = dataFrame.getValue("DEATHDATE", row);
+            if (death == null || death.isBlank()) count++;
+        }
+        return count;
+    }
+
+    public int getDistinctCityCount() {
+        return getDistinctValues("CITY").size();
+    }
+
+    public Map<String, Integer> getLivingDeceasedCounts() {
+        int living = getLivingCount();
+        int deceased = dataFrame.getRowCount() - living;
+        Map<String, Integer> counts = new LinkedHashMap<>();
+        counts.put("Living", living);
+        counts.put("Deceased", deceased);
+        return counts;
+    }
+
+    public Map<String, Integer> getCityCounts(int topN) {
+        Map<String, Integer> raw = new HashMap<>();
+        for (int row = 0; row < dataFrame.getRowCount(); row++) {
+            String val = dataFrame.getValue("CITY", row);
+            if (val != null && !val.isBlank()) raw.merge(val, 1, Integer::sum);
+        }
+        List<Map.Entry<String, Integer>> sorted = new ArrayList<>(raw.entrySet());
+        sorted.sort((a, b) -> b.getValue() - a.getValue());
+
+        Map<String, Integer> result = new LinkedHashMap<>();
+        int otherCount = 0;
+        for (int i = 0; i < sorted.size(); i++) {
+            if (i < topN) result.put(sorted.get(i).getKey(), sorted.get(i).getValue());
+            else otherCount += sorted.get(i).getValue();
+        }
+        if (otherCount > 0) result.put("Other", otherCount);
+        return result;
+    }
+
+    public Map<String, Integer> getAliveAgeHistogram() {
+        LocalDate today = LocalDate.now();
+        // Define buckets: 0-9, 10-19, ..., 90+
+        String[] bucketLabels = {"0-9","10-19","20-29","30-39","40-49","50-59","60-69","70-79","80-89","90+"};
+        Map<String, Integer> histogram = new LinkedHashMap<>();
+        for (String label : bucketLabels) histogram.put(label, 0);
+
+        for (int row = 0; row < dataFrame.getRowCount(); row++) {
+            String death = dataFrame.getValue("DEATHDATE", row);
+            if (death != null && !death.isBlank()) continue;
+            LocalDate birth = parseDate(dataFrame.getValue("BIRTHDATE", row));
+            if (birth == null) continue;
+            int age = ageAt(birth, today);
+            int bucketIndex = Math.min(age / 10, 9); // cap at 90+
+            histogram.merge(bucketLabels[bucketIndex], 1, Integer::sum);
+        }
+        return histogram;
     }
 }

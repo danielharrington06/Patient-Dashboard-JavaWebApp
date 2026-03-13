@@ -24,30 +24,31 @@ public class StatsServlet extends HttpServlet {
 
         // Key numbers
         request.setAttribute("totalPatients",       model.getTotalPatients());
-        request.setAttribute("oldestAliveAge",       model.getOldestAliveAge());
-        request.setAttribute("youngestAliveAge",     model.getYoungestAliveAge());
+        request.setAttribute("oldestAliveAge",      model.getOldestAliveAge());
+        request.setAttribute("youngestAliveAge",    model.getYoungestAliveAge());
         request.setAttribute("averageAliveAge",      String.format("%.1f", model.getAverageAliveAge()));
-        request.setAttribute("averageAgeAtDeath",    String.format("%.1f", model.getAverageAgeAtDeath()));
+        request.setAttribute("averageAgeAtDeath",   String.format("%.1f", model.getAverageAgeAtDeath()));
+        request.setAttribute("livingCount",         model.getLivingCount());
+        request.setAttribute("distinctCityCount",   model.getDistinctCityCount());
         String[] topCity = model.getMostCommonCity();
-        request.setAttribute("mostCommonCity",       topCity[0]);
-        request.setAttribute("mostCommonCityCount",  topCity[1]);
-        request.setAttribute("mostCommonEthnicity",  model.getMostCommonEthnicity());
+        request.setAttribute("mostCommonCity",      topCity[0]);
+        request.setAttribute("mostCommonCityCount", topCity[1]);
+        request.setAttribute("mostCommonEthnicity", model.getMostCommonEthnicity());
+        request.setAttribute("mostCommonRace",      model.getMostCommonRace());
+        request.setAttribute("ethnicityTopN",       Model.ETHNICITY_CHART_TOP_N);
+        request.setAttribute("cityTopN",            Model.CITY_CHART_TOP_N);
 
-        // Chart data (passed as maps; JSP converts to JSON arrays)
-        String[] genderJson    = JSONWriter.mapChartToJson(model.getGenderCounts());
-        String[] maritalJson   = JSONWriter.mapChartToJson(model.getMaritalCounts());
-        String[] ethnicityJson = JSONWriter.mapChartToJson(model.getEthnicityCounts(Model.ETHNICITY_CHART_TOP_N));
-        String[] raceJson      = JSONWriter.mapChartToJson(model.getRaceCounts());
-
-        request.setAttribute("genderLabels",    genderJson[0]);
-        request.setAttribute("genderValues",    genderJson[1]);
-        request.setAttribute("maritalLabels",   maritalJson[0]);
-        request.setAttribute("maritalValues",   maritalJson[1]);
-        request.setAttribute("ethnicityLabels", ethnicityJson[0]);
-        request.setAttribute("ethnicityValues", ethnicityJson[1]);
-        request.setAttribute("raceLabels",      raceJson[0]);
-        request.setAttribute("raceValues",      raceJson[1]);
-        request.setAttribute("ethnicityTopN", Model.ETHNICITY_CHART_TOP_N);
+        // Chart data
+        String chartDataJson = JSONWriter.buildChartDataJson(
+            JSONWriter.mapChartToJson(model.getGenderCounts()),
+            JSONWriter.mapChartToJson(model.getMaritalCounts()),
+            JSONWriter.mapChartToJson(model.getEthnicityCounts(Model.ETHNICITY_CHART_TOP_N)),
+            JSONWriter.mapChartToJson(model.getRaceCounts()),
+            JSONWriter.mapChartToJson(model.getLivingDeceasedCounts()),
+            JSONWriter.mapChartToJson(model.getCityCounts(Model.CITY_CHART_TOP_N)),
+            JSONWriter.mapChartToJson(model.getAliveAgeHistogram())
+        );
+        request.setAttribute("chartDataJson", chartDataJson);
 
         ServletContext context = getServletContext();
         RequestDispatcher dispatch = context.getRequestDispatcher("/stats.jsp");

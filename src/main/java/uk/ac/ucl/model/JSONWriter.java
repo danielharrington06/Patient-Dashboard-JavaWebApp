@@ -45,4 +45,39 @@ public class JSONWriter {
         labels.append("]"); values.append("]");
         return new String[]{labels.toString(), values.toString()};
     }
+
+    public static String buildChartDataJson(String[] gender, String[] marital, String[] ethnicity, String[] race) {
+        return "{"
+            + "\"genderLabels\":"    + gender[0]    + ","
+            + "\"genderValues\":"    + gender[1]    + ","
+            + "\"maritalLabels\":"   + marital[0]   + ","
+            + "\"maritalValues\":"   + marital[1]   + ","
+            + "\"ethnicityLabels\":" + ethnicity[0] + ","
+            + "\"ethnicityValues\":" + ethnicity[1] + ","
+            + "\"raceLabels\":"      + race[0]      + ","
+            + "\"raceValues\":"      + race[1]
+            + "}";
+    }
+
+    public static String buildChartDataJson(String[] gender, String[] marital,
+                                            String[] ethnicity, String[] race,
+                                            String[] living, String[] city,
+                                            String[] ageHistogram) {
+        return "{"
+            + "\"genderLabels\":"       + gender[0]       + ","
+            + "\"genderValues\":"       + gender[1]       + ","
+            + "\"maritalLabels\":"      + marital[0]      + ","
+            + "\"maritalValues\":"      + marital[1]      + ","
+            + "\"ethnicityLabels\":"    + ethnicity[0]    + ","
+            + "\"ethnicityValues\":"    + ethnicity[1]    + ","
+            + "\"raceLabels\":"         + race[0]         + ","
+            + "\"raceValues\":"         + race[1]         + ","
+            + "\"livingLabels\":"       + living[0]       + ","
+            + "\"livingValues\":"       + living[1]       + ","
+            + "\"cityLabels\":"         + city[0]         + ","
+            + "\"cityValues\":"         + city[1]         + ","
+            + "\"ageHistogramLabels\":" + ageHistogram[0] + ","
+            + "\"ageHistogramValues\":" + ageHistogram[1]
+            + "}";
+    }
 }

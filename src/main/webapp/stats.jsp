@@ -2,18 +2,18 @@
 <html lang="en">
 <head>
     <jsp:include page="/meta.jsp"/>
-    <title>Statistics</title>
+    <title>Patient Statistics</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 </head>
 <body>
 <jsp:include page="/header.jsp"/>
 
 <div class="main">
-    <h2 style="margin-bottom: 1.5rem;">Statistics</h2>
+    <h2 class="page-title">Statistics</h2>
 
     <%-- ── Key Numbers ─────────────────────────────────────── --%>
     <h3 class="section-heading">Key Numbers</h3>
-    <div class="stats-grid" style="margin-bottom: 2.5rem;">
+    <div class="stats-grid">
 
         <div class="stat-card">
             <div class="stat-label">Total Patients</div>
@@ -21,23 +21,33 @@
         </div>
 
         <div class="stat-card">
+            <div class="stat-label">Living Patients</div>
+            <div class="stat-value"><%= request.getAttribute("livingCount") %></div>
+        </div>
+
+        <div class="stat-card">
             <div class="stat-label">Oldest Alive</div>
-            <div class="stat-value"><%= request.getAttribute("oldestAliveAge") %><span style="font-size:1rem;font-weight:400;"> yrs</span></div>
+            <div class="stat-value"><%= request.getAttribute("oldestAliveAge") %><span class="stat-unit"> yrs</span></div>
         </div>
 
         <div class="stat-card">
             <div class="stat-label">Youngest Alive</div>
-            <div class="stat-value"><%= request.getAttribute("youngestAliveAge") %><span style="font-size:1rem;font-weight:400;"> yrs</span></div>
+            <div class="stat-value"><%= request.getAttribute("youngestAliveAge") %><span class="stat-unit"> yrs</span></div>
         </div>
 
         <div class="stat-card">
             <div class="stat-label">Avg Age (Living)</div>
-            <div class="stat-value"><%= request.getAttribute("averageAliveAge") %><span style="font-size:1rem;font-weight:400;"> yrs</span></div>
+            <div class="stat-value"><%= request.getAttribute("averageAliveAge") %><span class="stat-unit"> yrs</span></div>
         </div>
 
         <div class="stat-card">
             <div class="stat-label">Avg Age at Death</div>
-            <div class="stat-value"><%= request.getAttribute("averageAgeAtDeath") %><span style="font-size:1rem;font-weight:400;"> yrs</span></div>
+            <div class="stat-value"><%= request.getAttribute("averageAgeAtDeath") %><span class="stat-unit"> yrs</span></div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-label">Distinct Cities</div>
+            <div class="stat-value"><%= request.getAttribute("distinctCityCount") %></div>
         </div>
 
         <div class="stat-card">
@@ -51,15 +61,25 @@
             <div class="stat-value-text"><%= request.getAttribute("mostCommonEthnicity") %></div>
         </div>
 
+        <div class="stat-card">
+            <div class="stat-label">Most Common Race</div>
+            <div class="stat-value-text"><%= request.getAttribute("mostCommonRace") %></div>
+        </div>
+
     </div>
 
     <%-- ── Charts ─────────────────────────────────────────── --%>
-    <h3 class="section-heading">Charts</h3>
+    <h3 class="section-heading section-heading--spaced">Charts</h3>
     <div class="charts-grid">
 
         <div class="chart-card">
             <h3>Gender Split</h3>
             <canvas id="genderChart"></canvas>
+        </div>
+
+        <div class="chart-card">
+            <h3>Living vs Deceased</h3>
+            <canvas id="livingChart"></canvas>
         </div>
 
         <div class="chart-card">
@@ -72,32 +92,23 @@
             <canvas id="ethnicityChart"></canvas>
         </div>
 
-        <div class="chart-card">
-            <h3>Race</h3>
-            <canvas id="raceChart"></canvas>
+        <%-- ── Age Histogram — full width across 2 columns ── --%>
+        <div class="chart-card chart-card--wide">
+            <h3>Age Distribution (Living Patients)</h3>
+            <canvas id="ageHistogram"></canvas>
         </div>
 
     </div>
 </div>
 
-<%-- Data injected as JS variables directly — avoids HTML attribute quote-escaping issues --%>
-<script>
-    var chartData = {
-        genderLabels:    <%= request.getAttribute("genderLabels") %>,
-        genderValues:    <%= request.getAttribute("genderValues") %>,
-        maritalLabels:   <%= request.getAttribute("maritalLabels") %>,
-        maritalValues:   <%= request.getAttribute("maritalValues") %>,
-        ethnicityLabels: <%= request.getAttribute("ethnicityLabels") %>,
-        ethnicityValues: <%= request.getAttribute("ethnicityValues") %>,
-        raceLabels:      <%= request.getAttribute("raceLabels") %>,
-        raceValues:      <%= request.getAttribute("raceValues") %>
-    };
-</script>
+<div id="chartDataJson" style="display:none;"><%= request.getAttribute("chartDataJson") %></div>
 
 <jsp:include page="/footer.jsp"/>
 
 <script>
-    const PALETTE = [
+    var chartData = JSON.parse(document.getElementById('chartDataJson').textContent);
+
+    var PALETTE = [
         '#3b82f6', '#f59e0b', '#10b981', '#ef4444',
         '#8b5cf6', '#06b6d4', '#f97316', '#ec4899',
         '#84cc16', '#6366f1'
@@ -132,10 +143,43 @@
         });
     }
 
+    function makeBar(id, labels, data) {
+        new Chart(document.getElementById(id), {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Patients',
+                    data: data,
+                    backgroundColor: palette(data.length),
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: function(ctx) {
+                                return ' ' + ctx.parsed.y.toLocaleString() + ' patients';
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: { grid: { display: false } },
+                    y: { beginAtZero: true, ticks: { precision: 0 } }
+                }
+            }
+        });
+    }
+
     makePie('genderChart',    chartData.genderLabels,    chartData.genderValues);
+    makePie('livingChart',    chartData.livingLabels,    chartData.livingValues);
     makePie('maritalChart',   chartData.maritalLabels,   chartData.maritalValues);
     makePie('ethnicityChart', chartData.ethnicityLabels, chartData.ethnicityValues);
-    makePie('raceChart',      chartData.raceLabels,      chartData.raceValues);
+    makeBar('ageHistogram',   chartData.ageHistogramLabels, chartData.ageHistogramValues);
 </script>
 
 </body>
