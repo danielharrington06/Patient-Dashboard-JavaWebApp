@@ -17,7 +17,7 @@ import uk.ac.ucl.model.Model;
 import uk.ac.ucl.model.ModelFactory;
 
 @WebServlet("/patientList")
-public class ViewPatientListServlet extends HttpServlet {
+public class PatientListServlet extends HttpServlet {
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {

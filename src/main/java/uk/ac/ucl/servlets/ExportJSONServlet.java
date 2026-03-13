@@ -11,17 +11,16 @@ import uk.ac.ucl.model.Model;
 import uk.ac.ucl.model.ModelFactory;
 
 @WebServlet("/exportJSON")
-public class ExportJSONServlet extends HttpServlet {
-
+public class ExportJsonServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        Model model = ModelFactory.getModel();
         try {
+            Model model = ModelFactory.getModel();
             model.exportToJSON();
-            request.setAttribute("successMessage", "Data exported to JSON successfully.");
+            request.getSession().setAttribute("exportSuccess", true);
         } catch (IOException e) {
-            request.setAttribute("errorMessage", "Failed to export JSON: " + e.getMessage());
+            request.getSession().setAttribute("exportError", e.getMessage());
         }
-        getServletContext().getRequestDispatcher("/index.jsp").forward(request, response);
+        response.sendRedirect(request.getContextPath() + "/");
     }
 }

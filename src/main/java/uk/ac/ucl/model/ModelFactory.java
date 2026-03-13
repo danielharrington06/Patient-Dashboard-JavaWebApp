@@ -16,9 +16,13 @@ public class ModelFactory
     {
         if (model == null)
         {
-        model = new Model();
-        // The data should be read the file once, not every time the model is accessed!
+            model = new Model();
         }
         return model;
+    }
+
+    public static void reset()
+    {
+        model = null;
     }
 }

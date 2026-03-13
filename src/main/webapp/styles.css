@@ -663,3 +663,104 @@ span.field-error {
     white-space: nowrap;
     border: 0;
 }
+
+/* ── Statistics Page ── */
+/* ── Statistics Page ── */
+.section-heading {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--colour-text);
+    margin: 0 0 1rem 0;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--colour-border);
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1.25rem;
+    margin-bottom: 2.5rem;
+}
+
+.stat-card {
+    background: var(--colour-surface);
+    border: 1px solid var(--colour-border);
+    border-radius: var(--radius);
+    padding: 1.4rem 1.2rem;
+    text-align: center;
+    box-shadow: var(--shadow);
+}
+
+.stat-card .stat-label {
+    font-size: 0.82rem;
+    color: var(--colour-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.4rem;
+}
+
+.stat-card .stat-value {
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: var(--colour-primary);
+    line-height: 1.1;
+}
+
+.stat-card .stat-value-text {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--colour-primary);
+    line-height: 1.2;
+}
+
+.stat-card .stat-sub {
+    font-size: 0.78rem;
+    color: var(--colour-text-muted);
+    margin-top: 0.3rem;
+}
+
+.charts-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+}
+
+.chart-card {
+    background: var(--colour-surface);
+    border: 1px solid var(--colour-border);
+    border-radius: var(--radius);
+    padding: 1.4rem;
+    box-shadow: var(--shadow);
+}
+
+.chart-card h3 {
+    margin: 0 0 1rem 0;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--colour-text);
+}
+
+.chart-card canvas {
+    max-height: 260px;
+}
+
+@media (max-width: 640px) {
+    .charts-grid { grid-template-columns: 1fr; }
+}
+
+.chart-card--wide {
+    grid-column: span 2;
+}
+
+.page-title {
+    margin-bottom: 1.5rem;
+}
+
+.section-heading--spaced {
+    margin-top: 2rem;
+}
+
+.stat-unit {
+    font-size: 1rem;
+    font-weight: 400;
+}
