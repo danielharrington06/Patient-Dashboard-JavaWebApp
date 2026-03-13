@@ -11,7 +11,7 @@ import uk.ac.ucl.model.Model;
 import uk.ac.ucl.model.ModelFactory;
 
 @WebServlet("/exportJSON")
-public class ExportJsonServlet extends HttpServlet {
+public class ExportJSONServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try {
