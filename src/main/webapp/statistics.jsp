@@ -77,13 +77,13 @@
         </div>
 
         <div class="chart-card">
-            <h3>Living vs Deceased</h3>
-            <canvas id="livingChart"></canvas>
+            <h3>Marital Status</h3>
+            <canvas id="maritalChart"></canvas>
         </div>
 
         <div class="chart-card">
-            <h3>Marital Status</h3>
-            <canvas id="maritalChart"></canvas>
+            <h3>Living vs Deceased</h3>
+            <canvas id="livingChart"></canvas>
         </div>
 
         <div class="chart-card">

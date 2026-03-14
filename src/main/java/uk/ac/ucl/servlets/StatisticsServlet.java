@@ -29,7 +29,7 @@ public class StatisticsServlet extends HttpServlet {
         request.setAttribute("averageAliveAge",      String.format("%.1f", model.getAverageAliveAge()));
         request.setAttribute("averageAgeAtDeath",   String.format("%.1f", model.getAverageAgeAtDeath()));
         request.setAttribute("livingCount",         model.getLivingCount());
-        request.setAttribute("distinctCityCount",   model.getDistinctCityCount());
+        request.setAttribute("distinctCityCount",   model.getDistinctValues("CITY").size());
         String[] topCity = model.getMostCommonCity();
         request.setAttribute("mostCommonCity",      topCity[0]);
         request.setAttribute("mostCommonCityCount", topCity[1]);
@@ -43,9 +43,7 @@ public class StatisticsServlet extends HttpServlet {
             ChartDataBuilder.mapToChartArrays(model.getGenderCounts()),
             ChartDataBuilder.mapToChartArrays(model.getMaritalCounts()),
             ChartDataBuilder.mapToChartArrays(model.getEthnicityCounts(Model.ETHNICITY_CHART_TOP_N)),
-            ChartDataBuilder.mapToChartArrays(model.getRaceCounts()),
             ChartDataBuilder.mapToChartArrays(model.getLivingDeceasedCounts()),
-            ChartDataBuilder.mapToChartArrays(model.getCityCounts(Model.CITY_CHART_TOP_N)),
             ChartDataBuilder.mapToChartArrays(model.getAliveAgeHistogram())
         );
         request.setAttribute("chartDataJson", chartDataJson);

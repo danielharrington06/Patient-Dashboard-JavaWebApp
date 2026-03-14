@@ -17,12 +17,14 @@ import java.util.Set;
 
 public class Model
 {
-    DataFrame dataFrame;
-    public static final String DEFAULT_FILE = Paths.get("data", "patients100.csv").toString();
-    public String currentDataFile;
+    private DataFrame dataFrame;
     private Map<String, Integer> idToRowIndex = new HashMap<>();
+    
+    private String currentDataFile;
+    public static final String DEFAULT_FILE = Paths.get("data", "patients100.csv").toString();
 
     public static final int DEFAULT_PAGE_SIZE = 40;
+
     public static final int ETHNICITY_CHART_TOP_N = 8;
     public static final int CITY_CHART_TOP_N = 10; 
 
@@ -35,6 +37,8 @@ public class Model
         }
     }
 
+    /* Data Loading */
+
     public final void reloadData(String filename) throws IOException {
         CSVLoader loader = new CSVLoader();
         this.dataFrame = loader.load(filename);
@@ -42,17 +46,39 @@ public class Model
         buildIndex();
     }
 
+    public String getCurrentDataFile() {
+        return currentDataFile;
+    }
+
+    /* Indexing */
+
     private void buildIndex() {
         idToRowIndex = new HashMap<>();
         for (int row = 0; row < getRowCount(); row++) {
             idToRowIndex.put(dataFrame.getValue("ID", row), row);
         }
     }
-
-    public String getCurrentDataFile() {
-        return currentDataFile;
+    
+    public int getRowNumFromId(String id) {
+        Integer row = idToRowIndex.get(id);
+        if (row == null) throw new IllegalArgumentException("Invalid id: " + id);
+        return row;
     }
 
+    public boolean idExists(String id) {
+        return idToRowIndex.containsKey(id);
+    }
+
+    public String generateUUID() {
+        // unlikely for a UUID to clash with an existing one, but worth ensuring it cannot happen
+        String newId;
+        do {
+            newId = java.util.UUID.randomUUID().toString();
+        } while (idExists(newId));
+        return newId;
+    }
+
+    /* Data Access */
     public List<String> getColumnNames() {
         return dataFrame.getColumnNames();
     }
@@ -65,15 +91,29 @@ public class Model
         return dataFrame.getValue(columnName, row);
     }
 
-    public int getRowNumFromId(String id) {
-        Integer row = idToRowIndex.get(id);
-        if (row == null) throw new IllegalArgumentException("Invalid id: " + id);
-        return row;
+    public List<String> getDistinctValues(String columnName) {
+        Set<String> seen = new LinkedHashSet<>();
+        for (int row = 0; row < getRowCount(); row++) {
+            String value = getValue(columnName, row);
+            if (value != null && !value.isEmpty()) {
+                seen.add(value);
+            }
+        }
+        List<String> distinct = new ArrayList<>(seen);
+        return distinct;
     }
 
-    public boolean idExists(String id) {
-        return idToRowIndex.containsKey(id);
+    public LinkedHashMap<String, String> getDistinctValuesWithLabels(String columnName) {
+        List<String> distinct = getDistinctValues(columnName);
+        distinct.sort(String::compareToIgnoreCase);
+        LinkedHashMap<String, String> result = new LinkedHashMap<>();
+        for (String value : distinct) {
+            result.put(value, formatValue(columnName, value));
+        }
+        return result;
     }
+
+    /* Formatting */
 
     public String formatColumnName(String columnName) {
         switch (columnName.toUpperCase()) {
@@ -147,6 +187,8 @@ public class Model
             default -> { return value; }
         }
     }
+
+    /* Patient Records */
 
     public LinkedHashMap<String, String> getRawPatientRecord(String id) {
         LinkedHashMap<String, String> record = new LinkedHashMap<>();
@@ -225,6 +267,8 @@ public class Model
         return patients;
     }
 
+    /* Search, Filter, Sort */
+
     public Map<String, List<String>> searchPatientSummaries(String searchString) {
         String[] lowerStrings = searchString.toLowerCase().split(" ");
         Map<String, List<String>> results = new HashMap<>();
@@ -254,18 +298,46 @@ public class Model
         return results;
     }
 
-    public Map<String, List<String>> getPage(Map<String, List<String>> data, int page, int pageSize) {
-        List<String> keys = new ArrayList<>(data.keySet());
-        int start = (page - 1) * pageSize;
-        int end = Math.min(start + pageSize, keys.size());
-        if (start >= keys.size()) return new HashMap<>();
+    public Map<String, List<String>> filterPatients(Map<String, List<String>> data, String gender, String alive, String marital, List<String> races, List<String> ethnicities) {
 
-        Map<String, List<String>> pageData = new LinkedHashMap<>();
-        for (int i = start; i < end; i++) {
-            String key = keys.get(i);
-            pageData.put(key, data.get(key));
+        Map<String, List<String>> results = new LinkedHashMap<>();
+        for (Map.Entry<String, List<String>> entry : data.entrySet()) {
+            String id = entry.getKey();
+            int row = getRowNumFromId(id);
+
+            // gender filter
+            if (gender != null && !gender.isEmpty()) {
+                if (!gender.equalsIgnoreCase(getValue("GENDER", row))) continue;
+            }
+
+            // alive filter - check if DEATHDATE is empty
+            if (alive != null && !alive.isEmpty()) {
+                String deathDate = getValue("DEATHDATE", row);
+                boolean isAlive = (deathDate == null || deathDate.isEmpty());
+                if ("true".equals(alive) && !isAlive) continue;
+                if ("false".equals(alive) && isAlive) continue;
+            }
+
+            // marital filter
+            if (marital != null && !marital.isEmpty()) {
+                String val = getValue("MARITAL", row);
+                if ("-".equals(marital)) {
+                    // filter for unknown/blank
+                    if (val != null && !val.isEmpty()) continue;
+                } else {
+                    if (!marital.equalsIgnoreCase(val)) continue;
+                }
+            }
+            if (races != null && !races.isEmpty()) {
+                if (!races.contains(getValue("RACE", row))) continue;
+            }
+            if (ethnicities != null && !ethnicities.isEmpty()) {
+                if (!ethnicities.contains(getValue("ETHNICITY", row))) continue;
+            }
+
+            results.put(id, entry.getValue());
         }
-        return pageData;
+        return results;
     }
 
     public Map<String, List<String>> sortPatientSummaries(Map<String, List<String>> data, String sortKey, boolean ascending) {
@@ -323,74 +395,23 @@ public class Model
         return sorted;
     }
 
-    public Map<String, List<String>> filterPatients(Map<String, List<String>> data, String gender, String alive, String marital, List<String> races, List<String> ethnicities) {
+    /* Pagination */
 
-        Map<String, List<String>> results = new LinkedHashMap<>();
-        for (Map.Entry<String, List<String>> entry : data.entrySet()) {
-            String id = entry.getKey();
-            int row = getRowNumFromId(id);
+    public Map<String, List<String>> getPage(Map<String, List<String>> data, int page, int pageSize) {
+        List<String> keys = new ArrayList<>(data.keySet());
+        int start = (page - 1) * pageSize;
+        int end = Math.min(start + pageSize, keys.size());
+        if (start >= keys.size()) return new HashMap<>();
 
-            // gender filter
-            if (gender != null && !gender.isEmpty()) {
-                if (!gender.equalsIgnoreCase(getValue("GENDER", row))) continue;
-            }
-
-            // alive filter - check if DEATHDATE is empty
-            if (alive != null && !alive.isEmpty()) {
-                String deathDate = getValue("DEATHDATE", row);
-                boolean isAlive = (deathDate == null || deathDate.isEmpty());
-                if ("true".equals(alive) && !isAlive) continue;
-                if ("false".equals(alive) && isAlive) continue;
-            }
-
-            // marital filter
-            if (marital != null && !marital.isEmpty()) {
-                String val = getValue("MARITAL", row);
-                if ("-".equals(marital)) {
-                    // filter for unknown/blank
-                    if (val != null && !val.isEmpty()) continue;
-                } else {
-                    if (!marital.equalsIgnoreCase(val)) continue;
-                }
-            }
-            if (races != null && !races.isEmpty()) {
-                if (!races.contains(getValue("RACE", row))) continue;
-            }
-            if (ethnicities != null && !ethnicities.isEmpty()) {
-                if (!ethnicities.contains(getValue("ETHNICITY", row))) continue;
-            }
-
-            results.put(id, entry.getValue());
+        Map<String, List<String>> pageData = new LinkedHashMap<>();
+        for (int i = start; i < end; i++) {
+            String key = keys.get(i);
+            pageData.put(key, data.get(key));
         }
-        return results;
+        return pageData;
     }
 
-    public List<String> getDistinctValues(String columnName) {
-        Set<String> seen = new LinkedHashSet<>();
-        for (int row = 0; row < getRowCount(); row++) {
-            String value = getValue(columnName, row);
-            if (value != null && !value.isEmpty()) {
-                seen.add(value);
-            }
-        }
-        List<String> distinct = new ArrayList<>(seen);
-        distinct.sort(String::compareToIgnoreCase);
-        return distinct;
-    }
-
-    public LinkedHashMap<String, String> getDistinctValuesWithLabels(String columnName) {
-        List<String> distinct = getDistinctValues(columnName);
-        LinkedHashMap<String, String> result = new LinkedHashMap<>();
-        for (String value : distinct) {
-            result.put(value, formatValue(columnName, value));
-        }
-        return result;
-    }
-
-    public void saveToCSV() throws IOException {
-        CSVWriter writer = new CSVWriter();
-        writer.save(dataFrame, currentDataFile);
-    }
+    /* CRUD (Create, Read, Update Delete) Operations */
 
     public void deletePatient(String id) throws IOException {
         int row = getRowNumFromId(id);
@@ -403,19 +424,15 @@ public class Model
         saveToCSV();
     }
 
-    public String generateUUID() {
-        // unlikely for a UUID to clash with an existing one, but worth ensuring it cannot happen
-        String newId;
-        do {
-            newId = java.util.UUID.randomUUID().toString();
-        } while (idExists(newId));
-        return newId;
-    }
-
     public void editPatient(String id, Map<String, String> values) throws IOException {
         int row = getRowNumFromId(id);
         dataFrame.editRow(row, values);
         saveToCSV();
+    }
+
+    public void saveToCSV() throws IOException {
+        CSVWriter writer = new CSVWriter();
+        writer.save(dataFrame, currentDataFile);
     }
 
     public void exportToJSON() throws IOException {
@@ -423,6 +440,8 @@ public class Model
         Path outputPath = Paths.get("data", "patients.json");
         writer.write(dataFrame, outputPath.toString());
     }
+
+    /* URL Building */
 
     public Map<String, String> buildResetUrls(String search, String gender, String alive, String marital, List<String> race, List<String> ethnicity) {
         Map<String, String> urls = new HashMap<>();
@@ -460,7 +479,7 @@ public class Model
         return sb.toString();
     }
 
-    /* STATISTICS */ 
+    /* Statistics */ 
  
     private static final DateTimeFormatter DATE_FMT = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     
@@ -560,8 +579,27 @@ public class Model
                 .map(e -> formatValue("ETHNICITY", e.getKey()))
                 .orElse("N/A");
     }
-    
-    // ── Stats: chart data ────────────────────────────────────────
+
+    public String getMostCommonRace() {
+        Map<String, Integer> counts = new HashMap<>();
+        for (int row = 0; row < getRowCount(); row++) {
+            String val = dataFrame.getValue("RACE", row);
+            if (val != null && !val.isBlank()) counts.merge(val, 1, Integer::sum);
+        }
+        return counts.entrySet().stream()
+                .max(Map.Entry.comparingByValue())
+                .map(e -> formatValue("RACE", e.getKey()))
+                .orElse("N/A");
+    }
+
+    public int getLivingCount() {
+        int count = 0;
+        for (int row = 0; row < getRowCount(); row++) {
+            String death = dataFrame.getValue("DEATHDATE", row);
+            if (death == null || death.isBlank()) count++;
+        }
+        return count;
+    }
     
     public Map<String, Integer> getGenderCounts() {
         Map<String, Integer> counts = new LinkedHashMap<>();
@@ -591,6 +629,15 @@ public class Model
         }
         return counts;
     }
+
+    public Map<String, Integer> getLivingDeceasedCounts() {
+        int living = getLivingCount();
+        int deceased = getRowCount() - living;
+        Map<String, Integer> counts = new LinkedHashMap<>();
+        counts.put("Living", living);
+        counts.put("Deceased", deceased);
+        return counts;
+    }
     
     public Map<String, Integer> getEthnicityCounts(int topN) {
         // Returns top N ethnicities + "Other" bucket
@@ -614,80 +661,10 @@ public class Model
         if (otherCount > 0) result.put("Other", otherCount);
         return result;
     }
-    
-    public Map<String, Integer> getRaceCounts() {
-        Map<String, Integer> counts = new LinkedHashMap<>();
-        for (int row = 0; row < getRowCount(); row++) {
-            String val = dataFrame.getValue("RACE", row);
-            if (val != null && !val.isBlank()) {
-                String label = formatValue("RACE", val);
-                counts.merge(label, 1, Integer::sum);
-            }
-        }
-        // Sort by count descending
-        List<Map.Entry<String, Integer>> entries = new ArrayList<>(counts.entrySet());
-        entries.sort((a, b) -> b.getValue() - a.getValue());
-        Map<String, Integer> sorted = new LinkedHashMap<>();
-        for (Map.Entry<String, Integer> e : entries) sorted.put(e.getKey(), e.getValue());
-        return sorted;
-    }
-
-    public String getMostCommonRace() {
-        Map<String, Integer> counts = new HashMap<>();
-        for (int row = 0; row < getRowCount(); row++) {
-            String val = dataFrame.getValue("RACE", row);
-            if (val != null && !val.isBlank()) counts.merge(val, 1, Integer::sum);
-        }
-        return counts.entrySet().stream()
-                .max(Map.Entry.comparingByValue())
-                .map(e -> formatValue("RACE", e.getKey()))
-                .orElse("N/A");
-    }
-
-    public int getLivingCount() {
-        int count = 0;
-        for (int row = 0; row < getRowCount(); row++) {
-            String death = dataFrame.getValue("DEATHDATE", row);
-            if (death == null || death.isBlank()) count++;
-        }
-        return count;
-    }
-
-    public int getDistinctCityCount() {
-        return getDistinctValues("CITY").size();
-    }
-
-    public Map<String, Integer> getLivingDeceasedCounts() {
-        int living = getLivingCount();
-        int deceased = getRowCount() - living;
-        Map<String, Integer> counts = new LinkedHashMap<>();
-        counts.put("Living", living);
-        counts.put("Deceased", deceased);
-        return counts;
-    }
-
-    public Map<String, Integer> getCityCounts(int topN) {
-        Map<String, Integer> raw = new HashMap<>();
-        for (int row = 0; row < getRowCount(); row++) {
-            String val = dataFrame.getValue("CITY", row);
-            if (val != null && !val.isBlank()) raw.merge(val, 1, Integer::sum);
-        }
-        List<Map.Entry<String, Integer>> sorted = new ArrayList<>(raw.entrySet());
-        sorted.sort((a, b) -> b.getValue() - a.getValue());
-
-        Map<String, Integer> result = new LinkedHashMap<>();
-        int otherCount = 0;
-        for (int i = 0; i < sorted.size(); i++) {
-            if (i < topN) result.put(sorted.get(i).getKey(), sorted.get(i).getValue());
-            else otherCount += sorted.get(i).getValue();
-        }
-        if (otherCount > 0) result.put("Other", otherCount);
-        return result;
-    }
 
     public Map<String, Integer> getAliveAgeHistogram() {
         LocalDate today = LocalDate.now();
-        // Define buckets: 0-9, 10-19, ..., 90+
+        
         String[] bucketLabels = {"0-9","10-19","20-29","30-39","40-49","50-59","60-69","70-79","80-89","90+"};
         Map<String, Integer> histogram = new LinkedHashMap<>();
         for (String label : bucketLabels) histogram.put(label, 0);

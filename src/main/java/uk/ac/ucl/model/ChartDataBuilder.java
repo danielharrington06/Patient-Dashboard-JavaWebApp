@@ -25,10 +25,8 @@ public class ChartDataBuilder {
     public static String buildChartDataJson(
         String[] gender, 
         String[] marital,
-        String[] ethnicity, 
-        String[] race,
-        String[] living, 
-        String[] city,
+        String[] ethnicity,
+        String[] living,
         String[] ageHistogram) {
             
         try {
@@ -39,12 +37,8 @@ public class ChartDataBuilder {
             root.set("maritalValues",      mapper.readTree(marital[1]));
             root.set("ethnicityLabels",    mapper.readTree(ethnicity[0]));
             root.set("ethnicityValues",    mapper.readTree(ethnicity[1]));
-            root.set("raceLabels",         mapper.readTree(race[0]));
-            root.set("raceValues",         mapper.readTree(race[1]));
             root.set("livingLabels",       mapper.readTree(living[0]));
             root.set("livingValues",       mapper.readTree(living[1]));
-            root.set("cityLabels",         mapper.readTree(city[0]));
-            root.set("cityValues",         mapper.readTree(city[1]));
             root.set("ageHistogramLabels", mapper.readTree(ageHistogram[0]));
             root.set("ageHistogramValues", mapper.readTree(ageHistogram[1]));
             return mapper.writeValueAsString(root);
