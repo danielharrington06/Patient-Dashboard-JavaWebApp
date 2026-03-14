@@ -50,7 +50,7 @@
             <a href="statistics" class="home-card-link">
                 <div class="home-card home-card--stats">
                     <div class="home-card-title">Statistics</div>
-                    <div class="home-card-desc">Insights across the dataset</div>
+                    <div class="home-card-desc">Insights from across the dataset</div>
                 </div>
             </a>
 

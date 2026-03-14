@@ -2,7 +2,7 @@
     <div class="header-inner">
         <a href="/" class="site-title">Patient Data App</a>
         <nav class="nav">
-            <a href="/">Home</a>
+            <a href="/home">Home</a>
             <a href="/patientList">All Patients</a>
             <a href="/addPatient">Add Patient</a>
             <a href="/statistics">Statistics</a>

@@ -6,7 +6,7 @@
 <html lang="en">
 <head>
     <jsp:include page="/meta.jsp"/>
-    <title>Patient Data App</title>
+    <title>Patient Record</title>
 </head>
 <body>
 <jsp:include page="/header.jsp"/>

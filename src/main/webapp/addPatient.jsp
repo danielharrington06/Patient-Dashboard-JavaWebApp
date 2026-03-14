@@ -9,7 +9,7 @@
 <html lang="en">
 <head>
     <jsp:include page="/meta.jsp"/>
-    <title>Patient Data App - Add Patient</title>
+    <title>Add Patient</title>
 </head>
 <body>
 <jsp:include page="/header.jsp"/>
@@ -32,15 +32,8 @@
         </div>
     </div>
 
-    <% String errorMessage = (String) request.getAttribute("errorMessage");
-       if (errorMessage != null) { %>
-        <div class="error" style="margin-bottom: var(--spacing-md);">
-            <strong>Please fix the following errors:</strong> <%= errorMessage %>
-        </div>
-    <% } %>
-
     <p class="text-muted" style="margin-bottom: var(--spacing-md);">
-        Fields marked <span style="color: var(--colour-error)">*</span> are required.
+        Fields marked <span class="req-star">*</span> are required.
     </p>
 
     <form id="add-form" method="POST" action="/addPatient" novalidate>
@@ -68,7 +61,7 @@
                 <label for="field-<%= col %>">
                     <%= label %>
                     <% if (isRequired) { %>
-                        <span style="color: var(--colour-error)">*</span>
+                       <span class="req-star">*</span>
                     <% } %>
                 </label>
             </dt>
@@ -113,7 +106,8 @@
 </div>
 <jsp:include page="/footer.jsp"/>
 
-<script src="/validateForm.js"></script>
+<script src="/javascript/formValidation.js"></script>
 <script>setupFormValidation('add-form');</script>
+
 </body>
 </html>

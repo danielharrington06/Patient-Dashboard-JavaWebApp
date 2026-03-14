@@ -7,7 +7,7 @@
 <html lang="en">
 <head>
     <jsp:include page="/meta.jsp"/>
-    <title>Patient Data App - Patients</title>
+    <title>All Patients</title>
 </head>
 <body>
 <jsp:include page="/header.jsp"/>
@@ -16,7 +16,7 @@
     <h2>Patients</h2>
 
     <%-- Search bar and filters --%>
-    <div class="search-card" style="margin-bottom: 1.5rem; max-width: 100%;">
+    <div class="search-card search-card--full">
         <form method="GET" action="/runsearch">
             <div class="search-row">
                 <input class="search-input" type="text" name="searchstring"

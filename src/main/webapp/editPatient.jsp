@@ -31,15 +31,8 @@
         </div>
     </div>
 
-    <% String errorMessage = (String) request.getAttribute("errorMessage");
-       if (errorMessage != null) { %>
-        <div class="error" style="margin-bottom: var(--spacing-md);">
-            <strong>Please fix the following errors:</strong> <%= errorMessage %>
-        </div>
-    <% } %>
-
     <p class="text-muted" style="margin-bottom: var(--spacing-md);">
-        Fields marked <span style="color: var(--colour-error)">*</span> are required.
+        Fields marked <span class="req-star">*</span> are required.
     </p>
 
     <%
@@ -65,7 +58,7 @@
             <dt>
                 <label for="field-<%= col %>">
                     <%= label %>
-                    <% if (isRequired) { %><span style="color: var(--colour-error)">*</span><% } %>
+                    <% if (isRequired) { %><span class="req-star">*</span><% } %>
                 </label>
             </dt>
             <dd>
@@ -111,7 +104,8 @@
 </div>
 <jsp:include page="/footer.jsp"/>
 
-<script src="/validateForm.js"></script>
+<script src="/javascript/formValidation.js"></script>
 <script>setupFormValidation('edit-form');</script>
+
 </body>
 </html>

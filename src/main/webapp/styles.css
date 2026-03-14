@@ -331,6 +331,11 @@ dd select.input-error {
     padding: var(--spacing-lg);
 }
 
+.search-card--full {
+    margin-bottom: 1.5rem;
+    max-width: 100%;
+}
+
 .search-row {
     display: flex;
     gap: var(--spacing-md);
