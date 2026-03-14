@@ -11,8 +11,8 @@
 <div class="main">
     <h2 class="page-title">Statistics</h2>
 
-    <%-- ── Key Numbers ─────────────────────────────────────── --%>
-    <h3 class="section-heading">Key Numbers</h3>
+    <%-- Insights --%>
+    <h3 class="section-heading">Insights</h3>
     <div class="stats-grid">
 
         <div class="stat-card">
@@ -68,7 +68,7 @@
 
     </div>
 
-    <%-- ── Charts ─────────────────────────────────────────── --%>
+    <%-- Charts --%>
     <h3 class="section-heading section-heading--spaced">Charts</h3>
     <div class="charts-grid">
 

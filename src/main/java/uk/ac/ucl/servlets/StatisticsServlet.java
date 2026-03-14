@@ -13,8 +13,8 @@ import uk.ac.ucl.model.JSONWriter;
 import uk.ac.ucl.model.Model;
 import uk.ac.ucl.model.ModelFactory;
 
-@WebServlet("/stats")
-public class StatsServlet extends HttpServlet {
+@WebServlet("/statistics")
+public class StatisticsServlet extends HttpServlet {
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -23,7 +23,7 @@ public class StatsServlet extends HttpServlet {
         Model model = ModelFactory.getModel();
 
         // Key numbers
-        request.setAttribute("totalPatients",       model.getTotalPatients());
+        request.setAttribute("totalPatients",       model.getRowCount());
         request.setAttribute("oldestAliveAge",      model.getOldestAliveAge());
         request.setAttribute("youngestAliveAge",    model.getYoungestAliveAge());
         request.setAttribute("averageAliveAge",      String.format("%.1f", model.getAverageAliveAge()));
@@ -51,7 +51,7 @@ public class StatsServlet extends HttpServlet {
         request.setAttribute("chartDataJson", chartDataJson);
 
         ServletContext context = getServletContext();
-        RequestDispatcher dispatch = context.getRequestDispatcher("/stats.jsp");
+        RequestDispatcher dispatch = context.getRequestDispatcher("/statistics.jsp");
         dispatch.forward(request, response);
     }
 }

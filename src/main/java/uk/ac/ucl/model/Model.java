@@ -44,7 +44,7 @@ public class Model
 
     private void buildIndex() {
         idToRowIndex = new HashMap<>();
-        for (int row = 0; row < dataFrame.getRowCount(); row++) {
+        for (int row = 0; row < getRowCount(); row++) {
             idToRowIndex.put(dataFrame.getValue("ID", row), row);
         }
     }
@@ -477,14 +477,10 @@ public class Model
         return Period.between(birth, end).getYears();
     }
     
-    public int getTotalPatients() {
-        return dataFrame.getRowCount();
-    }
-    
     public int getOldestAliveAge() {
         LocalDate today = LocalDate.now();
         int max = -1;
-        for (int row = 0; row < dataFrame.getRowCount(); row++) {
+        for (int row = 0; row < getRowCount(); row++) {
             String death = dataFrame.getValue("DEATHDATE", row);
             if (death != null && !death.isBlank()) continue; // deceased
             LocalDate birth = parseDate(dataFrame.getValue("BIRTHDATE", row));
@@ -498,7 +494,7 @@ public class Model
     public int getYoungestAliveAge() {
         LocalDate today = LocalDate.now();
         int min = Integer.MAX_VALUE;
-        for (int row = 0; row < dataFrame.getRowCount(); row++) {
+        for (int row = 0; row < getRowCount(); row++) {
             String death = dataFrame.getValue("DEATHDATE", row);
             if (death != null && !death.isBlank()) continue;
             LocalDate birth = parseDate(dataFrame.getValue("BIRTHDATE", row));
@@ -513,7 +509,7 @@ public class Model
         LocalDate today = LocalDate.now();
         long total = 0;
         int count = 0;
-        for (int row = 0; row < dataFrame.getRowCount(); row++) {
+        for (int row = 0; row < getRowCount(); row++) {
             String death = dataFrame.getValue("DEATHDATE", row);
             if (death != null && !death.isBlank()) continue;
             LocalDate birth = parseDate(dataFrame.getValue("BIRTHDATE", row));
@@ -527,7 +523,7 @@ public class Model
     public double getAverageAgeAtDeath() {
         long total = 0;
         int count = 0;
-        for (int row = 0; row < dataFrame.getRowCount(); row++) {
+        for (int row = 0; row < getRowCount(); row++) {
             LocalDate death = parseDate(dataFrame.getValue("DEATHDATE", row));
             if (death == null) continue;
             LocalDate birth = parseDate(dataFrame.getValue("BIRTHDATE", row));
@@ -541,7 +537,7 @@ public class Model
     public String[] getMostCommonCity() {
         // Returns [cityName, count]
         Map<String, Integer> counts = new HashMap<>();
-        for (int row = 0; row < dataFrame.getRowCount(); row++) {
+        for (int row = 0; row < getRowCount(); row++) {
             String city = dataFrame.getValue("CITY", row);
             if (city != null && !city.isBlank()) {
                 counts.merge(city, 1, Integer::sum);
@@ -555,7 +551,7 @@ public class Model
     
     public String getMostCommonEthnicity() {
         Map<String, Integer> counts = new HashMap<>();
-        for (int row = 0; row < dataFrame.getRowCount(); row++) {
+        for (int row = 0; row < getRowCount(); row++) {
             String val = dataFrame.getValue("ETHNICITY", row);
             if (val != null && !val.isBlank()) counts.merge(val, 1, Integer::sum);
         }
@@ -572,7 +568,7 @@ public class Model
         counts.put("Male", 0);
         counts.put("Female", 0);
         counts.put("Unknown", 0);
-        for (int row = 0; row < dataFrame.getRowCount(); row++) {
+        for (int row = 0; row < getRowCount(); row++) {
             String g = dataFrame.getValue("GENDER", row);
             if ("M".equalsIgnoreCase(g)) counts.merge("Male", 1, Integer::sum);
             else if ("F".equalsIgnoreCase(g)) counts.merge("Female", 1, Integer::sum);
@@ -587,7 +583,7 @@ public class Model
         counts.put("Married", 0);
         counts.put("Single", 0);
         counts.put("Unknown", 0);
-        for (int row = 0; row < dataFrame.getRowCount(); row++) {
+        for (int row = 0; row < getRowCount(); row++) {
             String m = dataFrame.getValue("MARITAL", row);
             if ("M".equalsIgnoreCase(m)) counts.merge("Married", 1, Integer::sum);
             else if ("S".equalsIgnoreCase(m)) counts.merge("Single", 1, Integer::sum);
@@ -599,7 +595,7 @@ public class Model
     public Map<String, Integer> getEthnicityCounts(int topN) {
         // Returns top N ethnicities + "Other" bucket
         Map<String, Integer> raw = new HashMap<>();
-        for (int row = 0; row < dataFrame.getRowCount(); row++) {
+        for (int row = 0; row < getRowCount(); row++) {
             String val = dataFrame.getValue("ETHNICITY", row);
             if (val != null && !val.isBlank()) raw.merge(val, 1, Integer::sum);
         }
@@ -621,7 +617,7 @@ public class Model
     
     public Map<String, Integer> getRaceCounts() {
         Map<String, Integer> counts = new LinkedHashMap<>();
-        for (int row = 0; row < dataFrame.getRowCount(); row++) {
+        for (int row = 0; row < getRowCount(); row++) {
             String val = dataFrame.getValue("RACE", row);
             if (val != null && !val.isBlank()) {
                 String label = formatValue("RACE", val);
@@ -638,7 +634,7 @@ public class Model
 
     public String getMostCommonRace() {
         Map<String, Integer> counts = new HashMap<>();
-        for (int row = 0; row < dataFrame.getRowCount(); row++) {
+        for (int row = 0; row < getRowCount(); row++) {
             String val = dataFrame.getValue("RACE", row);
             if (val != null && !val.isBlank()) counts.merge(val, 1, Integer::sum);
         }
@@ -650,7 +646,7 @@ public class Model
 
     public int getLivingCount() {
         int count = 0;
-        for (int row = 0; row < dataFrame.getRowCount(); row++) {
+        for (int row = 0; row < getRowCount(); row++) {
             String death = dataFrame.getValue("DEATHDATE", row);
             if (death == null || death.isBlank()) count++;
         }
@@ -663,7 +659,7 @@ public class Model
 
     public Map<String, Integer> getLivingDeceasedCounts() {
         int living = getLivingCount();
-        int deceased = dataFrame.getRowCount() - living;
+        int deceased = getRowCount() - living;
         Map<String, Integer> counts = new LinkedHashMap<>();
         counts.put("Living", living);
         counts.put("Deceased", deceased);
@@ -672,7 +668,7 @@ public class Model
 
     public Map<String, Integer> getCityCounts(int topN) {
         Map<String, Integer> raw = new HashMap<>();
-        for (int row = 0; row < dataFrame.getRowCount(); row++) {
+        for (int row = 0; row < getRowCount(); row++) {
             String val = dataFrame.getValue("CITY", row);
             if (val != null && !val.isBlank()) raw.merge(val, 1, Integer::sum);
         }
@@ -696,7 +692,7 @@ public class Model
         Map<String, Integer> histogram = new LinkedHashMap<>();
         for (String label : bucketLabels) histogram.put(label, 0);
 
-        for (int row = 0; row < dataFrame.getRowCount(); row++) {
+        for (int row = 0; row < getRowCount(); row++) {
             String death = dataFrame.getValue("DEATHDATE", row);
             if (death != null && !death.isBlank()) continue;
             LocalDate birth = parseDate(dataFrame.getValue("BIRTHDATE", row));

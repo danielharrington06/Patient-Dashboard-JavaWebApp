@@ -173,7 +173,7 @@ dd select.input-error {
 
 .welcome-card p {
     color: var(--colour-text-muted);
-    margin-bottom: var(--spacing-lg);
+    margin-bottom: var(--spacing-md);
 }
 
 .quick-links {
@@ -226,6 +226,100 @@ dd select.input-error {
 
 .btn-danger:hover {
     background-color: #b91c1c;
+}
+
+/* ── Home page ── */
+.welcome-card--full {
+    max-width: 100%;
+    margin-bottom: 2rem;
+}
+
+.home-cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.home-card-link {
+    text-decoration: none;
+    color: inherit;
+}
+
+.home-card {
+    border: 1px solid var(--colour-border);
+    border-radius: var(--radius);
+    padding: 1rem 1.25rem;
+    background: var(--colour-bg);
+    transition: box-shadow 0.2s;
+    cursor: pointer;
+}
+
+.home-card:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.home-card--search,
+.home-card--add,
+.home-card--stats {
+    border-left: 4px solid var(--colour-primary);
+}
+
+.home-card-title {
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+}
+
+.home-card-desc {
+    font-size: 0.85rem;
+    color: var(--colour-text-muted);
+}
+
+.dataset-heading {
+    margin-bottom: 1rem;
+}
+
+.dataset-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.dataset-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.75rem;
+    flex: 1;
+}
+
+.dataset-chip {
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem var(--spacing-lg);
+    border-radius: 999px;
+    font-size: 0.95rem;
+    min-height: 38px;
+}
+
+.dataset-chip-name {
+    font-weight: 400;
+}
+
+.dataset-chip-desc {
+    display: none;
+}
+
+.dataset-actions {
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+    align-items: center;
+}
+
+.flash-msg {
+    margin: 0;
 }
 
 /* ── Search ── */

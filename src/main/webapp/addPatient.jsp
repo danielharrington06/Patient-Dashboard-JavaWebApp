@@ -17,9 +17,6 @@
     <h2>Add Patient</h2>
 
     <%
-        String backHref = (String) session.getAttribute("lastListUrl");
-        if (backHref == null) backHref = "/patientList";
-
         String generatedId = (String) request.getAttribute("generatedId");
         if (generatedId == null) generatedId = "";
 
@@ -29,7 +26,7 @@
     %>
 
     <div class="record-actions">
-        <a href="<%= backHref %>" class="btn btn-secondary">← Cancel</a>
+        <button type="button" class="btn btn-secondary" onclick="history.back()">← Cancel</button>
         <div class="record-actions-right">
             <button type="submit" form="add-form" class="btn">Add Patient</button>
         </div>
