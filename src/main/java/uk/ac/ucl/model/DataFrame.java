@@ -4,8 +4,7 @@ import java.util.ArrayList;
 import java.util.Map;
 
 public class DataFrame {
-    // need to decide a consistent way to deal with out of range
-
+    
     private final ArrayList<Column> columns;
 
     public DataFrame() {
@@ -18,11 +17,9 @@ public class DataFrame {
 
     public ArrayList<String> getColumnNames() {
         ArrayList<String> names = new ArrayList<>();
-
-        for (Column column : columns) {
-            names.add(column.getName());
+        for (Column column : columns) { 
+            names.add(column.getName()); 
         }
-
         return names;
     }
 
@@ -46,14 +43,14 @@ public class DataFrame {
     }
 
     public void removeRow(int row) {
-        if (row < 0 || row >= getRowCount()) {
-            throw new IndexOutOfBoundsException("Row " + row + " out of bounds for size " + getRowCount());
-        }
         for (Column column : columns) {
             column.removeRowValue(row);
         }
     }
 
+    /**
+     * @param values - map of column name to value — unspecified columns default to empty string
+     */
     public void addRow(Map<String, String> values) {
         for (Column column : columns) {
             String val = values.getOrDefault(column.getName(), "");
@@ -61,6 +58,9 @@ public class DataFrame {
         }
     }
 
+    /**
+     * @param values - map of column name to value - including edited attributes only
+     */
     public void editRow(int row, Map<String, String> values) {
         for (Map.Entry<String, String> entry : values.entrySet()) {
             putValue(row, entry.getKey(), entry.getValue());

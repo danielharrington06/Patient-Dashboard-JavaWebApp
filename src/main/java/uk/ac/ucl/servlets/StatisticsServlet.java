@@ -9,7 +9,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import uk.ac.ucl.model.JSONWriter;
+import uk.ac.ucl.model.ChartDataBuilder;
 import uk.ac.ucl.model.Model;
 import uk.ac.ucl.model.ModelFactory;
 
@@ -39,14 +39,14 @@ public class StatisticsServlet extends HttpServlet {
         request.setAttribute("cityTopN",            Model.CITY_CHART_TOP_N);
 
         // Chart data
-        String chartDataJson = JSONWriter.buildChartDataJson(
-            JSONWriter.mapChartToJson(model.getGenderCounts()),
-            JSONWriter.mapChartToJson(model.getMaritalCounts()),
-            JSONWriter.mapChartToJson(model.getEthnicityCounts(Model.ETHNICITY_CHART_TOP_N)),
-            JSONWriter.mapChartToJson(model.getRaceCounts()),
-            JSONWriter.mapChartToJson(model.getLivingDeceasedCounts()),
-            JSONWriter.mapChartToJson(model.getCityCounts(Model.CITY_CHART_TOP_N)),
-            JSONWriter.mapChartToJson(model.getAliveAgeHistogram())
+        String chartDataJson = ChartDataBuilder.buildChartDataJson(
+            ChartDataBuilder.mapToChartArrays(model.getGenderCounts()),
+            ChartDataBuilder.mapToChartArrays(model.getMaritalCounts()),
+            ChartDataBuilder.mapToChartArrays(model.getEthnicityCounts(Model.ETHNICITY_CHART_TOP_N)),
+            ChartDataBuilder.mapToChartArrays(model.getRaceCounts()),
+            ChartDataBuilder.mapToChartArrays(model.getLivingDeceasedCounts()),
+            ChartDataBuilder.mapToChartArrays(model.getCityCounts(Model.CITY_CHART_TOP_N)),
+            ChartDataBuilder.mapToChartArrays(model.getAliveAgeHistogram())
         );
         request.setAttribute("chartDataJson", chartDataJson);
 

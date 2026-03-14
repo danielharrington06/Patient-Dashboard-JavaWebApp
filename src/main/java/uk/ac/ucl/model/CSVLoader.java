@@ -13,8 +13,7 @@ class CSVLoader {
     public DataFrame load(String csvFilePath) throws IOException {
         DataFrame dataFrame = new DataFrame();
         try (BufferedReader reader = new BufferedReader(new FileReader(csvFilePath));
-         CSVParser csvParser = new CSVParser(reader,
-                 CSVFormat.DEFAULT.withFirstRecordAsHeader().withTrim())) {
+         CSVParser csvParser = new CSVParser(reader, CSVFormat.DEFAULT.withFirstRecordAsHeader().withTrim())) {
             
             // create columns
             for (String header : csvParser.getHeaderNames()) {
