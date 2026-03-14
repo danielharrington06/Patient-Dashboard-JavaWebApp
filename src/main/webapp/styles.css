@@ -36,11 +36,6 @@ body {
 }
 
 /* ── Header / Nav ── */
-.site-title {
-    color: white;
-    text-decoration: none;
-}
-
 .site-header {
     background: var(--colour-primary);
     color: white;
@@ -60,6 +55,8 @@ body {
     font-size: 1.25rem;
     font-weight: 600;
     letter-spacing: 0.02em;
+    color: white;
+    text-decoration: none;
 }
 
 .nav {
@@ -82,6 +79,16 @@ body {
     color: white;
 }
 
+/* ── Footer ── */
+.site-footer {
+    background: var(--colour-surface);
+    border-top: 1px solid var(--colour-border);
+    text-align: center;
+    padding: var(--spacing-md);
+    color: var(--colour-text-muted);
+    font-size: 0.85rem;
+}
+
 /* ── Main content ── */
 .main {
     flex: 1;
@@ -93,92 +100,6 @@ body {
 
 .main h2 {
     margin-bottom: var(--spacing-sm);
-}
-
-/* ── Footer ── */
-.site-footer {
-    background: var(--colour-surface);
-    border-top: 1px solid var(--colour-border);
-    text-align: center;
-    padding: var(--spacing-md);
-    color: var(--colour-text-muted);
-    font-size: 0.85rem;
-}
-
-/* ── Error banner ── */
-.error {
-    background: var(--colour-error-bg);
-    color: var(--colour-error);
-    border: 1px solid var(--colour-error);
-    border-radius: var(--radius);
-    padding: var(--spacing-sm) var(--spacing-md);
-    margin-bottom: var(--spacing-md);
-}
-
-/* ── Patient record (dl) ── */
-dl {
-    background: var(--colour-surface);
-    border: 1px solid var(--colour-border);
-    border-radius: var(--radius);
-    box-shadow: var(--shadow);
-    padding: var(--spacing-lg);
-    display: grid;
-    grid-template-columns: 200px 1fr;
-    gap: var(--spacing-sm) var(--spacing-md);
-}
-
-dt {
-    color: var(--colour-text-muted);
-    font-size: 0.875rem;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    padding: var(--spacing-sm) 0;
-    border-bottom: 1px solid var(--colour-border);
-}
-
-dd {
-    color: var(--colour-text);
-    padding: var(--spacing-sm) 0;
-    border-bottom: 1px solid var(--colour-border);
-}
-
-/* ── Field errors inside dl ── */
-dd .field-error {
-    display: block;
-    font-size: 0.78rem;
-    color: var(--colour-error) !important;
-    min-height: 1em;
-    margin-top: 2px;
-}
-
-dd input.input-error,
-dd select.input-error {
-    border-color: var(--colour-error) !important;
-    background: var(--colour-error-bg) !important;
-}
-
-/* ── Welcome card ── */
-.welcome-card {
-    background: var(--colour-surface);
-    border: 1px solid var(--colour-border);
-    border-radius: var(--radius);
-    box-shadow: var(--shadow);
-    padding: var(--spacing-lg);
-    max-width: 600px;
-}
-
-.welcome-card h2 {
-    margin-bottom: var(--spacing-sm);
-}
-
-.welcome-card p {
-    color: var(--colour-text-muted);
-    margin-bottom: var(--spacing-md);
-}
-
-.quick-links {
-    display: flex;
-    gap: var(--spacing-md);
 }
 
 /* ── Buttons ── */
@@ -228,12 +149,89 @@ dd select.input-error {
     background-color: #b91c1c;
 }
 
-/* ── Home page ── */
+/* ── Base card ── */
+.card {
+    background: var(--colour-surface);
+    border: 1px solid var(--colour-border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+}
+
+/* ── Welcome card ── */
+.welcome-card {
+    padding: var(--spacing-lg);
+    max-width: 600px;
+}
+
+.welcome-card h2 {
+    margin-bottom: var(--spacing-sm);
+}
+
+.welcome-card p {
+    color: var(--colour-text-muted);
+    margin-bottom: var(--spacing-md);
+}
+
 .welcome-card--full {
     max-width: 100%;
     margin-bottom: 2rem;
 }
 
+/* ── Search card ── */
+.search-card {
+    padding: var(--spacing-lg);
+}
+
+.search-card--full {
+    margin-bottom: 1.5rem;
+    max-width: 100%;
+}
+
+/* ── Error banner ── */
+.error {
+    background: var(--colour-error-bg);
+    color: var(--colour-error);
+    border: 1px solid var(--colour-error);
+    border-radius: var(--radius);
+    padding: var(--spacing-sm) var(--spacing-md);
+    margin-bottom: var(--spacing-md);
+}
+
+/* ── Misc ── */
+.result-count {
+    font-size: 0.85rem;
+    color: var(--colour-text-muted);
+}
+
+.text-muted {
+    color: var(--colour-text-muted);
+}
+
+.page-title {
+    margin-bottom: 1.5rem;
+}
+
+.flash-msg {
+    margin: 0;
+}
+
+.req-star {
+    color: var(--colour-error);
+}
+
+.visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* ── Home page ── */
 .home-cards {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -275,6 +273,7 @@ dd select.input-error {
     color: var(--colour-text-muted);
 }
 
+/* ── Dataset selector ── */
 .dataset-heading {
     margin-bottom: 1rem;
 }
@@ -318,24 +317,7 @@ dd select.input-error {
     align-items: center;
 }
 
-.flash-msg {
-    margin: 0;
-}
-
-/* ── Search ── */
-.search-card {
-    background: var(--colour-surface);
-    border: 1px solid var(--colour-border);
-    border-radius: var(--radius);
-    box-shadow: var(--shadow);
-    padding: var(--spacing-lg);
-}
-
-.search-card--full {
-    margin-bottom: 1.5rem;
-    max-width: 100%;
-}
-
+/* ── Search bar ── */
 .search-row {
     display: flex;
     gap: var(--spacing-md);
@@ -354,113 +336,6 @@ dd select.input-error {
 
 .search-input:focus {
     border-color: var(--colour-primary);
-}
-
-/* ── Patient Table ── */
-.table-wrapper {
-    background: var(--colour-surface);
-    border: 1px solid var(--colour-border);
-    border-radius: var(--radius);
-    box-shadow: var(--shadow);
-    overflow: hidden;
-}
-
-.patient-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-family: 'Segoe UI', system-ui, sans-serif;
-    font-size: 0.9rem;
-}
-
-.patient-table thead {
-    background: var(--colour-bg);
-    border-bottom: 2px solid var(--colour-border);
-}
-
-.patient-table th {
-    padding: var(--spacing-sm) var(--spacing-md);
-    text-align: left;
-    font-size: 0.78rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.07em;
-    color: var(--colour-text-muted);
-}
-
-.patient-table td {
-    padding: var(--spacing-sm) var(--spacing-md);
-    border-bottom: 1px solid var(--colour-border);
-    color: var(--colour-text);
-}
-
-.patient-table tbody tr:last-child td {
-    border-bottom: none;
-}
-
-.patient-table tbody tr:hover {
-    background: var(--colour-bg);
-}
-
-.patient-table tbody tr[data-href] {
-    cursor: pointer;
-}
-
-/* ── Pagination ── */
-.pagination {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-top: var(--spacing-md);
-    flex-wrap: wrap;
-    gap: var(--spacing-sm);
-}
-
-.page-controls {
-    display: flex;
-    gap: var(--spacing-xs);
-    flex-wrap: wrap;
-}
-
-/* ── Sorting ── */
-.patient-table th.sortable {
-    cursor: pointer;
-    user-select: none;
-}
-
-.patient-table th.sortable a {
-    color: inherit;
-    text-decoration: none;
-    display: flex;
-    align-items: center;
-    gap: 4px;
-}
-
-.patient-table th.sortable:hover {
-    background: var(--colour-border);
-}
-
-.patient-table th.sort-active {
-    background: var(--colour-border);
-    color: var(--colour-primary);
-}
-
-.patient-table th.sort-active a {
-    color: var(--colour-primary);
-}
-
-.sort-status {
-    font-size: 0.85rem;
-    color: var(--colour-text-muted);
-    margin-bottom: var(--spacing-md);
-}
-
-.sort-status a {
-    color: var(--colour-primary);
-    text-decoration: none;
-}
-
-.sort-status a:hover {
-    text-decoration: underline;
 }
 
 /* ── Filters ── */
@@ -544,6 +419,166 @@ dd select.input-error {
     color: var(--colour-primary);
 }
 
+/* ── Patient table ── */
+.table-wrapper {
+    background: var(--colour-surface);
+    border: 1px solid var(--colour-border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+}
+
+.patient-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    font-size: 0.9rem;
+}
+
+.patient-table thead {
+    background: var(--colour-bg);
+    border-bottom: 2px solid var(--colour-border);
+}
+
+.patient-table th {
+    padding: var(--spacing-sm) var(--spacing-md);
+    text-align: left;
+    font-size: 0.78rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--colour-text-muted);
+}
+
+.patient-table td {
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-bottom: 1px solid var(--colour-border);
+    color: var(--colour-text);
+}
+
+.patient-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.patient-table tbody tr:hover {
+    background: var(--colour-bg);
+}
+
+.patient-table tbody tr[data-href] {
+    cursor: pointer;
+}
+
+/* ── Sorting ── */
+.patient-table th.sortable {
+    cursor: pointer;
+    user-select: none;
+}
+
+.patient-table th.sortable a {
+    color: inherit;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.patient-table th.sortable:hover {
+    background: var(--colour-border);
+}
+
+.patient-table th.sort-active {
+    background: var(--colour-border);
+    color: var(--colour-primary);
+}
+
+.patient-table th.sort-active a {
+    color: var(--colour-primary);
+}
+
+.sort-status {
+    font-size: 0.85rem;
+    color: var(--colour-text-muted);
+    margin-bottom: var(--spacing-md);
+}
+
+.sort-status a {
+    color: var(--colour-primary);
+    text-decoration: none;
+}
+
+.sort-status a:hover {
+    text-decoration: underline;
+}
+
+/* ── Pagination ── */
+.pagination {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: var(--spacing-md);
+    flex-wrap: wrap;
+    gap: var(--spacing-sm);
+}
+
+.page-controls {
+    display: flex;
+    gap: var(--spacing-xs);
+    flex-wrap: wrap;
+}
+
+.page-goto {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.goto-input {
+    width: 70px;
+    padding: 0.2rem 0.4rem;
+    border: 1px solid var(--colour-border);
+    border-radius: var(--radius);
+    font-size: 0.85rem;
+    color: var(--colour-text);
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.goto-input:focus {
+    border-color: var(--colour-primary);
+}
+
+.page-ellipsis {
+    padding: 0 4px;
+    color: var(--colour-text-muted);
+}
+
+/* ── Patient record (dl) ── */
+dl {
+    background: var(--colour-surface);
+    border: 1px solid var(--colour-border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: var(--spacing-lg);
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: var(--spacing-sm) var(--spacing-md);
+}
+
+dt {
+    color: var(--colour-text-muted);
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: var(--spacing-sm) 0;
+    border-bottom: 1px solid var(--colour-border);
+}
+
+dd {
+    color: var(--colour-text);
+    padding: var(--spacing-sm) 0;
+    border-bottom: 1px solid var(--colour-border);
+}
+
 /* ── Record actions ── */
 .record-actions {
     display: flex;
@@ -564,7 +599,7 @@ dd select.input-error {
     align-items: stretch;
 }
 
-/* ── Edit patient inputs inside dl ── */
+/* ── Form inputs ── */
 .record-input {
     width: 100%;
     padding: 0.2rem 0.4rem;
@@ -583,21 +618,8 @@ dd select.input-error {
     background: var(--colour-surface);
 }
 
-input.record-input.input-error,
-select.record-input.input-error {
-    border-color: var(--colour-error) !important;
-    background: var(--colour-error-bg) !important;
-}
-
 .field-error,
-dd .field-error {
-    display: block;
-    font-size: 0.78rem;
-    color: var(--colour-error) !important;
-    min-height: 1em;
-    margin-top: 2px;
-}
-
+dd .field-error,
 span.field-error {
     display: block;
     font-size: 0.78rem;
@@ -606,12 +628,16 @@ span.field-error {
     margin-top: 2px;
 }
 
+.input-error {
+    border-color: var(--colour-error) !important;
+    background: var(--colour-error-bg) !important;
+}
+
 .field-hint {
     font-size: 0.78rem;
     color: var(--colour-text-muted);
 }
 
-/* ── Patient form (add/edit page) ── */
 .patient-form {
     display: flex;
     flex-direction: column;
@@ -619,10 +645,6 @@ span.field-error {
 }
 
 .form-section {
-    background: var(--colour-surface);
-    border: 1px solid var(--colour-border);
-    border-radius: var(--radius);
-    box-shadow: var(--shadow);
     padding: var(--spacing-lg);
 }
 
@@ -661,8 +683,7 @@ span.field-error {
     letter-spacing: 0.07em;
 }
 
-.form-group input,
-.form-group select {
+.form-group :is(input, select) {
     padding: var(--spacing-sm) var(--spacing-md);
     border: 1px solid var(--colour-border);
     border-radius: var(--radius);
@@ -674,14 +695,12 @@ span.field-error {
     transition: border-color 0.2s;
 }
 
-.form-group input:focus,
-.form-group select:focus {
+.form-group :is(input, select):focus {
     border-color: var(--colour-primary);
     background: var(--colour-surface);
 }
 
-.form-group input.input-error,
-.form-group select.input-error {
+.form-group :is(input, select).input-error {
     border-color: var(--colour-error) !important;
     background: var(--colour-error-bg) !important;
 }
@@ -691,10 +710,6 @@ span.field-error {
     justify-content: flex-end;
     gap: var(--spacing-md);
     padding-top: var(--spacing-sm);
-}
-
-.req-star {
-    color: var(--colour-error);
 }
 
 /* ── Modal ── */
@@ -709,8 +724,6 @@ span.field-error {
 }
 
 .modal {
-    background: var(--colour-surface);
-    border-radius: var(--radius);
     padding: var(--spacing-lg);
     max-width: 400px;
     width: 90%;
@@ -741,30 +754,7 @@ span.field-error {
     display: flex;
 }
 
-/* ── Misc ── */
-.result-count {
-    font-size: 0.85rem;
-    color: var(--colour-text-muted);
-}
-
-.text-muted {
-    color: var(--colour-text-muted);
-}
-
-.visually-hidden {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    white-space: nowrap;
-    border: 0;
-}
-
-/* ── Statistics Page ── */
-/* ── Statistics Page ── */
+/* ── Statistics page ── */
 .section-heading {
     font-size: 1.2rem;
     font-weight: 600;
@@ -772,6 +762,10 @@ span.field-error {
     margin: 0 0 1rem 0;
     padding-bottom: 0.5rem;
     border-bottom: 2px solid var(--colour-border);
+}
+
+.section-heading--spaced {
+    margin-top: 2rem;
 }
 
 .stats-grid {
@@ -782,12 +776,8 @@ span.field-error {
 }
 
 .stat-card {
-    background: var(--colour-surface);
-    border: 1px solid var(--colour-border);
-    border-radius: var(--radius);
     padding: 1.4rem 1.2rem;
     text-align: center;
-    box-shadow: var(--shadow);
 }
 
 .stat-card .stat-label {
@@ -818,6 +808,11 @@ span.field-error {
     margin-top: 0.3rem;
 }
 
+.stat-unit {
+    font-size: 1rem;
+    font-weight: 400;
+}
+
 .charts-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -825,11 +820,7 @@ span.field-error {
 }
 
 .chart-card {
-    background: var(--colour-surface);
-    border: 1px solid var(--colour-border);
-    border-radius: var(--radius);
     padding: 1.4rem;
-    box-shadow: var(--shadow);
 }
 
 .chart-card h3 {
@@ -843,23 +834,11 @@ span.field-error {
     max-height: 260px;
 }
 
-@media (max-width: 640px) {
-    .charts-grid { grid-template-columns: 1fr; }
-}
-
 .chart-card--wide {
     grid-column: span 2;
 }
 
-.page-title {
-    margin-bottom: 1.5rem;
-}
-
-.section-heading--spaced {
-    margin-top: 2rem;
-}
-
-.stat-unit {
-    font-size: 1rem;
-    font-weight: 400;
+@media (max-width: 640px) {
+    .charts-grid { grid-template-columns: 1fr; }
+    .chart-card--wide { grid-column: span 1; }
 }

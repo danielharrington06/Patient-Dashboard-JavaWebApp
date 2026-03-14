@@ -23,7 +23,7 @@ public class Model
     private String currentDataFile;
     public static final String DEFAULT_FILE = Paths.get("data", "patients100.csv").toString();
 
-    public static final int DEFAULT_PAGE_SIZE = 40;
+    public static final int DEFAULT_PAGE_SIZE = 50;
 
     public static final int ETHNICITY_CHART_TOP_N = 8;
     public static final int CITY_CHART_TOP_N = 10; 
@@ -37,7 +37,7 @@ public class Model
         }
     }
 
-    /* Data Loading */
+    /* -- Data Loading -- */
 
     public final void reloadData(String filename) throws IOException {
         CSVLoader loader = new CSVLoader();
@@ -50,7 +50,7 @@ public class Model
         return currentDataFile;
     }
 
-    /* Indexing */
+    /* -- Indexing -- */
 
     private void buildIndex() {
         idToRowIndex = new HashMap<>();
@@ -78,7 +78,7 @@ public class Model
         return newId;
     }
 
-    /* Data Access */
+    /* -- Data Access -- */
     public List<String> getColumnNames() {
         return dataFrame.getColumnNames();
     }
@@ -113,7 +113,7 @@ public class Model
         return result;
     }
 
-    /* Formatting */
+    /* -- Formatting -- */
 
     public String formatColumnName(String columnName) {
         switch (columnName.toUpperCase()) {
@@ -188,7 +188,7 @@ public class Model
         }
     }
 
-    /* Patient Records */
+    /* -- Patient Records -- */
 
     public LinkedHashMap<String, String> getRawPatientRecord(String id) {
         LinkedHashMap<String, String> record = new LinkedHashMap<>();
@@ -267,7 +267,7 @@ public class Model
         return patients;
     }
 
-    /* Search, Filter, Sort */
+    /* -- Search, Filter, Sort -- */
 
     public Map<String, List<String>> searchPatientSummaries(String searchString) {
         String[] lowerStrings = searchString.toLowerCase().split(" ");
@@ -395,7 +395,7 @@ public class Model
         return sorted;
     }
 
-    /* Pagination */
+    /* -- Pagination -- */
 
     public Map<String, List<String>> getPage(Map<String, List<String>> data, int page, int pageSize) {
         List<String> keys = new ArrayList<>(data.keySet());
@@ -411,7 +411,7 @@ public class Model
         return pageData;
     }
 
-    /* CRUD (Create, Read, Update Delete) Operations */
+    /* -- CRUD (Create, Read, Update Delete) Operations -- */
 
     public void deletePatient(String id) throws IOException {
         int row = getRowNumFromId(id);
@@ -441,9 +441,10 @@ public class Model
         writer.write(dataFrame, outputPath.toString());
     }
 
-    /* URL Building */
+    /* -- URL Building -- */
 
     public Map<String, String> buildResetUrls(String search, String gender, String alive, String marital, List<String> race, List<String> ethnicity) {
+        // by building all 5 in one function, they can easily and cleanly be accessed by the reset button that is pressed on the page
         Map<String, String> urls = new HashMap<>();
         urls.put("gender", buildUrl(search, null, alive, marital, race, ethnicity));
         urls.put("alive",  buildUrl(search, gender, null, marital, race, ethnicity));
@@ -479,7 +480,7 @@ public class Model
         return sb.toString();
     }
 
-    /* Statistics */ 
+    /* -- Statistics -- */ 
  
     private static final DateTimeFormatter DATE_FMT = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     

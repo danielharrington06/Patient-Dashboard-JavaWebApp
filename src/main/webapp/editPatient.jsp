@@ -25,7 +25,7 @@
     %>
 
     <div class="record-actions">
-        <a href="/patientRecord?id=<%= id %>" class="btn btn-secondary">← Cancel</a>
+        <a href="/patientRecord?id=<%= id %>" class="btn btn-secondary">&larr; Cancel</a>
         <div class="record-actions-right">
             <button type="submit" form="edit-form" class="btn">Save Changes</button>
         </div>

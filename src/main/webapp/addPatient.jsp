@@ -26,7 +26,7 @@
     %>
 
     <div class="record-actions">
-        <button type="button" class="btn btn-secondary" onclick="history.back()">← Cancel</button>
+        <button type="button" class="btn btn-secondary" onclick="history.back()">&larr; Cancel</button>
         <div class="record-actions-right">
             <button type="submit" form="add-form" class="btn">Add Patient</button>
         </div>

@@ -27,7 +27,7 @@
 
 <div class="main">
 
-    <div class="welcome-card welcome-card--full">
+    <div class="welcome-card welcome-card--full card">
         <h2>Patient Data App</h2>
         <p>Currently viewing <strong><%= patientCount %></strong> patients.</p>
 
@@ -57,7 +57,7 @@
         </div>
     </div>
 
-    <div class="search-card">
+    <div class="search-card card">
         <h3 class="dataset-heading">Select Dataset</h3>
         <div class="dataset-row">
             <form method="POST" action="/switchdataset">

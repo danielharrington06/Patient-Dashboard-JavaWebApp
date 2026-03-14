@@ -20,7 +20,7 @@
     %>
 
     <div class="record-actions">
-        <a href="<%= backHref %>" class="btn btn-secondary">← Back</a>
+        <a href="<%= backHref %>" class="btn btn-secondary">&larr; Back</a>
         <div class="record-actions-right">
             <a href="/editPatient?id=<%= id %>" class="btn btn-secondary">Edit Patient</a>
             <button type="button" class="btn btn-danger" onclick="document.getElementById('delete-modal').style.display='flex'">
@@ -28,7 +28,7 @@
             </button>
 
             <div id="delete-modal" class="modal-overlay">
-                <div class="modal">
+                <div class="modal card">
                     <h3 class="modal-title">Delete Patient</h3>
                     <p class="modal-body">
                         Are you sure you want to delete this patient? This action cannot be undone.
