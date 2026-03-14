@@ -315,37 +315,16 @@
                 <a href="<%= baseUrl %><%= currentPage + 1 %>" class="btn btn-secondary btn-sm">Next &rarr;</a>
             <% } %>
         </div>
-        <form method="GET" action="<%= (searchTerm != null && !searchTerm.isEmpty()) ? "/runsearch" : "/patientList" %>" style="display: flex; align-items: center; gap: 0.5rem;">
-            <% if (searchTerm != null && !searchTerm.isEmpty()) { %>
-                <input type="hidden" name="searchstring" value="<%= searchTerm %>">
-            <% } %>
-            <% if (genderFilter != null && !genderFilter.isEmpty()) { %>
-                <input type="hidden" name="gender" value="<%= genderFilter %>">
-            <% } %>
-            <% if (aliveFilter != null && !aliveFilter.isEmpty()) { %>
-                <input type="hidden" name="alive" value="<%= aliveFilter %>">
-            <% } %>
-            <% if (maritalFilter != null && !maritalFilter.isEmpty()) { %>
-                <input type="hidden" name="marital" value="<%= maritalFilter %>">
-            <% } %>
-            <% if (sortKey != null && !sortKey.isEmpty()) { %>
-                <input type="hidden" name="sort" value="<%= sortKey %>">
-                <input type="hidden" name="dir" value="<%= sortDir %>">
-            <% } %>
-            <% if (raceFilterList != null) {
-                for (String r : raceFilterList) { %>
-                    <input type="hidden" name="race" value="<%= r %>">
-            <% } } %>
-            <% if (ethnicityFilterList != null) {
-                for (String e : ethnicityFilterList) { %>
-                    <input type="hidden" name="ethnicity" value="<%= e %>">
-            <% } } %>
-            <label style="font-size: 0.85rem; color: var(--colour-text-muted);">Go to page</label>
-            <input type="number" name="page" min="1" max="<%= totalPages %>"
-                style="width: 70px; padding: 0.2rem 0.4rem; border: 1px solid var(--colour-border); border-radius: var(--radius); font-size: 0.85rem;"
-                placeholder="<%= currentPage %>">
-            <button type="submit" class="btn btn-secondary btn-sm">Go</button>
-        </form>
+        <div class="page-goto">
+            <form class="page-goto" onsubmit="goToPage(); event.preventDefault();">
+
+                <span id="baseUrl" class="visually-hidden"><%= baseUrl %></span>
+                <span id="totalPages" class="visually-hidden"><%= totalPages %></span>
+                <label class="text-muted">Go to page</label>
+                <input type="number" id="pageInput" min="1" max="<%= totalPages %>" class="goto-input" placeholder="<%= currentPage %>">
+                <button type="submit" class="btn btn-secondary btn-sm" onclick="goToPage(); event.preventDefault();">Go</button>
+            </form>
+        </div>
     </div>
     <%
         }
@@ -362,11 +341,12 @@
 </div>
 <jsp:include page="/footer.jsp"/>
 <script>
-    document.querySelectorAll('tr[data-href]').forEach(row => {
-        row.addEventListener('click', () => {
-            window.location = row.dataset.href;
-        });
-    });
+    function goToPage() {
+        var p = parseInt(document.getElementById('pageInput').value);
+        var total = parseInt(document.getElementById('totalPages').textContent);
+        var base = document.getElementById('baseUrl').textContent;
+        if (p >= 1 && p <= total) window.location = base + p;
+    }
 </script>
 </body>
 </html>

@@ -469,13 +469,13 @@ public class Model
         StringBuilder sb = new StringBuilder(
             (search != null && !search.isEmpty()) ? "/runsearch?" : "/patientList?"
         );
-        if (search != null && !search.isEmpty()) sb.append("searchstring=").append(search).append("&");
-        if (gender != null && !gender.isEmpty()) sb.append("gender=").append(gender).append("&");
-        if (alive != null && !alive.isEmpty()) sb.append("alive=").append(alive).append("&");
-        if (marital != null && !marital.isEmpty()) sb.append("marital=").append(marital).append("&");
-        if (race != null) race.forEach(r -> sb.append("race=").append(r).append("&"));
-        if (ethnicity != null) ethnicity.forEach(e -> sb.append("ethnicity=").append(e).append("&"));
-        if (sortKey != null && !sortKey.isEmpty()) sb.append("sort=").append(sortKey).append("&dir=").append(sortDir != null ? sortDir : "asc").append("&");
+        if (search != null && !search.isEmpty()) sb.append("searchstring=").append(search).append("&amp;");
+        if (gender != null && !gender.isEmpty()) sb.append("gender=").append(gender).append("&amp;");
+        if (alive != null && !alive.isEmpty()) sb.append("alive=").append(alive).append("&amp;");
+        if (marital != null && !marital.isEmpty()) sb.append("marital=").append(marital).append("&amp;");
+        if (race != null) race.forEach(r -> sb.append("race=").append(r).append("&amp;"));
+        if (ethnicity != null) ethnicity.forEach(e -> sb.append("ethnicity=").append(e).append("&amp;"));
+        if (sortKey != null && !sortKey.isEmpty()) sb.append("sort=").append(sortKey).append("&amp;dir=").append(sortDir != null ? sortDir : "asc").append("&amp;");
         sb.append("page=");
         return sb.toString();
     }
