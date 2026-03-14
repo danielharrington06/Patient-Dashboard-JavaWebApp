@@ -1,10 +1,12 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ page import="uk.ac.ucl.model.ModelFactory" %>
-<%@ page import="uk.ac.ucl.model.Model" %>
 <%
-    Model model = ModelFactory.getModel();
-    String currentFile = model.getCurrentDataFile().replace("\\", "/");
-    int patientCount = model.getRowCount();
+    if (request.getAttribute("patientCount") == null) {
+        response.sendRedirect(request.getContextPath() + "/home");
+        return;
+    }
+    
+    int patientCount = (Integer) request.getAttribute("patientCount");
+    String currentFile = (String) request.getAttribute("currentFile");
 
     Boolean exportSuccess = (Boolean) session.getAttribute("exportSuccess");
     String exportError = (String) session.getAttribute("exportError");
