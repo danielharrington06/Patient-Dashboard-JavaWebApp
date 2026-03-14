@@ -207,6 +207,26 @@
             {"City", "city"}
         };
 
+        // Build a reusable base URL that preserves the search term and all active filters.
+        // This is appended to by sort links, the clear-sort link, and pagination so that
+        // none of those navigations accidentally discard the user's current filter state.
+        StringBuilder filterBase = new StringBuilder(
+            (searchTerm != null && !searchTerm.isEmpty())
+                ? "/runsearch?searchstring=" + searchTerm
+                : "/patientList?"
+        );
+        if (genderFilter != null && !genderFilter.isEmpty())
+            filterBase.append("&gender=").append(genderFilter);
+        if (aliveFilter != null && !aliveFilter.isEmpty())
+            filterBase.append("&alive=").append(aliveFilter);
+        if (maritalFilter != null && !maritalFilter.isEmpty())
+            filterBase.append("&marital=").append(maritalFilter);
+        for (String r : raceFilterList)
+            filterBase.append("&race=").append(r);
+        for (String e : ethnicityFilterList)
+            filterBase.append("&ethnicity=").append(e);
+        String filterBaseUrl = filterBase.toString();
+
         if (patients != null && !patients.isEmpty()) {
     %>
 
@@ -220,7 +240,7 @@
             }
         %>
             Sorted by <strong><%= activeLabel %></strong> (<%= dirLabel %>) —
-            <a href="<%= (searchTerm != null && !searchTerm.isEmpty()) ? "/runsearch?searchstring=" + searchTerm : "/patientList" %>">clear sort</a>
+            <a href="<%= filterBaseUrl %>">clear sort</a>
         <% } else { %>
             Click a column header to sort
         <% } %>
@@ -239,11 +259,8 @@
                             boolean isActive = key.equals(sortKey);
                             String nextDir = (isActive && "asc".equals(sortDir)) ? "desc" : "asc";
                             String arrow = isActive ? ("asc".equals(sortDir) ? " ↑" : " ↓") : "";
-                            String base = (searchTerm != null && !searchTerm.isEmpty())
-                                ? "/runsearch?searchstring=" + searchTerm
-                                : "/patientList?";
-                            String sortUrl = base + (base.endsWith("?") ? "" : "&") + "sort=" + key + "&dir=" + nextDir;
                             String tooltipDir = (isActive && "asc".equals(sortDir)) ? "descending" : "ascending";
+                            String sortUrl = filterBaseUrl + "&sort=" + key + "&dir=" + nextDir;
                             String tooltip = isActive
                                 ? "Sort by " + label + " (" + tooltipDir + ")"
                                 : "Sort by " + label;
@@ -317,7 +334,6 @@
         </div>
         <div class="page-goto">
             <form class="page-goto" onsubmit="goToPage(); event.preventDefault();">
-
                 <span id="baseUrl" class="visually-hidden"><%= baseUrl %></span>
                 <span id="totalPages" class="visually-hidden"><%= totalPages %></span>
                 <label class="text-muted">Go to page</label>
@@ -347,6 +363,11 @@
         var base = document.getElementById('baseUrl').textContent;
         if (p >= 1 && p <= total) window.location = base + p;
     }
+    document.querySelectorAll('tr[data-href]').forEach(row => {
+        row.addEventListener('click', () => {
+            window.location = row.dataset.href;
+        });
+    });
 </script>
 </body>
 </html>
