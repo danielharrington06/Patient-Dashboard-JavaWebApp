@@ -3,10 +3,6 @@ package uk.ac.ucl.model;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.time.LocalDate;
-import java.time.Period;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -17,6 +13,8 @@ import java.util.Set;
 
 public class Model
 {
+    private final Statistics statistics;
+
     private DataFrame dataFrame;
     private Map<String, Integer> idToRowIndex = new HashMap<>();
     
@@ -33,6 +31,9 @@ public class Model
         } catch (IOException e) {
             System.err.println("Error loading CSV file: " + e.getMessage());
             this.dataFrame = new DataFrame(); // fallback to empty frame
+        }
+        finally {
+            statistics = new Statistics(dataFrame);
         }
     }
 
@@ -53,7 +54,7 @@ public class Model
 
     private void buildIndex() {
         idToRowIndex = new HashMap<>();
-        for (int row = 0; row < getRowCount(); row++) {
+        for (int row = 0; row < dataFrame.getRowCount(); row++) {
             idToRowIndex.put(dataFrame.getValue("ID", row), row);
         }
     }
@@ -82,9 +83,7 @@ public class Model
         return dataFrame.getColumnNames();
     }
 
-    public int getRowCount() {
-        return dataFrame.getRowCount();
-    }
+    public int getNumPatients() { return dataFrame.getRowCount(); }
 
     public String getValue(String columnName, int row) {
         return dataFrame.getValue(columnName, row);
@@ -92,7 +91,7 @@ public class Model
 
     public List<String> getDistinctValues(String columnName) {
         Set<String> seen = new LinkedHashSet<>();
-        for (int row = 0; row < getRowCount(); row++) {
+        for (int row = 0; row < dataFrame.getRowCount(); row++) {
             String value = getValue(columnName, row);
             if (value != null && !value.isEmpty()) {
                 seen.add(value);
@@ -107,86 +106,10 @@ public class Model
         distinct.sort(String::compareToIgnoreCase);
         LinkedHashMap<String, String> result = new LinkedHashMap<>();
         for (String value : distinct) {
-            result.put(value, formatValue(columnName, value));
+            result.put(value, Formatter.formatValue(columnName, value));
         }
         return result;
     }
-
-    /* -- Formatting -- */
-
-    public String formatColumnName(String columnName) {
-        switch (columnName.toUpperCase()) {
-            case "ID" -> {return "Patient ID";}
-            case "BIRTHDATE" -> {return "Date of Birth";}
-            case "DEATHDATE" -> {return "Date of Death";}
-            case "SSN" -> {return "SSN";}
-            case "DRIVERS" -> {return "Driver's Licence Number";}
-            case "PASSPORT" -> {return "Passport Number";}
-            case "PREFIX" -> {return "Prefix";}
-            case "FIRST" -> {return "Firstname";}
-            case "LAST" -> {return "Lastname";}
-            case "SUFFIX" -> {return "Suffix";}
-            case "MAIDEN" -> {return "Maiden Name";}
-            case "MARITAL" -> {return "Marital Status";}
-            case "RACE" -> {return "Race";}
-            case "ETHNICITY" -> {return "Ethnicity";}
-            case "GENDER" -> {return "Gender";}
-            case "BIRTHPLACE" -> {return "Birthplace";}
-            case "ADDRESS" -> {return "Street Address";}
-            case "CITY" -> {return "City";}
-            case "STATE" -> {return "State";}
-            case "ZIP" -> {return "Zip Code";}
-            default -> { return columnName; }
-        }
-    }
-
-    public String formatValue(String columnName, String value) {
-        if (value == null || value.isEmpty()) return "—";
-        
-        switch (columnName.toUpperCase()) {
-            case "GENDER" -> {
-                return switch (value.toUpperCase()) {
-                    case "M" -> "Male";
-                    case "F" -> "Female";
-                    default -> value;
-                };
-            }
-            case "MARITAL" -> {
-                return switch (value.toUpperCase()) {
-                    case "M" -> "Married";
-                    case "S" -> "Single";
-                    default -> value;
-                };
-            }
-            case "ETHNICITY", "RACE" -> {
-                // convert underscores to spaces and capitalise each word
-                String[] words = value.replace("_", " ").split(" ");
-                StringBuilder sb = new StringBuilder();
-                for (String word : words) {
-                    if (!word.isEmpty()) {
-                        sb.append(Character.toUpperCase(word.charAt(0)))
-                        .append(word.substring(1).toLowerCase())
-                        .append(" ");
-                    }
-                }
-                return sb.toString().trim();
-            }
-            case "BIRTHDATE", "DEATHDATE" -> {
-                // convert 1979-08-24 to 24 Aug 1979
-                try {
-                    String[] parts = value.split("-");
-                    String[] months = {"Jan","Feb","Mar","Apr","May","Jun",
-                                    "Jul","Aug","Sep","Oct","Nov","Dec"};
-                    int month = Integer.parseInt(parts[1]) - 1;
-                    return parts[2] + " " + months[month] + " " + parts[0];
-                } catch (NumberFormatException e) {
-                    return value;
-                }
-            }
-            default -> { return value; }
-        }
-    }
-
     /* -- Patient Records -- */
 
     public LinkedHashMap<String, String> getRawPatientRecord(String id) {
@@ -202,7 +125,7 @@ public class Model
         Map<String, String> formatted = new LinkedHashMap<>();
         int row = getRowNumFromId(id);
         for (String column : getColumnNames()) {
-            formatted.put(column, formatValue(column, getValue(column, row)));
+            formatted.put(column, Formatter.formatValue(column, getValue(column, row)));
         }
         return formatted;
     }
@@ -211,7 +134,7 @@ public class Model
         List<String> summaryColumns = List.of("FIRST", "LAST", "BIRTHDATE", "DEATHDATE", "GENDER", "MARITAL", "RACE", "ETHNICITY", "CITY");
         List<String> displayNames = new ArrayList<>();
         for (String col : summaryColumns) {
-            displayNames.add(formatColumnName(col));
+            displayNames.add(Formatter.formatColumnName(col));
         }
         return displayNames;
     }
@@ -243,22 +166,22 @@ public class Model
 
     public List<String> packagePatientSummaryInfo(int row) {
         List<String> info = new ArrayList<>();
-        info.add(formatValue("FIRST", dataFrame.getValue("FIRST", row)));  // index 0: firstname
-        info.add(formatValue("LAST", dataFrame.getValue("LAST", row)));    // index 1: lastname
-        info.add(formatValue("BIRTHDATE", dataFrame.getValue("BIRTHDATE", row)));
-        info.add(formatValue("DEATHDATE", dataFrame.getValue("DEATHDATE", row)));
-        info.add(formatValue("GENDER", dataFrame.getValue("GENDER", row)));
-        info.add(formatValue("MARITAL", dataFrame.getValue("MARITAL", row)));
-        info.add(formatValue("RACE", dataFrame.getValue("RACE", row)));
-        info.add(formatValue("ETHNICITY", dataFrame.getValue("ETHNICITY", row)));
-        info.add(formatValue("CITY", dataFrame.getValue("CITY", row)));
+        info.add(Formatter.formatValue("FIRST", dataFrame.getValue("FIRST", row)));  // index 0: firstname
+        info.add(Formatter.formatValue("LAST", dataFrame.getValue("LAST", row)));    // index 1: lastname
+        info.add(Formatter.formatValue("BIRTHDATE", dataFrame.getValue("BIRTHDATE", row)));
+        info.add(Formatter.formatValue("DEATHDATE", dataFrame.getValue("DEATHDATE", row)));
+        info.add(Formatter.formatValue("GENDER", dataFrame.getValue("GENDER", row)));
+        info.add(Formatter.formatValue("MARITAL", dataFrame.getValue("MARITAL", row)));
+        info.add(Formatter.formatValue("RACE", dataFrame.getValue("RACE", row)));
+        info.add(Formatter.formatValue("ETHNICITY", dataFrame.getValue("ETHNICITY", row)));
+        info.add(Formatter.formatValue("CITY", dataFrame.getValue("CITY", row)));
         return info;
     }
 
     public Map<String, List<String>> getPatientSummaries() {
         // gets a hash map of id to contents: [fullName, dob, gender, city, state]
         Map<String, List<String>> patients = new LinkedHashMap<>();
-        for (int row = 0; row < getRowCount(); row++) {
+        for (int row = 0; row < dataFrame.getRowCount(); row++) {
             String id = dataFrame.getValue("ID", row);
             List<String> info = packagePatientSummaryInfo(row);
             patients.put(id, info);
@@ -272,13 +195,13 @@ public class Model
         String[] lowerStrings = searchString.toLowerCase().split(" ");
         Map<String, List<String>> results = new HashMap<>();
 
-        for (int row = 0; row < getRowCount(); row++) {
+        for (int row = 0; row < dataFrame.getRowCount(); row++) {
             boolean valid = true;
             for (String term : lowerStrings) {
                 boolean found = false;
                 for (String column : getColumnNames()) {
                     String value = getValue(column, row);
-                    if (value != null && formatValue(column, value).toLowerCase().contains(term)) {
+                    if (value != null && Formatter.formatValue(column, value).toLowerCase().contains(term)) {
                         found = true;
                         break;
                     }
@@ -479,205 +402,31 @@ public class Model
         return sb.toString();
     }
 
-    /* -- Statistics -- */ 
- 
-    private static final DateTimeFormatter DATE_FMT = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-    
-    private LocalDate parseDate(String raw) {
-        if (raw == null || raw.isBlank()) return null;
-        try {
-            return LocalDate.parse(raw.trim(), DATE_FMT);
-        } catch (DateTimeParseException e) {
-            return null;
-        }
-    }
-    
-    private int ageAt(LocalDate birth, LocalDate end) {
-        return Period.between(birth, end).getYears();
-    }
-    
-    public int getOldestAliveAge() {
-        LocalDate today = LocalDate.now();
-        int max = -1;
-        for (int row = 0; row < getRowCount(); row++) {
-            String death = dataFrame.getValue("DEATHDATE", row);
-            if (death != null && !death.isBlank()) continue; // deceased
-            LocalDate birth = parseDate(dataFrame.getValue("BIRTHDATE", row));
-            if (birth == null) continue;
-            int age = ageAt(birth, today);
-            if (age > max) max = age;
-        }
-        return max;
-    }
-    
-    public int getYoungestAliveAge() {
-        LocalDate today = LocalDate.now();
-        int min = Integer.MAX_VALUE;
-        for (int row = 0; row < getRowCount(); row++) {
-            String death = dataFrame.getValue("DEATHDATE", row);
-            if (death != null && !death.isBlank()) continue;
-            LocalDate birth = parseDate(dataFrame.getValue("BIRTHDATE", row));
-            if (birth == null) continue;
-            int age = ageAt(birth, today);
-            if (age < min) min = age;
-        }
-        return min == Integer.MAX_VALUE ? -1 : min;
-    }
-    
-    public double getAverageAliveAge() {
-        LocalDate today = LocalDate.now();
-        long total = 0;
-        int count = 0;
-        for (int row = 0; row < getRowCount(); row++) {
-            String death = dataFrame.getValue("DEATHDATE", row);
-            if (death != null && !death.isBlank()) continue;
-            LocalDate birth = parseDate(dataFrame.getValue("BIRTHDATE", row));
-            if (birth == null) continue;
-            total += ageAt(birth, today);
-            count++;
-        }
-        return count == 0 ? 0 : (double) total / count;
-    }
-    
-    public double getAverageAgeAtDeath() {
-        long total = 0;
-        int count = 0;
-        for (int row = 0; row < getRowCount(); row++) {
-            LocalDate death = parseDate(dataFrame.getValue("DEATHDATE", row));
-            if (death == null) continue;
-            LocalDate birth = parseDate(dataFrame.getValue("BIRTHDATE", row));
-            if (birth == null) continue;
-            total += ageAt(birth, death);
-            count++;
-        }
-        return count == 0 ? 0 : (double) total / count;
-    }
-    
-    public String[] getMostCommonCity() {
-        // Returns [cityName, count]
-        Map<String, Integer> counts = new HashMap<>();
-        for (int row = 0; row < getRowCount(); row++) {
-            String city = dataFrame.getValue("CITY", row);
-            if (city != null && !city.isBlank()) {
-                counts.merge(city, 1, Integer::sum);
-            }
-        }
-        return counts.entrySet().stream()
-                .max(Map.Entry.comparingByValue())
-                .map(e -> new String[]{e.getKey(), String.valueOf(e.getValue())})
-                .orElse(new String[]{"N/A", "0"});
-    }
-    
-    public String getMostCommonEthnicity() {
-        Map<String, Integer> counts = new HashMap<>();
-        for (int row = 0; row < getRowCount(); row++) {
-            String val = dataFrame.getValue("ETHNICITY", row);
-            if (val != null && !val.isBlank()) counts.merge(val, 1, Integer::sum);
-        }
-        return counts.entrySet().stream()
-                .max(Map.Entry.comparingByValue())
-                .map(e -> formatValue("ETHNICITY", e.getKey()))
-                .orElse("N/A");
-    }
+    /* -- Statistics -- */
 
-    public String getMostCommonRace() {
-        Map<String, Integer> counts = new HashMap<>();
-        for (int row = 0; row < getRowCount(); row++) {
-            String val = dataFrame.getValue("RACE", row);
-            if (val != null && !val.isBlank()) counts.merge(val, 1, Integer::sum);
-        }
-        return counts.entrySet().stream()
-                .max(Map.Entry.comparingByValue())
-                .map(e -> formatValue("RACE", e.getKey()))
-                .orElse("N/A");
-    }
-
-    public int getLivingCount() {
-        int count = 0;
-        for (int row = 0; row < getRowCount(); row++) {
-            String death = dataFrame.getValue("DEATHDATE", row);
-            if (death == null || death.isBlank()) count++;
-        }
-        return count;
-    }
+    public int getOldestAliveAge() { return statistics.getOldestAliveAge(); }
     
-    public Map<String, Integer> getGenderCounts() {
-        Map<String, Integer> counts = new LinkedHashMap<>();
-        counts.put("Male", 0);
-        counts.put("Female", 0);
-        counts.put("Unknown", 0);
-        for (int row = 0; row < getRowCount(); row++) {
-            String g = dataFrame.getValue("GENDER", row);
-            if ("M".equalsIgnoreCase(g)) counts.merge("Male", 1, Integer::sum);
-            else if ("F".equalsIgnoreCase(g)) counts.merge("Female", 1, Integer::sum);
-            else counts.merge("Unknown", 1, Integer::sum);
-        }
-        counts.values().removeIf(v -> v == 0);
-        return counts;
-    }
+    public int getYoungestAliveAge() { return statistics.getYoungestAliveAge(); }
     
-    public Map<String, Integer> getMaritalCounts() {
-        Map<String, Integer> counts = new LinkedHashMap<>();
-        counts.put("Married", 0);
-        counts.put("Single", 0);
-        counts.put("Unknown", 0);
-        for (int row = 0; row < getRowCount(); row++) {
-            String m = dataFrame.getValue("MARITAL", row);
-            if ("M".equalsIgnoreCase(m)) counts.merge("Married", 1, Integer::sum);
-            else if ("S".equalsIgnoreCase(m)) counts.merge("Single", 1, Integer::sum);
-            else counts.merge("Unknown", 1, Integer::sum);
-        }
-        return counts;
-    }
-
-    public Map<String, Integer> getLivingDeceasedCounts() {
-        int living = getLivingCount();
-        int deceased = getRowCount() - living;
-        Map<String, Integer> counts = new LinkedHashMap<>();
-        counts.put("Living", living);
-        counts.put("Deceased", deceased);
-        return counts;
-    }
+    public double getAverageAliveAge() { return statistics.getAverageAliveAge(); }
     
-    public Map<String, Integer> getEthnicityCounts(int topN) {
-        // Returns top N ethnicities + "Other" bucket
-        Map<String, Integer> raw = new HashMap<>();
-        for (int row = 0; row < getRowCount(); row++) {
-            String val = dataFrame.getValue("ETHNICITY", row);
-            if (val != null && !val.isBlank()) raw.merge(val, 1, Integer::sum);
-        }
-        List<Map.Entry<String, Integer>> sorted = new ArrayList<>(raw.entrySet());
-        sorted.sort((a, b) -> b.getValue() - a.getValue());
+    public double getAverageAgeAtDeath() { return statistics.getAverageAgeAtDeath(); }
     
-        Map<String, Integer> result = new LinkedHashMap<>();
-        int otherCount = 0;
-        for (int i = 0; i < sorted.size(); i++) {
-            if (i < topN) {
-                result.put(formatValue("ETHNICITY", sorted.get(i).getKey()), sorted.get(i).getValue());
-            } else {
-                otherCount += sorted.get(i).getValue();
-            }
-        }
-        if (otherCount > 0) result.put("Other", otherCount);
-        return result;
-    }
+    public String[] getMostCommonCity() { return statistics.getMostCommonCity(); }
+    
+    public String getMostCommonEthnicity() { return statistics.getMostCommonEthnicity(); }
 
-    public Map<String, Integer> getAliveAgeHistogram() {
-        LocalDate today = LocalDate.now();
-        
-        String[] bucketLabels = {"0-9","10-19","20-29","30-39","40-49","50-59","60-69","70-79","80-89","90+"};
-        Map<String, Integer> histogram = new LinkedHashMap<>();
-        for (String label : bucketLabels) histogram.put(label, 0);
+    public String getMostCommonRace() { return statistics.getMostCommonRace(); }
 
-        for (int row = 0; row < getRowCount(); row++) {
-            String death = dataFrame.getValue("DEATHDATE", row);
-            if (death != null && !death.isBlank()) continue;
-            LocalDate birth = parseDate(dataFrame.getValue("BIRTHDATE", row));
-            if (birth == null) continue;
-            int age = ageAt(birth, today);
-            int bucketIndex = Math.min(age / 10, 9); // cap at 90+
-            histogram.merge(bucketLabels[bucketIndex], 1, Integer::sum);
-        }
-        return histogram;
-    }
+    public int getLivingCount() { return statistics.getLivingCount(); }
+    
+    public Map<String, Integer> getGenderCounts() { return statistics.getGenderCounts(); }
+    
+    public Map<String, Integer> getMaritalCounts() { return statistics.getMaritalCounts(); }
+
+    public Map<String, Integer> getLivingDeceasedCounts() { return statistics.getLivingDeceasedCounts(); }
+    
+    public Map<String, Integer> getEthnicityCounts(int topN) { return statistics.getEthnicityCounts(topN); }
+
+    public Map<String, Integer> getAliveAgeHistogram() { return statistics.getAliveAgeHistogram(); }
 }

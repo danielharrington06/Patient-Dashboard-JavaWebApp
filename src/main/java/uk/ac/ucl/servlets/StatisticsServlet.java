@@ -23,7 +23,7 @@ public class StatisticsServlet extends HttpServlet {
         Model model = ModelFactory.getModel();
 
         // Key numbers
-        request.setAttribute("totalPatients",       model.getRowCount());
+        request.setAttribute("totalPatients",       model.getNumPatients());
         request.setAttribute("oldestAliveAge",      model.getOldestAliveAge());
         request.setAttribute("youngestAliveAge",    model.getYoungestAliveAge());
         request.setAttribute("averageAliveAge",      String.format("%.1f", model.getAverageAliveAge()));
