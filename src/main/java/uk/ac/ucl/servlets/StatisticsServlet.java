@@ -36,7 +36,6 @@ public class StatisticsServlet extends HttpServlet {
         request.setAttribute("mostCommonEthnicity", model.getMostCommonEthnicity());
         request.setAttribute("mostCommonRace",      model.getMostCommonRace());
         request.setAttribute("ethnicityTopN",       Model.ETHNICITY_CHART_TOP_N);
-        request.setAttribute("cityTopN",            Model.CITY_CHART_TOP_N);
 
         // Chart data
         String chartDataJson = ChartDataBuilder.buildChartDataJson(

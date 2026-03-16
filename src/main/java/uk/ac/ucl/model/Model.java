@@ -26,7 +26,6 @@ public class Model
     public static final int DEFAULT_PAGE_SIZE = 50;
 
     public static final int ETHNICITY_CHART_TOP_N = 8;
-    public static final int CITY_CHART_TOP_N = 10; 
 
     public Model() {
         try {
