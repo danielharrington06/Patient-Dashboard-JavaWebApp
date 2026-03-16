@@ -15,6 +15,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import uk.ac.ucl.model.Model;
 import uk.ac.ucl.model.ModelFactory;
+import uk.ac.ucl.model.URLBuilder;
 
 @WebServlet("/patientList")
 public class PatientListServlet extends HttpServlet {
@@ -80,8 +81,8 @@ public class PatientListServlet extends HttpServlet {
             request.setAttribute("raceOptions", model.getDistinctValuesWithLabels("RACE"));
             request.setAttribute("ethnicityOptions", model.getDistinctValuesWithLabels("ETHNICITY"));
 
-            request.setAttribute("resetUrls", model.buildResetUrls(searchTerm, genderFilter, aliveFilter, maritalFilter, raceFilterList, ethnicityFilterList));
-            request.setAttribute("paginationBaseUrl", model.buildPaginationBaseUrl(searchTerm, genderFilter, aliveFilter, maritalFilter, raceFilterList, ethnicityFilterList, sortKey, sortDir));
+            request.setAttribute("resetUrls", URLBuilder.buildResetUrls(searchTerm, genderFilter, aliveFilter, maritalFilter, raceFilterList, ethnicityFilterList));
+            request.setAttribute("paginationBaseUrl", URLBuilder.buildPaginationBaseUrl(searchTerm, genderFilter, aliveFilter, maritalFilter, raceFilterList, ethnicityFilterList, sortKey, sortDir));
             
             // Save current list URL to session for back navigation
             String queryString = request.getQueryString();

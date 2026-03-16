@@ -15,6 +15,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import uk.ac.ucl.model.Model;
 import uk.ac.ucl.model.ModelFactory;
+import uk.ac.ucl.model.URLBuilder;
 
 @WebServlet("/runsearch")
 public class SearchServlet extends HttpServlet {
@@ -100,10 +101,10 @@ public class SearchServlet extends HttpServlet {
             request.setAttribute("ethnicityFilterList", ethnicityFilterList);
             request.setAttribute("raceOptions", model.getDistinctValuesWithLabels("RACE"));
             request.setAttribute("ethnicityOptions", model.getDistinctValuesWithLabels("ETHNICITY"));
-            request.setAttribute("resetUrls", model.buildResetUrls(
+            request.setAttribute("resetUrls", URLBuilder.buildResetUrls(
                 searchString, genderFilter, aliveFilter, maritalFilter, raceFilterList, ethnicityFilterList
             ));
-            request.setAttribute("paginationBaseUrl", model.buildPaginationBaseUrl(
+            request.setAttribute("paginationBaseUrl", URLBuilder.buildPaginationBaseUrl(
                 searchString, genderFilter, aliveFilter, maritalFilter, raceFilterList, ethnicityFilterList, sortKey, sortDir
             ));
 
