@@ -27,6 +27,10 @@ public class Model
 
     public static final int ETHNICITY_CHART_TOP_N = 8;
 
+    public static final List<String> ORDERED_COLUMNS = List.of("ID", "PREFIX", "FIRST", "LAST", "SUFFIX", "MAIDEN", "GENDER", "BIRTHDATE", "DEATHDATE", "MARITAL", "RACE", "ETHNICITY", "BIRTHPLACE", "SSN", "DRIVERS", "PASSPORT", "ADDRESS", "CITY", "STATE", "ZIP");
+
+    private static final List<String> SUMMARY_COLUMNS = List.of("FIRST", "LAST", "BIRTHDATE", "DEATHDATE", "GENDER", "MARITAL", "RACE", "ETHNICITY", "CITY");
+
     public Model() {
         try {
             reloadData(DEFAULT_FILE);
@@ -87,7 +91,9 @@ public class Model
         return dataFrame.getColumnNames();
     }
 
-    public int getNumPatients() { return dataFrame.getRowCount(); }
+    public int getNumPatients() { 
+        return dataFrame.getRowCount(); 
+    }
 
     public String getValue(String columnName, int row) {
         return dataFrame.getValue(columnName, row);
@@ -136,9 +142,8 @@ public class Model
     }
 
     public List<String> getSummaryColumnNamesFormatted() {
-        List<String> summaryColumns = List.of("FIRST", "LAST", "BIRTHDATE", "DEATHDATE", "GENDER", "MARITAL", "RACE", "ETHNICITY", "CITY");
         List<String> displayNames = new ArrayList<>();
-        for (String col : summaryColumns) {
+        for (String col : SUMMARY_COLUMNS) {
             displayNames.add(Formatter.formatColumnName(col));
         }
         return displayNames;
@@ -146,40 +151,18 @@ public class Model
 
     public Map<String, String> getAllColumnNamesFormatted() {
         Map<String, String> columnLabels = new LinkedHashMap<>();
-        columnLabels.put("ID",         "Patient ID");
-        columnLabels.put("PREFIX",     "Prefix");
-        columnLabels.put("FIRST",      "First Name");
-        columnLabels.put("LAST",       "Last Name");
-        columnLabels.put("SUFFIX",     "Suffix");
-        columnLabels.put("MAIDEN",     "Maiden Name");
-        columnLabels.put("GENDER",     "Gender");
-        columnLabels.put("BIRTHDATE",  "Date of Birth");
-        columnLabels.put("DEATHDATE",  "Date of Death");
-        columnLabels.put("MARITAL",    "Marital Status");
-        columnLabels.put("RACE",       "Race");
-        columnLabels.put("ETHNICITY",  "Ethnicity");
-        columnLabels.put("BIRTHPLACE", "Birthplace");
-        columnLabels.put("SSN",        "SSN");
-        columnLabels.put("DRIVERS",    "Driver's Licence");
-        columnLabels.put("PASSPORT",   "Passport");
-        columnLabels.put("ADDRESS",    "Address");
-        columnLabels.put("CITY",       "City");
-        columnLabels.put("STATE",      "State");
-        columnLabels.put("ZIP",        "ZIP Code");
+        for (String column : ORDERED_COLUMNS) {
+            columnLabels.put(column, Formatter.formatColumnName(column));
+        }
         return columnLabels;
     }
 
     public List<String> packagePatientSummaryInfo(int row) {
-        List<String> info = new ArrayList<>();
-        info.add(Formatter.formatValue("FIRST", dataFrame.getValue("FIRST", row)));  // index 0: firstname
-        info.add(Formatter.formatValue("LAST", dataFrame.getValue("LAST", row)));    // index 1: lastname
-        info.add(Formatter.formatValue("BIRTHDATE", dataFrame.getValue("BIRTHDATE", row)));
-        info.add(Formatter.formatValue("DEATHDATE", dataFrame.getValue("DEATHDATE", row)));
-        info.add(Formatter.formatValue("GENDER", dataFrame.getValue("GENDER", row)));
-        info.add(Formatter.formatValue("MARITAL", dataFrame.getValue("MARITAL", row)));
-        info.add(Formatter.formatValue("RACE", dataFrame.getValue("RACE", row)));
-        info.add(Formatter.formatValue("ETHNICITY", dataFrame.getValue("ETHNICITY", row)));
-        info.add(Formatter.formatValue("CITY", dataFrame.getValue("CITY", row)));
+    List<String> info = new ArrayList<>();
+
+        for (String column : SUMMARY_COLUMNS) {
+            info.add(Formatter.formatValue(column, dataFrame.getValue(column, row)));
+        }
         return info;
     }
 
