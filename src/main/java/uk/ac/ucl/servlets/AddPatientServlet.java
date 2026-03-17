@@ -22,6 +22,7 @@ public class AddPatientServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         Model model = ModelFactory.getModel();
+        request.setAttribute("activePage", "add");
         request.setAttribute("generatedId", model.generateUUID());
         request.setAttribute("columnLabels", model.getAllColumnNamesFormatted());
         request.setAttribute("columnNames", model.getColumnNames());
@@ -31,6 +32,7 @@ public class AddPatientServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         Model model = ModelFactory.getModel();
+        request.setAttribute("activePage", "add");
         List<String> columns = new ArrayList<>(model.getColumnNames());
         columns.remove("ID");
 

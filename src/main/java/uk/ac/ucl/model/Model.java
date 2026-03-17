@@ -28,11 +28,9 @@ public class Model
     public static final int ETHNICITY_CHART_TOP_N = 8;
 
     public static final List<String> ORDERED_COLUMNS = List.of("ID", "PREFIX", "FIRST", "LAST", "SUFFIX", "MAIDEN", "GENDER", "BIRTHDATE", "DEATHDATE", "MARITAL", "RACE", "ETHNICITY", "BIRTHPLACE", "SSN", "DRIVERS", "PASSPORT", "ADDRESS", "CITY", "STATE", "ZIP");
-
     private static final List<String> SUMMARY_COLUMNS = List.of("FIRST", "LAST", "BIRTHDATE", "DEATHDATE", "GENDER", "MARITAL", "RACE", "ETHNICITY", "CITY");
 
     public Model() {
-
         try {
             reloadData(DEFAULT_FILE);
         } catch (IOException e) {
@@ -51,25 +49,33 @@ public class Model
         this.patientQuery = new PatientQuery(dataFrame);
     }
 
+    /**
+     * @apiNote This method is intended for servlet use only. Internal model-layer
+     * classes should call currentDataFile directly.
+     */
     public String getCurrentDataFile() {
         return currentDataFile;
     }
 
     /* -- Data Access -- */
 
-    /** Only call this method from servlets
-     * 
-     * @return
+    /**
+     * @apiNote This method is intended for servlet use only. Internal model-layer
+     * classes should call dataFrame.getColumnNames() directly.
      */
     public List<String> getColumnNames() {
         return dataFrame.getColumnNames();
     }
 
+    /**
+     * @apiNote This method is intended for servlet use only. Internal model-layer
+     * classes should call dataFrame.getRowCount() directly.
+     */
     public int getNumPatients() { 
-        return dataFrame.getRowCount(); 
+        return dataFrame.getRowCount();
     }
 
-    public List<String> getDistinctValues(String columnName) {
+    public List<String> getDistinctValuesInCol(String columnName) {
         Set<String> seen = new LinkedHashSet<>();
         for (int row = 0; row < dataFrame.getRowCount(); row++) {
             String value = dataFrame.getValue(columnName, row);
@@ -81,10 +87,10 @@ public class Model
         return distinct;
     }
 
-    public LinkedHashMap<String, String> getDistinctValuesWithLabels(String columnName) {
-        List<String> distinct = getDistinctValues(columnName);
+    public Map<String, String> getDistinctValuesMapInCol(String columnName) {
+        List<String> distinct = getDistinctValuesInCol(columnName);
         distinct.sort(String::compareToIgnoreCase);
-        LinkedHashMap<String, String> result = new LinkedHashMap<>();
+        Map<String, String> result = new LinkedHashMap<>();
         for (String value : distinct) {
             result.put(value, Formatter.formatValue(columnName, value));
         }
@@ -93,30 +99,16 @@ public class Model
     
     /* -- Patient Records -- */
 
-    public LinkedHashMap<String, String> getRawPatientRecord(String id) {
-        LinkedHashMap<String, String> record = new LinkedHashMap<>();
+    public Map<String, String> getRawPatientRecord(String id) {
         int row = dataFrame.getRowNumFromId(id);
-        for (String column : dataFrame.getColumnNames()) {
-            record.put(column, dataFrame.getValue(column, row));
-        }
+        Map<String, String> record = dataFrame.getRecord(row);
         return record;
     }
 
     public Map<String, String> getFormattedPatientRecord(String id) {
-        Map<String, String> formatted = new LinkedHashMap<>();
-        int row = dataFrame.getRowNumFromId(id);
-        for (String column : dataFrame.getColumnNames()) {
-            formatted.put(column, Formatter.formatValue(column, dataFrame.getValue(column, row)));
-        }
-        return formatted;
-    }
-
-    public List<String> getSummaryColumnNamesFormatted() {
-        List<String> displayNames = new ArrayList<>();
-        for (String col : SUMMARY_COLUMNS) {
-            displayNames.add(Formatter.formatColumnName(col));
-        }
-        return displayNames;
+        Map<String, String> record = getRawPatientRecord(id);
+        record.replaceAll((column, value) -> Formatter.formatValue(column, value)); // lambda function
+        return record;
     }
 
     public Map<String, String> getAllColumnNamesFormatted() {
@@ -127,9 +119,16 @@ public class Model
         return columnLabels;
     }
 
-    public List<String> packagePatientSummaryInfo(int row) {
-    List<String> info = new ArrayList<>();
+    public List<String> getSummaryColumnNamesFormatted() {
+        List<String> displayNames = new ArrayList<>();
+        for (String col : SUMMARY_COLUMNS) {
+            displayNames.add(Formatter.formatColumnName(col));
+        }
+        return displayNames;
+    }
 
+    private List<String> packagePatientSummaryInfo(int row) {
+        List<String> info = new ArrayList<>();
         for (String column : SUMMARY_COLUMNS) {
             info.add(Formatter.formatValue(column, dataFrame.getValue(column, row)));
         }
@@ -137,7 +136,6 @@ public class Model
     }
 
     public Map<String, List<String>> getPatientSummaries() {
-        // gets a hash map of id to contents: [fullName, dob, gender, city, state]
         Map<String, List<String>> patients = new LinkedHashMap<>();
         for (int row = 0; row < dataFrame.getRowCount(); row++) {
             String id = dataFrame.getValue("ID", row);
@@ -174,7 +172,12 @@ public class Model
     /* -- CRUD (Create, Read, Update Delete) Operations -- */
 
     public String generateUUID() {
-        return dataFrame.generateUUID();
+        // unlikely for a UUID to clash with an existing one, but worth ensuring it cannot happen
+        String newId;
+        do {
+            newId = java.util.UUID.randomUUID().toString();
+        } while (dataFrame.idExists(newId));
+        return newId;
     }
 
     public void deletePatient(String id) throws IOException {
@@ -197,7 +200,7 @@ public class Model
         saveToCSV();
     }
 
-    public void saveToCSV() throws IOException {
+    private void saveToCSV() throws IOException {
         CSVWriter writer = new CSVWriter();
         writer.save(dataFrame, currentDataFile);
     }
@@ -234,5 +237,5 @@ public class Model
     
     public Map<String, Integer> getEthnicityCounts(int topN) { return statistics.getEthnicityCounts(topN); }
 
-    public Map<String, Integer> getAliveAgeHistogram() { return statistics.getAliveAgeHistogram(); }
+    public Map<String, Integer> getAliveAgeHistogram() {return statistics.getAliveAgeHistogram(); }
 }

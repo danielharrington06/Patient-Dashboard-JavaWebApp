@@ -2,6 +2,7 @@ package uk.ac.ucl.model;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 class DataFrame {
@@ -32,16 +33,7 @@ class DataFrame {
         return idToRowIndex.containsKey(id);
     }
 
-    public String generateUUID() {
-        // unlikely for a UUID to clash with an existing one, but worth ensuring it cannot happen
-        String newId;
-        do {
-            newId = java.util.UUID.randomUUID().toString();
-        } while (idExists(newId));
-        return newId;
-    }
-
-    /** -- Get and Set -- */
+    /** -- Columns-- */
 
     public void addColumn(Column column) {
         columns.add(column);
@@ -60,6 +52,8 @@ class DataFrame {
         return columns.get(0).getSize();
     }
 
+    /* -- Values -- */
+
     public String getValue(String columnName, int row) {
         int i = getColumnNames().indexOf(columnName);
         return columns.get(i).getRowValue(row);
@@ -73,6 +67,16 @@ class DataFrame {
     public void addValue(String columnName, String value) {
         int i = getColumnNames().indexOf(columnName);
         columns.get(i).addRowValue(value);
+    }
+
+    /* -- Rows -- */
+
+    public Map<String, String> getRecord(int row) {
+        Map<String, String> record = new LinkedHashMap<>();
+        for (String column : getColumnNames()) {
+            record.put(column, getValue(column, row));
+        }
+        return record;
     }
 
     public void removeRow(int row) {

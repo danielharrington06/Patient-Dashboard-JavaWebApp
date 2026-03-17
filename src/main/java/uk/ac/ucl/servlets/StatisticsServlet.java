@@ -17,10 +17,10 @@ import uk.ac.ucl.util.ChartDataBuilder;
 public class StatisticsServlet extends HttpServlet {
 
     @Override
-    public void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws IOException, ServletException {
+    public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 
         Model model = ModelFactory.getModel();
+        request.setAttribute("activePage", "statistics");
 
         // Key numbers
         request.setAttribute("totalPatients",       model.getNumPatients());
@@ -29,7 +29,7 @@ public class StatisticsServlet extends HttpServlet {
         request.setAttribute("averageAliveAge",      String.format("%.1f", model.getAverageAliveAge()));
         request.setAttribute("averageAgeAtDeath",   String.format("%.1f", model.getAverageAgeAtDeath()));
         request.setAttribute("livingCount",         model.getLivingCount());
-        request.setAttribute("distinctCityCount",   model.getDistinctValues("CITY").size());
+        request.setAttribute("distinctCityCount",   model.getDistinctValuesInCol("CITY").size());
         String[] topCity = model.getMostCommonCity();
         request.setAttribute("mostCommonCity",      topCity[0]);
         request.setAttribute("mostCommonCityCount", topCity[1]);

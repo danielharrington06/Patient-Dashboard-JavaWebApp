@@ -24,6 +24,7 @@ public class PatientListServlet extends HttpServlet {
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         try {
             Model model = ModelFactory.getModel();
+            request.setAttribute("activePage", "patients");
 
             String searchTerm = request.getParameter("searchstring");
             
@@ -78,8 +79,8 @@ public class PatientListServlet extends HttpServlet {
             request.setAttribute("maritalFilter", maritalFilter);
             request.setAttribute("raceFilterList", raceFilterList);
             request.setAttribute("ethnicityFilterList", ethnicityFilterList);
-            request.setAttribute("raceOptions", model.getDistinctValuesWithLabels("RACE"));
-            request.setAttribute("ethnicityOptions", model.getDistinctValuesWithLabels("ETHNICITY"));
+            request.setAttribute("raceOptions", model.getDistinctValuesMapInCol("RACE"));
+            request.setAttribute("ethnicityOptions", model.getDistinctValuesMapInCol("ETHNICITY"));
 
             request.setAttribute("resetUrls", URLBuilder.buildResetUrls(searchTerm, genderFilter, aliveFilter, maritalFilter, raceFilterList, ethnicityFilterList));
             request.setAttribute("paginationBaseUrl", URLBuilder.buildPaginationBaseUrl(searchTerm, genderFilter, aliveFilter, maritalFilter, raceFilterList, ethnicityFilterList, sortKey, sortDir));

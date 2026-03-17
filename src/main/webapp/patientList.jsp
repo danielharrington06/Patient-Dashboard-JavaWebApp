@@ -35,8 +35,8 @@
                 String mf = (String) request.getAttribute("maritalFilter");
                 List<String> raceFilterList = (List<String>) request.getAttribute("raceFilterList");
                 List<String> ethnicityFilterList = (List<String>) request.getAttribute("ethnicityFilterList");
-                LinkedHashMap<String, String> raceOptions = (LinkedHashMap<String, String>) request.getAttribute("raceOptions");
-                LinkedHashMap<String, String> ethnicityOptions = (LinkedHashMap<String, String>) request.getAttribute("ethnicityOptions");
+                Map<String, String> raceOptions = (Map<String, String>) request.getAttribute("raceOptions");
+                Map<String, String> ethnicityOptions = (Map<String, String>) request.getAttribute("ethnicityOptions");
                 if (raceFilterList == null) raceFilterList = new ArrayList<>();
                 if (ethnicityFilterList == null) ethnicityFilterList = new ArrayList<>();
             %>

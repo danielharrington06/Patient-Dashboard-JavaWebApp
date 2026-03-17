@@ -16,6 +16,7 @@ public class HomeServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         Model model = ModelFactory.getModel();
+        request.setAttribute("activePage", "home");
         request.setAttribute("patientCount", model.getNumPatients());
         request.setAttribute("currentFile", model.getCurrentDataFile().replace("\\", "/"));
         request.getRequestDispatcher("/index.jsp").forward(request, response);
