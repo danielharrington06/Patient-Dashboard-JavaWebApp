@@ -19,7 +19,8 @@ public class DeletePatientServlet extends HttpServlet {
         try {
             Model model = ModelFactory.getModel();
             model.deletePatient(id);
-            response.sendRedirect("/patientList");
+            String lastListUrl = (String) request.getSession().getAttribute("lastListUrl");
+            response.sendRedirect(lastListUrl != null ? lastListUrl : "/patientList");
         } catch (IllegalArgumentException e) {
             request.setAttribute("errorMessage", "Patient not found: " + e.getMessage());
             getServletContext().getRequestDispatcher("/error.jsp").forward(request, response);
