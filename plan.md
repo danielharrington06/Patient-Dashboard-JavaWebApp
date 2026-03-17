@@ -1,8 +1,3 @@
-# Upcoming features
-- take out:
-  - check through all classes and check method visibility
-  - check model doesnt need stuff extracted any more
-
 # Something to consider
 - use git branches
 ```bash
@@ -17,11 +12,3 @@ git merge --no-ff feature/{featurename} -m "{message}"
 git merge --no-ff --no-edit feature/{featurename}
 git branch -d feature/{featurename}
 ```
-
-# Plan for search
-2. filter
-3. sort
-
-sorting:
-    clear sorting button
-    make it so you can click on the entire box to sort, not just name
