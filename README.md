@@ -24,3 +24,5 @@ This Java Web App uses the MVC (Model View Controller) design pattern, separated
 # ==Need to Mention==
 - why util classes
 - how model structured
+- made things private
+- extract class refactoring - delegation

@@ -1,15 +1,47 @@
 package uk.ac.ucl.model;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 public class DataFrame {
     
     private final ArrayList<Column> columns;
+    private Map<String, Integer> idToRowIndex = new HashMap<>();
 
     public DataFrame() {
         this.columns = new ArrayList<>();
     }
+
+    /* -- Indexing -- */
+
+    public final void rebuildIndex() {
+        idToRowIndex = new HashMap<>();
+        for (int row = 0; row < getRowCount(); row++) {
+            idToRowIndex.put(getValue("ID", row), row);
+        }
+    }
+    
+    public int getRowNumFromId(String id) {
+        Integer row = idToRowIndex.get(id);
+        if (row == null) throw new IllegalArgumentException("Invalid id: " + id);
+        return row;
+    }
+
+    public boolean idExists(String id) {
+        return idToRowIndex.containsKey(id);
+    }
+
+    public String generateUUID() {
+        // unlikely for a UUID to clash with an existing one, but worth ensuring it cannot happen
+        String newId;
+        do {
+            newId = java.util.UUID.randomUUID().toString();
+        } while (idExists(newId));
+        return newId;
+    }
+
+    /** -- Get and Set -- */
 
     public void addColumn(Column column) {
         columns.add(column);
@@ -24,6 +56,7 @@ public class DataFrame {
     }
 
     public int getRowCount() {
+        if (columns.isEmpty()) return 0;
         return columns.get(0).getSize();
     }
 

@@ -2,7 +2,6 @@
 - take out:
   - maybe: patient records
   - search filter sort pagination
-  - URL Building
 
 # Something to consider
 - use git branches
