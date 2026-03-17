@@ -1,7 +1,7 @@
 # Upcoming features
 - take out:
-  - maybe: patient records
-  - search filter sort pagination
+  - check through all classes and check method visibility
+  - check model doesnt need stuff extracted any more
 
 # Something to consider
 - use git branches

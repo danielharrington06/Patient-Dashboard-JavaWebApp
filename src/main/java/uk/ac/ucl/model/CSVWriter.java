@@ -10,7 +10,7 @@ import java.util.List;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 
-public class CSVWriter {
+class CSVWriter {
 
     public void save(DataFrame dataFrame, String csvFilePath) throws IOException {
         List<String> columnNames = dataFrame.getColumnNames();

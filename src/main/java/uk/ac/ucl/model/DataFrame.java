@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class DataFrame {
+class DataFrame {
     
     private final ArrayList<Column> columns;
     private Map<String, Integer> idToRowIndex = new HashMap<>();

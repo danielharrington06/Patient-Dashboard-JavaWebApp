@@ -9,7 +9,7 @@ import java.util.Map;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class JSONWriter {
+class JSONWriter {
     public JSONWriter() {}
 
     public void write(DataFrame dataFrame, String jsonFilePath) throws IOException {

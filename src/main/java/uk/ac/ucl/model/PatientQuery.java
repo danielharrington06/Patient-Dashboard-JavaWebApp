@@ -8,7 +8,7 @@ import java.util.Map;
 
 import uk.ac.ucl.util.Formatter;
 
-public class PatientQuery {
+class PatientQuery {
     
     private final DataFrame dataFrame;
 

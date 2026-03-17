@@ -2,7 +2,7 @@ package uk.ac.ucl.model;
 
 import java.util.ArrayList;
 
-public class Column {
+class Column {
     
     private String name;
     private final ArrayList<String> rows;

@@ -11,7 +11,7 @@ import java.util.Map;
 
 import uk.ac.ucl.util.Formatter;
 
-public class Statistics {
+class Statistics {
 
     private final DataFrame dataFrame;
 

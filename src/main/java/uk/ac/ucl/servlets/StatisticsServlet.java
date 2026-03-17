@@ -9,9 +9,9 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import uk.ac.ucl.model.ChartDataBuilder;
 import uk.ac.ucl.model.Model;
 import uk.ac.ucl.model.ModelFactory;
+import uk.ac.ucl.util.ChartDataBuilder;
 
 @WebServlet("/statistics")
 public class StatisticsServlet extends HttpServlet {
