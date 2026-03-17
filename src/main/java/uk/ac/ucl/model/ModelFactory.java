@@ -7,21 +7,18 @@ import java.io.IOException;
 // an initialised Model object. This version limits the program to one model object,
 // which is returned whenever getModel is called.
 
-public class ModelFactory
-{
+public class ModelFactory {
     private static Model model;
 
-    public static Model getModel() throws IOException
-    {
-        if (model == null)
-        {
+    public static Model getModel() throws IOException {
+        
+        if (model == null) {
             model = new Model();
         }
         return model;
     }
 
-    public static void reset()
-    {
+    public static void reset() {
         model = null;
     }
 }

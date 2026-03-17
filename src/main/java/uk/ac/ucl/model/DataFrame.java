@@ -1,15 +1,39 @@
 package uk.ac.ucl.model;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class DataFrame {
+class DataFrame {
     
     private final ArrayList<Column> columns;
+    private Map<String, Integer> idToRowIndex = new HashMap<>();
 
     public DataFrame() {
         this.columns = new ArrayList<>();
     }
+
+    /* -- Indexing -- */
+
+    public final void rebuildIndex() {
+        idToRowIndex = new HashMap<>();
+        for (int row = 0; row < getRowCount(); row++) {
+            idToRowIndex.put(getValue("ID", row), row);
+        }
+    }
+    
+    public int getRowNumFromId(String id) {
+        Integer row = idToRowIndex.get(id);
+        if (row == null) throw new IllegalArgumentException("Invalid id: " + id);
+        return row;
+    }
+
+    public boolean idExists(String id) {
+        return idToRowIndex.containsKey(id);
+    }
+
+    /** -- Columns-- */
 
     public void addColumn(Column column) {
         columns.add(column);
@@ -24,8 +48,11 @@ public class DataFrame {
     }
 
     public int getRowCount() {
+        if (columns.isEmpty()) return 0;
         return columns.get(0).getSize();
     }
+
+    /* -- Values -- */
 
     public String getValue(String columnName, int row) {
         int i = getColumnNames().indexOf(columnName);
@@ -40,6 +67,16 @@ public class DataFrame {
     public void addValue(String columnName, String value) {
         int i = getColumnNames().indexOf(columnName);
         columns.get(i).addRowValue(value);
+    }
+
+    /* -- Rows -- */
+
+    public Map<String, String> getRecord(int row) {
+        Map<String, String> record = new LinkedHashMap<>();
+        for (String column : getColumnNames()) {
+            record.put(column, getValue(column, row));
+        }
+        return record;
     }
 
     public void removeRow(int row) {

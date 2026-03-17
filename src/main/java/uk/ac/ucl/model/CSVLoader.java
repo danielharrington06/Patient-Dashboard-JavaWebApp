@@ -28,6 +28,7 @@ class CSVLoader {
                 }
             }
         }
+        dataFrame.rebuildIndex();
         return dataFrame;
     }
 }

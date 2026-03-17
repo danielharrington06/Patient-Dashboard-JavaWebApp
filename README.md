@@ -19,3 +19,10 @@ This Java Web App uses the MVC (Model View Controller) design pattern, separated
 - Filtering (narrows results by useful criteria such as gender, marital status, ethnicity etc.)
 - Server-side session state tracking - server tracks the current page, filters and search string so that when patient records are viewed and edited, returning to the patient list retains the search parameters
 - Dataset switching from within the web app
+
+
+# ==Need to Mention==
+- why util classes
+- how model structured
+- made things private
+- extract class refactoring - delegation

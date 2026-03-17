@@ -1,8 +1,7 @@
 # Upcoming features
-- sort search results
-- deal with search term "abington" which returns patients with current address matching but also birthplace
-- add filters such as for gender, whether patient is alive, ethnicity, race, marital status
-- requirement 7: functionality like oldest person, people living in same place
+- take out:
+  - check through all classes and check method visibility
+  - check model doesnt need stuff extracted any more
 
 # Something to consider
 - use git branches

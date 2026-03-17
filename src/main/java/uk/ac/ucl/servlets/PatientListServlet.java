@@ -15,6 +15,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import uk.ac.ucl.model.Model;
 import uk.ac.ucl.model.ModelFactory;
+import uk.ac.ucl.util.URLBuilder;
 
 @WebServlet("/patientList")
 public class PatientListServlet extends HttpServlet {
@@ -23,6 +24,7 @@ public class PatientListServlet extends HttpServlet {
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         try {
             Model model = ModelFactory.getModel();
+            request.setAttribute("activePage", "patients");
 
             String searchTerm = request.getParameter("searchstring");
             
@@ -77,11 +79,11 @@ public class PatientListServlet extends HttpServlet {
             request.setAttribute("maritalFilter", maritalFilter);
             request.setAttribute("raceFilterList", raceFilterList);
             request.setAttribute("ethnicityFilterList", ethnicityFilterList);
-            request.setAttribute("raceOptions", model.getDistinctValuesWithLabels("RACE"));
-            request.setAttribute("ethnicityOptions", model.getDistinctValuesWithLabels("ETHNICITY"));
+            request.setAttribute("raceOptions", model.getDistinctValuesMapInCol("RACE"));
+            request.setAttribute("ethnicityOptions", model.getDistinctValuesMapInCol("ETHNICITY"));
 
-            request.setAttribute("resetUrls", model.buildResetUrls(searchTerm, genderFilter, aliveFilter, maritalFilter, raceFilterList, ethnicityFilterList));
-            request.setAttribute("paginationBaseUrl", model.buildPaginationBaseUrl(searchTerm, genderFilter, aliveFilter, maritalFilter, raceFilterList, ethnicityFilterList, sortKey, sortDir));
+            request.setAttribute("resetUrls", URLBuilder.buildResetUrls(searchTerm, genderFilter, aliveFilter, maritalFilter, raceFilterList, ethnicityFilterList));
+            request.setAttribute("paginationBaseUrl", URLBuilder.buildPaginationBaseUrl(searchTerm, genderFilter, aliveFilter, maritalFilter, raceFilterList, ethnicityFilterList, sortKey, sortDir));
             
             // Save current list URL to session for back navigation
             String queryString = request.getQueryString();
